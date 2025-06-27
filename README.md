@@ -41,6 +41,7 @@ A Flask-based interactive language learning game where players join a cultural e
    ```
    SECRET_KEY=your_secret_key
    GROQ_API_KEY=your_groq_api_key
+   SAPLING_API_KEY=your_sapling_api_key
    GROQ_MODEL=llama-3.1-8b-instant
    ```
 
