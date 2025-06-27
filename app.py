@@ -963,6 +963,38 @@ def get_level_assessment_prompt(question, answer, question_type=None):
     
     C1: Has consistent and accurate spelling with only occasional minor errors or typos that don't interfere with meaning.
     """
+    
+    # Instructions for professional English assessment
+    professional_english_instructions = """
+    PROFESSIONAL ENGLISH ASSESSMENT CRITERIA:
+
+    Pay special attention to:
+
+    1. CAPITALIZATION:
+    - "I" must always be capitalized (not "i")
+    - Proper nouns should be capitalized
+    - Beginning of sentences should be capitalized
+    
+    2. CONTRACTIONS AND FORMALITY:
+    - A1-A2: Contractions (I'm, don't, can't) are acceptable
+    - B1: Should show awareness of when to use contractions vs. full forms
+    - B2-C1: Should use appropriate formality level - avoid contractions in formal contexts, use full forms (I am, do not, cannot)
+    
+    3. PUNCTUATION:
+    - Proper use of periods, commas, question marks
+    - Apostrophes in contractions and possessives
+    
+    4. REGISTER AWARENESS:
+    - A1-A2: Basic informal language is acceptable
+    - B1: Should show some awareness of formal vs. informal language
+    - B2-C1: Should demonstrate appropriate register for the context (formal meeting setting)
+
+    SCORING IMPACT:
+    - Consistent "i" instead of "I" should lower the grammar score
+    - Inappropriate use of contractions in formal contexts should affect the assessment
+    - Poor capitalization should impact both spelling and grammar scores
+    - These elements are indicators of language maturity and professionalism
+    """
 
     return f"""
     You are an expert language assessor specializing in CEFR (Common European Framework of Reference for Languages) levels, with particular expertise in applied linguistics and second language acquisition.
@@ -983,33 +1015,36 @@ def get_level_assessment_prompt(question, answer, question_type=None):
     
     {spelling_instructions}
     
-    Carefully assess the response using these six key criteria:
-    
+    Carefully assess the response using these seven key criteria:
+
     1. VOCABULARY RANGE: Assess the complexity and variety of vocabulary used. Note specific examples of basic (A1-A2), intermediate (B1-B2), or advanced (C1) vocabulary. Recognize and give appropriate credit for vocabulary from other languages.
-    
+
     2. GRAMMAR AND SYNTAX: Evaluate sentence structure, tense usage, and grammatical accuracy. Look for conditional forms, complex connectors, and error patterns.
-    
+
     3. SPELLING ACCURACY: Assess the accuracy of spelling throughout the response. Note any patterns in spelling errors while considering the multilingual context.
-    
-    4. COMPREHENSION AND RELEVANCE: Determine if the response directly addresses the question with appropriate detail and understanding.
-    
-    5. FLUENCY AND DETAIL: Consider the coherence, elaboration, and natural flow of the response.
-    
-    6. OVERALL CEFR LEVEL: Based on the above, determine the most appropriate CEFR level.
+
+    4. PROFESSIONAL ENGLISH STANDARDS: Evaluate capitalization (especially "I"), appropriate use of contractions vs. full forms, punctuation, and register awareness. This is crucial for determining language maturity.
+
+    5. COMPREHENSION AND RELEVANCE: Determine if the response directly addresses the question with appropriate detail and understanding.
+
+    6. FLUENCY AND DETAIL: Consider the coherence, elaboration, and natural flow of the response.
+
+    7. OVERALL CEFR LEVEL: Based on the above, determine the most appropriate CEFR level.
     
     Format your response as a detailed JSON object:
-    {{
+    {
         "level": "A1/A2/B1/B2/C1",
         "justification": "Your explanation here",
         "vocabulary_assessment": "Analysis of vocabulary with specific examples",
-        "grammar_assessment": "Analysis of grammatical structures with specific examples",
+        "grammar_assessment": "Analysis of grammatical structures with specific examples, including capitalization and sentence structure",
         "spelling_assessment": "Analysis of spelling accuracy with specific examples",
+        "professional_english_assessment": "Analysis of capitalization, contractions, formality level, and register awareness",
         "comprehension_assessment": "Analysis of how well they understood and addressed the question",
         "fluency_assessment": "Analysis of coherence and detail",
         "specific_strengths": ["Strength 1", "Strength 2"],
         "specific_areas_for_improvement": ["Area 1", "Area 2"],
-        "tips_for_improvement": "Concrete suggestions for improving language skills"
-    }}
+        "tips_for_improvement": "Concrete suggestions for improving language skills, including professional English standards"
+    }
     
     Do not include any text outside of the JSON object.
     """
@@ -1017,7 +1052,6 @@ def get_level_assessment_prompt(question, answer, question_type=None):
 
 
 # **************************************
-
 
 def fallback_assessment(answer):
     """Fallback method when Groq API is unavailable - with multilingual support and spelling assessment"""
@@ -1491,15 +1525,48 @@ def get_ai_feedback():
 
     {coaching_notes}
 
+    CRITICAL FEEDBACK REQUIREMENTS:
+    - Always check for basic capitalization errors, especially "i" instead of "I"
+    - Check for inappropriate contractions in formal contexts
+    - Point out professional English standards when needed
+    - Use formal English in your own response (I am, do not, cannot - NO contractions)
+
+    SPECIFIC ERRORS TO ALWAYS CATCH:
+    - "i" instead of "I" → Must be corrected every time
+    - Missing capitalization at sentence beginnings
+    - Informal contractions in formal contexts: "i'm" → "I am", "don't" → "do not", "can't" → "cannot", "won't" → "will not", "shouldn't" → "should not", "couldn't" → "could not", "wouldn't" → "would not"
+    - Missing punctuation
+
+    CONTRACTION RULES FOR CORRECTION:
+    - "i'm" → "I am" (also fix capitalization)
+    - "don't" → "do not"
+    - "can't" → "cannot"
+    - "won't" → "will not"
+    - "shouldn't" → "should not"
+    - "couldn't" → "could not"
+    - "wouldn't" → "would not"
+
     IMPORTANT: Your response MUST BE IN ENGLISH ONLY, even if the student wrote in another language. This is an English language learning application.
 
     Your response should:
     1. Stay completely in character as {speaker}
     2. Be encouraging and supportive
     3. Be concise (2-3 sentences)
-    4. Include one brief, specific suggestion for improvement if appropriate
-    5. End with a natural segue to the next part of the conversation
-    6. ALWAYS RESPOND IN ENGLISH ONLY, regardless of what language the student used
+    4. ALWAYS correct "i" to "I" and contractions if you see these errors
+    5. Include one brief, specific suggestion for improvement focusing on professional English
+    6. Model correct formal English in your own response (use "I am", "do not", "cannot" etc.)
+    7. End with a natural segue to the next part of the conversation
+    8. ALWAYS RESPOND IN ENGLISH ONLY, regardless of what language the student used
+
+    EXAMPLE CORRECTIONS:
+    - If student writes "i am fine" → Say "Remember to always capitalize 'I' - it should be 'I am fine'"
+    - If student writes "i'm happy" → Say "Great! Just remember to capitalize 'I' and use 'I am' instead of 'I'm' for more formal writing"
+    - If student writes "i don't know" → Say "Good effort! Remember to capitalize 'I' and use 'do not' instead of 'don't' - so 'I do not know'"
+    - If student writes "i can't help" → Say "Thank you for responding! Use 'I cannot help' instead of 'i can't help' for proper capitalization and formal English"
+    - If student writes "i won't go" → Say "Please remember to write 'I will not go' instead of 'i won't go' for formal English"
+    - If student writes "i shouldn't worry" → Say "Good thinking! Just write 'I should not worry' instead of 'i shouldn't worry' for formal English"
+    - If student writes "i couldn't understand" → Say "That's honest! Use 'I could not understand' instead of 'i couldn't understand' for proper English"
+    - If student writes "i wouldn't like that" → Say "Thank you for sharing! Please use 'I would not like that' instead of 'i wouldn't like that'"
     """
     
     ai_response = get_ai_response(prompt, speaker)
@@ -1632,29 +1699,59 @@ def certificate():
         completion_date=completion_date
     )
 
+@app.route('/api/check-ai-response', methods=['POST'])
+def check_ai_response():
+    """API endpoint to check if a response is AI-generated before submission"""
+    try:
+        data = request.json
+        response_text = data.get('response', '')
+        
+        logger.info(f"Checking AI for text: {response_text[:100]}...")
+        
+        if len(response_text.strip()) < 20:
+            return jsonify({
+                "is_ai": False,
+                "score": 0,
+                "message": "Response too short for AI detection",
+                "reasons": []
+            })
+        
+        # Utiliser la détection avec l'API Sapling si disponible
+        is_ai, ai_score, ai_reasons = check_with_sapling_api(response_text)
+        
+        logger.info(f"AI Detection result - is_ai: {is_ai}, score: {ai_score}")
+        
+        return jsonify({
+            "is_ai": is_ai,
+            "score": ai_score,
+            "message": f"AI detection score: {ai_score:.0%}",
+            "reasons": ai_reasons[:3] if ai_reasons else []
+        })
+        
+    except Exception as e:
+        logger.error(f"ERROR in check_ai_response: {str(e)}")
+        return jsonify({
+            "is_ai": False,
+            "score": 0,
+            "message": "Error in AI detection",
+            "reasons": []
+        }), 200  # Return 200 to allow continuation in case of error
+          
 @app.route('/submit-response', methods=['POST'])
 def submit_response():
     """Process player response, assess language level, and update game state"""
     current_step = session.get('current_step', 0)
     player_response = request.form.get('response', '')
     
-    # Check if response is AI-generated using Sapling API
+    # VÉRIFICATION OBLIGATOIRE DE L'IA CÔTÉ SERVEUR
     is_ai, ai_score, ai_reasons = check_with_sapling_api(player_response)
     
-    # If detected as AI-generated, display a message but continue the process
-    if is_ai:
-        flash(f"Attention: Your response was detected as potentially AI-generated (score: {ai_score:.2f}). Personal responses are encouraged for better learning.", "warning")
-        
-        # Store the information in the session for reference
-        ai_responses = session.get('ai_responses', [])
-        ai_responses.append({
-            "step": current_step + 1,
-            "score": ai_score,
-            "reasons": ai_reasons,
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        })
-        session['ai_responses'] = ai_responses
+    # Si l'IA est détectée avec un score élevé, refuser la soumission
+    if is_ai and ai_score > 0.5:
+        flash(f"❌ AI content detected ({ai_score:.0%}). Please provide your own authentic response.", "error")
+        return redirect(url_for('game'))  # Retourner à la même question
     
+    # Le reste du code reste identique...
     if current_step < len(DIALOGUE_QUESTIONS):
         question_data = DIALOGUE_QUESTIONS[current_step]
         question_text = question_data['question']
@@ -1677,7 +1774,7 @@ def submit_response():
         # Assess the response
         assessment = assess_response(question_text, player_response, question_type)
         
-        # Add the type to the assessment for easier filtering
+        # Add AI info to assessment
         assessment["type"] = question_type
         assessment["step"] = current_step + 1
         assessment["ai_generated"] = is_ai
@@ -1689,26 +1786,15 @@ def submit_response():
         assessments.append(assessment)
         session['assessments'] = assessments
         
-        # Calculate and assign XP
+        # Calculate XP (pas de réduction car on a déjà bloqué l'IA)
         xp_earned = question_data.get('xp_reward', 10)
-        # XP bonus based on level
         level_multipliers = {"A1": 1.0, "A2": 1.2, "B1": 1.5, "B2": 1.8, "C1": 2.0}
         xp_earned = int(xp_earned * level_multipliers.get(assessment.get('level', 'B1'), 1.0))
         
-        # Reduce XP if AI-generated
-        if is_ai:
-            xp_earned = int(xp_earned * 0.5)  # 50% of normal XP
+        flash(f"Great work! You earned {xp_earned} XP for your authentic response.", "success")
         
         session['xp'] = session.get('xp', 0) + xp_earned
-        
-        # Move to next step
         session['current_step'] = current_step + 1
-        
-        # Display message about earned XP
-        if is_ai:
-            flash(f"Response submitted! You earned {xp_earned} XP (reduced because it was detected as AI-generated).", "success")
-        else:
-            flash(f"Response submitted! You earned {xp_earned} XP.", "success")
     
     return redirect(url_for('game'))
 

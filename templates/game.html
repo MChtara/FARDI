@@ -474,52 +474,6 @@
                     </div>
                 </div>
                 
-                <!-- Example responses for guidance (collapsible) -->
-                <div class="mb-4">
-                    <p>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#exampleResponses">
-                            <i class="fas fa-lightbulb me-1"></i> Need help? See example responses
-                        </button>
-                    </p>
-                    <div class="collapse" id="exampleResponses">
-                        <div class="card card-body">
-                            <p class="small text-muted mb-2">Here are example responses at different levels:</p>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <span class="badge bg-secondary">A1 (Beginner)</span>
-                                        <p class="small mt-1">{{ question.example_responses.A1 }}</p>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <span class="badge bg-info">A2 (Elementary)</span>
-                                        <p class="small mt-1">{{ question.example_responses.A2 }}</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <span class="badge bg-primary">B1 (Intermediate)</span>
-                                        <p class="small mt-1">{{ question.example_responses.B1 }}</p>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <span class="badge bg-success">B2 (Upper Intermediate)</span>
-                                        <p class="small mt-1">{{ question.example_responses.B2 }}</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-12">
-                                    <div>
-                                        <span class="badge bg-warning text-dark">C1 (Advanced)</span>
-                                        <p class="small mt-1">{{ question.example_responses.C1 }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 
                 <!-- Response form -->
                 <div class="player-response-container">
@@ -539,12 +493,16 @@
                         
                         <div class="d-grid gap-2">
                             <button type="button" id="get-feedback" class="btn btn-outline-primary">
-                                <i class="fas fa-comment-dots me-1"></i> Get Feedback
+                                <i class="fas fa-comment-dots me-1"></i> Get Feedback (Optional)
                             </button>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane me-1"></i> Submit & Continue
+                                <i class="fas fa-shield-alt me-1"></i> Submit & Continue (AI Check Included)
                             </button>
+                            <small class="text-muted text-center">
+                                <i class="fas fa-info-circle"></i> Your response will be automatically checked for AI content before submission
+                            </small>
                         </div>
+                                            
                     </form>
                 </div>
                 
@@ -783,27 +741,60 @@ $(document).ready(function() {
     });
     
     // Gestionnaire d'événement pour le formulaire de soumission (Submit & Continue)
-    $('#responseForm').on('submit', function(e) {
-        // Empêcher la soumission par défaut
-        e.preventDefault();
-        
-        // Récupérer la réponse
-        const response = $('#responseInput').val().trim();
-        
-        // Si la réponse est vide, alerter l'utilisateur
-        if (!response) {
-            alert("Please type a response first.");
-            return false;
-        }
-        
-        // Vérifier si la réponse semble générée par IA
-        checkAIDetection(response, (shouldProceed) => {
-            if (shouldProceed) {
-                // Si l'utilisateur confirme ou si pas d'alerte, soumettre le formulaire
+    // Gestionnaire d'événement pour le formulaire de soumission (Submit & Continue)
+$('#responseForm').on('submit', function(e) {
+    // Empêcher la soumission par défaut
+    e.preventDefault();
+    
+    // Récupérer la réponse
+    const response = $('#responseInput').val().trim();
+    
+    // Si la réponse est vide, alerter l'utilisateur
+    if (!response) {
+        alert("Please type a response first.");
+        return false;
+    }
+    
+    // Désactiver le bouton de soumission pendant la vérification
+    const submitBtn = $(this).find('button[type="submit"]');
+    const originalText = submitBtn.html();
+    submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status"></span> Checking for AI...');
+    
+    // Vérification OBLIGATOIRE de l'IA
+    $.ajax({
+        url: '/api/check-ai-response',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            response: response
+        }),
+        success: (data) => {
+            if (data.is_ai && data.score > 0.5) {
+                // IA détectée - BLOQUER la soumission
+                alert(`❌ AI CONTENT DETECTED ❌\n\nYour response appears to be generated by AI (${Math.round(data.score * 100)}% confidence).\n\nPlease write your own authentic response to continue.\n\nDetected patterns:\n${data.reasons ? data.reasons.slice(0, 2).join('\n') : 'Generic AI patterns'}\n\nThe question will remain the same - please try again with your own words.`);
+                
+                // Réactiver le bouton
+                submitBtn.prop('disabled', false).html(originalText);
+                
+                // Optionnel: vider le champ de texte pour forcer une nouvelle réponse
+                $('#responseInput').val('').focus();
+                
+            } else {
+                // Pas d'IA détectée ou score faible - permettre la soumission
+                submitBtn.prop('disabled', false).html(originalText);
+                
+                // Soumettre le formulaire réel
                 this.submit();
             }
-        });
+        },
+        error: (xhr, status, error) => {
+            console.error('Erreur lors de la vérification IA:', error);
+            // En cas d'erreur, permettre la soumission (failsafe)
+            submitBtn.prop('disabled', false).html(originalText);
+            this.submit();
+        }
     });
+});
     
     // Fonction pour vérifier les indices de texte généré par IA
     function checkForAiIndicators(text) {
