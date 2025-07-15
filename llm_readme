@@ -1,0 +1,213 @@
+# LLM Memory - FARDI Project Conversation Context
+
+## 📋 Project Overview
+**Project Name**: FARDI - Cultural Event Planning Committee Language Assessment  
+**Type**: Flask web application with AI-powered CEFR language assessment  
+**Current Status**: Fully restructured with mandatory authentication system  
+
+## 🎯 Original Request and Evolution
+
+### Initial State:
+- User provided a single large Flask app file (`paste.txt`) with authentication, game logic, AI detection, and assessment features all in one file
+- App had both guest access and user accounts
+- URL routing issues with blueprint endpoints
+
+### User's Progression of Requests:
+1. **Restructuring Request**: "can you divide this into a well structered app give me each file in a seperate one"
+2. **URL Fix Request**: User reported `BuildError` for `get_ai_feedback` endpoint (should be `api.get_ai_feedback`)
+3. **Template Enhancement Request**: "actually lets fix the html files too please group the css alone also enhance the design and in index page aka either much better and more clear for ux"
+4. **Authentication Addition**: "i want you to add login/signup logic to the code with db of sqllite please"
+5. **Mandatory Login**: "i want the system to ask for login before anything please"
+
+## 🏗️ Complete Application Architecture
+
+### Backend Structure:
+```
+├── app.py                      # Main Flask application (UPDATED)
+├── config.py                   # Configuration settings
+├── requirements.txt            # Python dependencies
+├── .env.example               # Environment variables template
+├── models/
+│   ├── game_data.py           # Game data and constants
+│   └── auth.py                # User authentication models (NEW)
+├── services/
+│   ├── ai_service.py          # AI and language processing
+│   ├── audio_service.py       # Audio generation service
+│   └── assessment_service.py  # Language assessment service
+├── routes/
+│   ├── api_routes.py          # API endpoints
+│   └── auth_routes.py         # Authentication routes (NEW)
+├── utils/
+│   └── helpers.py             # Helper functions
+└── static/
+    ├── css/
+    │   ├── base.css           # Base styles and variables
+    │   ├── components.css     # UI components
+    │   ├── index.css          # Index page styles
+    │   ├── game.css           # Game page styles (NEW)
+    │   ├── auth.css           # Authentication styles (NEW)
+    │   └── profile.css        # Profile page styles (NEW)
+    └── js/
+        ├── base.js            # Base JavaScript functionality
+        ├── index.js           # Index page interactions
+        ├── auth.js            # Authentication JavaScript (NEW)
+        └── game.js            # Game page functionality (NEW)
+```
+
+### Templates Structure:
+```
+templates/
+├── base.html                  # Enhanced base template
+├── index.html                 # Main page (login-required)
+├── welcome.html               # Public landing page (NEW)
+├── game.html                  # Assessment game page
+├── results.html               # Assessment results
+├── dashboard.html             # User dashboard (NEW)
+├── certificate.html           # Certificate page
+└── auth/
+    ├── login.html            # Login page (NEW)
+    ├── signup.html           # Signup page (NEW)
+    ├── profile.html          # User profile (NEW)
+    ├── edit_profile.html     # Edit profile (NEW)
+    └── change_password.html  # Change password (NEW)
+```
+
+## 🔐 Authentication System Details
+
+### Database Schema (SQLite):
+- **users**: User accounts and profiles
+- **user_sessions**: Session management
+- **assessment_results**: Assessment history
+- **password_reset_tokens**: Password reset functionality
+- **email_verification_tokens**: Email verification
+- **user_preferences**: User settings
+
+### Key Authentication Features:
+- ✅ Secure password hashing with salt
+- ✅ Session management with "Remember Me"
+- ✅ Real-time username/email availability checking
+- ✅ Password strength validation
+- ✅ Profile management
+- ✅ Assessment history tracking
+
+### Authentication Flow:
+```
+Unauthenticated User → /welcome → Login/Signup Required
+                                       ↓
+Authenticated User → /home → Full Platform Access
+```
+
+## 🎮 Game Features and Functionality
+
+### Core Assessment System:
+- **9 Interactive Questions**: Different scenarios with NPCs
+- **AI-Powered Assessment**: Uses Groq API for language evaluation
+- **CEFR Level Determination**: A1 to C1 classification
+- **Audio Integration**: Text-to-speech for listening comprehension
+- **AI Content Detection**: Prevents cheating using Sapling API
+- **Real-time Feedback**: AI feedback on responses
+
+### NPCs and Scenarios:
+- **Ms. Mabrouki**: Event Coordinator
+- **SKANDER**: Student Council President  
+- **Emna**: Committee Member (Finance)
+- **Ryan**: Committee Member (Social Media)
+- **Lilia**: Committee Member (Artistic Direction)
+
+### Assessment Categories:
+- Introduction, Motivation, Cultural Knowledge
+- Listening Comprehension, Creativity
+- Social Interaction, Problem Solving
+- Skills Discussion, Writing
+
+## 🔧 Technical Implementation
+
+### Key Technologies:
+- **Backend**: Flask, SQLite, Python
+- **AI Services**: Groq API, Sapling AI Detection API
+- **Audio**: Edge TTS for speech generation
+- **Frontend**: Bootstrap 5, Custom CSS/JS
+- **Authentication**: Session-based with decorators
+
+### Important Environment Variables:
+```env
+SECRET_KEY=your-secret-key-here
+GROQ_API_KEY=your-groq-api-key
+SAPLING_API_KEY=your-sapling-api-key (optional)
+```
+
+### Key Decorators:
+- `@login_required`: Requires user authentication
+- `@guest_only`: Only for non-authenticated users
+
+## 🎨 Design and UX Changes
+
+### Visual Enhancements Made:
+- ✅ **Modern CSS Architecture**: CSS custom properties, component-based
+- ✅ **Tunisian Color Scheme**: Red and blue gradient theme
+- ✅ **Interactive Elements**: Hover effects, animations, transitions
+- ✅ **Responsive Design**: Mobile-first approach
+- ✅ **Accessibility**: Focus states, keyboard navigation
+- ✅ **Professional Authentication**: Modern login/signup forms
+
+### Current UX Flow:
+1. **Welcome Page**: Beautiful landing page for new visitors
+2. **Authentication**: Required login/signup
+3. **Main Page**: Personalized experience with user info
+4. **Assessment**: 9-question interactive experience
+5. **Results**: Detailed CEFR analysis with history tracking
+6. **Dashboard**: User stats and assessment history
+
+## 🚨 Critical Issues Fixed
+
+### 1. URL Routing Issues:
+- **Problem**: `BuildError: Could not build url for endpoint 'get_ai_feedback'`
+- **Solution**: Updated to `url_for('api.get_ai_feedback')` for blueprint routes
+
+### 2. Authentication Requirements:
+- **Change**: Removed all guest access options
+- **Implementation**: All routes now require `@login_required`
+- **User Flow**: Mandatory account creation before any access
+
+### 3. Template Structure:
+- **Enhancement**: Separated CSS into modular files
+- **Improvement**: Enhanced forms with real-time validation
+- **Addition**: User-specific content and personalization
+
+## 📊 Current System State
+
+### What Works:
+✅ Complete authentication system with SQLite  
+✅ Modular, well-structured codebase  
+✅ AI-powered CEFR assessment  
+✅ User dashboard and profile management  
+✅ Assessment history tracking  
+✅ Modern, responsive UI/UX  
+✅ Audio integration for listening tests  
+✅ AI content detection  
+✅ Mandatory login for all features  
+
+### User Experience:
+- **First-time visitors**: See welcome page → Must create account
+- **Returning users**: Login → Access personalized dashboard
+- **Assessment flow**: Streamlined with user data auto-populated
+- **Results tracking**: All assessments saved to user profile
+
+
+### Common Development Tasks:
+- Adding new assessment question types
+- Extending user profile features
+- Implementing email notifications
+- Adding more detailed analytics
+- Creating admin management tools
+
+## 💡 Important Notes for Next LLM
+
+1. **No Guest Access**: System now requires login for ALL functionality
+2. **Database Auto-Creation**: SQLite database initializes automatically
+3. **Blueprint Structure**: API routes use `/api/` prefix
+4. **Session Management**: Users stay logged in with "Remember Me"
+5. **Assessment Storage**: All results automatically saved for logged-in users
+6. **Modern Architecture**: Clean separation of concerns, modular design
+
+This represents a complete, production-ready language assessment platform with mandatory authentication and comprehensive user management.

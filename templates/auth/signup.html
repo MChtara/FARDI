@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - FARDI{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/auth.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2>Join FARDI</h2>
+                    <p>Create your account and start your language assessment journey</p>
+                </div>
+                
+                <div class="auth-body">
+                    <form method="POST" class="auth-form" id="signupForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="first_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        First Name
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="first_name" 
+                                           name="first_name" 
+                                           placeholder="Enter your first name"
+                                           value="{{ first_name or '' }}"
+                                           autocomplete="given-name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="last_name" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        Last Name
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="last_name" 
+                                           name="last_name" 
+                                           placeholder="Enter your last name"
+                                           value="{{ last_name or '' }}"
+                                           autocomplete="family-name">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-at"></i>
+                                Username *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="username" 
+                                   name="username" 
+                                   placeholder="Choose a unique username"
+                                   value="{{ username or '' }}"
+                                   required
+                                   autocomplete="username">
+                            <div id="username-feedback" class="input-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Address *
+                            </label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   placeholder="Enter your email address"
+                                   value="{{ email or '' }}"
+                                   required
+                                   autocomplete="email">
+                            <div id="email-feedback" class="input-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Password *
+                            </label>
+                            <div class="password-input-container">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="Create a strong password"
+                                       required
+                                       autocomplete="new-password">
+                                <button type="button" class="password-toggle" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill"></div>
+                                </div>
+                                <div class="strength-text">Password strength: <span></span></div>
+                            </div>
+                            <div class="password-requirements">
+                                <small>Password must contain:</small>
+                                <ul>
+                                    <li id="req-length">At least 8 characters</li>
+                                    <li id="req-uppercase">One uppercase letter</li>
+                                    <li id="req-lowercase">One lowercase letter</li>
+                                    <li id="req-number">One number</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Confirm Password *
+                            </label>
+                            <div class="password-input-container">
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="confirm_password" 
+                                       name="confirm_password" 
+                                       placeholder="Confirm your password"
+                                       required
+                                       autocomplete="new-password">
+                                <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div id="confirm-password-feedback" class="input-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-check terms-check">
+                                <input type="checkbox" class="form-check-input" id="terms_accepted" name="terms_accepted" required>
+                                <label class="form-check-label" for="terms_accepted">
+                                    I agree to the 
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a> 
+                                    and 
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary auth-submit-btn" id="submitBtn" >
+                            <span class="btn-text">Create Account</span>
+                            <i class="fas fa-user-plus btn-icon"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="auth-divider">
+                        <span>Already have an account?</span>
+                    </div>
+                    
+                    <div class="login-option">
+                        <p>Ready to sign in?</p>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary login-btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="auth-footer">
+                    <p>Already have an account? 
+                        <a href="{{ url_for('auth.login') }}" class="auth-link">
+                            Sign in here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms of Service Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Terms of Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="terms-content">
+                    <h6>1. Acceptance of Terms</h6>
+                    <p>By using FARDI, you agree to be bound by these Terms of Service.</p>
+                    
+                    <h6>2. Use of Service</h6>
+                    <p>FARDI is an AI-powered language assessment platform. You may use this service for personal, educational purposes.</p>
+                    
+                    <h6>3. User Accounts</h6>
+                    <p>You are responsible for maintaining the security of your account and password.</p>
+                    
+                    <h6>4. Assessment Results</h6>
+                    <p>Assessment results are for educational purposes and may not reflect official language certifications.</p>
+                    
+                    <h6>5. Privacy</h6>
+                    <p>Your privacy is important to us. Please review our Privacy Policy.</p>
+                    
+                    <h6>6. Prohibited Use</h6>
+                    <p>You may not use AI-generated responses during assessments or attempt to manipulate results.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyModalLabel">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="privacy-content">
+                    <h6>Information We Collect</h6>
+                    <p>We collect information you provide directly, such as your name, email, and assessment responses.</p>
+                    
+                    <h6>How We Use Information</h6>
+                    <p>We use your information to provide language assessment services and improve our platform.</p>
+                    
+                    <h6>Information Sharing</h6>
+                    <p>We do not sell or share your personal information with third parties for marketing purposes.</p>
+                    
+                    <h6>Data Security</h6>
+                    <p>We implement appropriate security measures to protect your personal information.</p>
+                    
+                    <h6>Your Rights</h6>
+                    <p>You can access, update, or delete your personal information through your account settings.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize signup form
+    FARDI.Auth.initSignupForm();
+});
+</script>
+{% endblock %}
