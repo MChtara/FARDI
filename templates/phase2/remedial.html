@@ -197,83 +197,102 @@
                     console.log(`FILL_GAPS - Total Score: ${score}/6`);
                 }
 
-                // ⭐ LOGIQUE CORRIGÉE
-    let feedback = "";
-    let nextAction = "";
-    let progressionLevel = "";
-    
-    console.log(`\n=== PROGRESSION LOGIC ===`);
-    console.log(`Current Step: ${currentStep}`);
-    
-    if (score === 6) {
-        progressionLevel = "B2";
-        feedback = "Excellent work! Ready to move forward!";
-        
-        // Déterminer la prochaine destination selon le step
-        if (currentStep === "step_1") {
-            nextAction = "/phase2/step/step_2";
-        } else if (currentStep === "step_2") {
-            nextAction = "/phase2/step/step_3";
-        } else if (currentStep === "step_3") {
-            nextAction = "/phase2/step/final_writing";
-        } else {
-            nextAction = "/phase2/complete";
-        }
-        console.log(`Score 6 → B2 → PROCEED TO NEXT STEP: ${nextAction}`);
-        
-    } else if (score === 5) {
-        progressionLevel = "B1";
-        feedback = "Great job! Let's practice more to perfect our skills!";
-        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
-        console.log(`Score 5 → B1 → REMEDIAL B1 in ${currentStep}`);
-        
-    } else if (score >= 3 && score <= 4) {
-        progressionLevel = "A2";
-        feedback = "Good effort! Let's try A2 level activities!";
-        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
-        console.log(`Score ${score} → A2 → REMEDIAL A2 in ${currentStep}`);
-        
-    } else if (score >= 1 && score <= 2) {
-        progressionLevel = "A1";
-        feedback = "Let's continue with A1 exercises!";
-        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity={{ current_activity + 1 }}`;
-        console.log(`Score ${score} → A1 → NEXT A1 EXERCISE in ${currentStep}`);
-        
-    } else { // score = 0
-        progressionLevel = "A1";
-        feedback = "Let's go back and review the fundamentals!";
-        
-        // ⭐ LOGIQUE SPÉCIALE : Score 0 = retour au step précédent
-        if (currentStep === "step_2") {
-            nextAction = "/phase2/remedial/step_1/A1?activity=0";
-            console.log(`Score 0 in step_2 → BACK TO STEP_1 A1`);
-        } else if (currentStep === "step_3") {
-            nextAction = "/phase2/remedial/step_2/A1?activity=0";
-            console.log(`Score 0 in step_3 → BACK TO STEP_2 A1`);
-        } else if (currentStep === "final_writing") {
-            nextAction = "/phase2/remedial/step_3/A1?activity=0";
-            console.log(`Score 0 in final_writing → BACK TO STEP_3 A1`);
-        } else {
-            // Si déjà en step_1, retry same
-            nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity={{ current_activity }}`;
-            console.log(`Score 0 in step_1 → RETRY SAME EXERCISE`);
-        }
-    }
+               //  DYNAMIC PROGRESSION LOGIC
+                const maxScore = {{ activity.get('success_threshold', 6) }};
+                const currentActivity = {{ current_activity }};
+                const totalActivities = {{ total_activities }};
 
-    console.log(`\nFINAL DECISION:`);
-    console.log(`  Current Step: ${currentStep}`);
-    console.log(`  Current Level: {{ level }}`);
-    console.log(`  Score: ${score}/6`);
-    console.log(`  New Level: ${progressionLevel}`);
-    console.log(`  Next Action: ${nextAction}`);
+                let feedback = "";
+                let nextAction = "";
+                let progressionLevel = "";
 
+                console.log(`\n=== DYNAMIC PROGRESSION LOGIC ===`);
+                console.log(`Current Step: ${currentStep}`);
+                console.log(`Max Score: ${maxScore}`);
+                console.log(`Current Score: ${score}`);
+
+                // Calculate percentage-based thresholds
+                const perfectScore = maxScore;                    // 100%
+                const goodScore = Math.floor(maxScore * 0.83);   // ~83% 
+                const okayScore = Math.floor(maxScore * 0.5);    // ~50%
+                const lowScore = Math.floor(maxScore * 0.33);    // ~33%
+
+                console.log(`Thresholds: Perfect=${perfectScore} (100%), Good=${goodScore} (~83%), Okay=${okayScore} (~50%), Low=${lowScore} (~33%)`);
+
+                if (score >= perfectScore) {
+                    progressionLevel = "B2";
+                    feedback = "Excellent work! Ready to move forward!";
+                    
+                    if (currentStep === "step_1") {
+                        nextAction = "/phase2/step/step_2";
+                    } else if (currentStep === "step_2") {
+                        nextAction = "/phase2/step/step_3";
+                    } else if (currentStep === "step_3") {
+                        nextAction = "/phase2/step/final_writing";
+                    } else {
+                        nextAction = "/phase2/complete";
+                    }
+                    console.log(`Score ${score}/${maxScore} (100%) → B2 → PROCEED TO NEXT STEP`);
+                    
+                } else if (score >= goodScore) {
+                    progressionLevel = "B1";
+                    feedback = "Great job! Let's practice more to perfect our skills!";
+                    nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
+                    console.log(`Score ${score}/${maxScore} (~83%) → B1 → REMEDIAL B1`);
+                    
+                } else if (score >= okayScore) {
+                    progressionLevel = "A2";
+                    feedback = "Good effort! Let's try A2 level activities!";
+                    nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
+                    console.log(`Score ${score}/${maxScore} (~50%) → A2 → REMEDIAL A2`);
+                    
+                } else if (score >= lowScore) {
+                    progressionLevel = "A1";
+                    feedback = "Let's continue with A1 exercises!";
+                    
+                    if (currentActivity + 1 < totalActivities) {
+                        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=${currentActivity + 1}`;
+                        console.log(`Score ${score}/${maxScore} (~33%) → A1 → NEXT A1 ACTIVITY`);
+                    } else {
+                        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
+                        console.log(`A1 activities completed → RESTART FROM BEGINNING`);
+                    }
+                    
+                } else { // score = 0 or very low
+                    progressionLevel = "A1";
+                    feedback = "Let's go back and review the fundamentals!";
+                    
+                    if (currentActivity + 1 < totalActivities) {
+                        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=${currentActivity + 1}`;
+                        console.log(`Score 0 → NEXT A1 ACTIVITY`);
+                    } else {
+                        if (currentStep === "step_2") {
+                            nextAction = "/phase2/remedial/step_1/A1?activity=0";
+                        } else if (currentStep === "step_3") {
+                            nextAction = "/phase2/remedial/step_2/A1?activity=0";
+                        } else if (currentStep === "final_writing") {
+                            nextAction = "/phase2/remedial/step_3/A1?activity=0";
+                        } else {
+                            nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
+                        }
+                        console.log(`A1 exhausted → GO BACK OR RESTART`);
+                    }
+                }
+
+                console.log(`\nFINAL DECISION:`);
+                console.log(`  Current Step: ${currentStep}`);
+                console.log(`  Current Level: {{ level }}`);
+                console.log(`  Current Activity: ${currentActivity + 1}/${totalActivities}`);
+                console.log(`  Score: ${score}/${maxScore} (${Math.round((score/maxScore)*100)}%)`);
+                console.log(`  New Level: ${progressionLevel}`);
+                console.log(`  Next Action: ${nextAction}`);
 
 
                 // Afficher le feedback
                 $("#feedback").html(feedback);
                 $("#feedback").removeClass().addClass("mt-4 text-lg font-medium " + 
-                    (score >= 5 ? "text-green-600" : score >= 3 ? "text-blue-600" : "text-orange-600"));
-                
+                    (score >= goodScore ? "text-green-600" : score >= okayScore ? "text-blue-600" : "text-orange-600"));
+
                 // Désactiver les boutons
                 $("#check-work").prop('disabled', true).text('Checking...');
                 $("#submit-continue").prop('disabled', true);
@@ -307,17 +326,12 @@
                         console.log("\n=== BACKEND RESPONSE ===");
                         console.log('Server response:', response);
                         
-                        // ⭐ REDIRECTION CORRIGÉE
+                        //  REDIRECTION CORRIGÉE
                         setTimeout(() => {
-                            console.log(`\n=== REDIRECTING ===`);
-                            if (score >= 6) {
-                                console.log(`→ Going to Step 2: /phase2/step/step_2`);
-                                window.location.href = "/phase2/step/step_2";
-                            } else {
-                                console.log(`→ Going to: ${nextAction}`);
-                                window.location.href = nextAction;
-                            }
-                        }, 3000);
+                        console.log(`\n=== REDIRECTING ===`);
+                        console.log(`→ Going to: ${nextAction}`);
+                        window.location.href = nextAction;
+                    }, 3000);
                     },
                     error: function(xhr, status, error) {
                         console.error('\n=== AJAX ERROR ===');

@@ -665,7 +665,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                     "Art": "Skill for drawing or design",
                     "Organized": "Skill for planning and order"
                 },
-                "word_bank": ["Decorations", "Music", "", "Promotion", "Art", "Food"],
+                "word_bank": ["Decorations", "Music", "Organized", "Promotion", "Art", "Food"],
                 "success_feedback": "Amazing, [Player]! Your role knowledge is ready for our cultural event! Let’s move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Nice try, [Player]! Let’s practice more to make our action plan shine. Join me for the next task!",
                 "success_threshold": 6,
@@ -688,7 +688,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "Ryan", "decorations", "music", "promotion", "food", "art", "likes", "good", "organized"],
                 "success_feedback": "Wow, [Player]! Your role stories are perfect! Ready for [Step 2: Scheduling Meetings]?",
                 "remedial_feedback": "Good effort, [Player]! Let’s keep building our event story!",
-                "success_threshold": 6,
+                "success_threshold": 15,
                 "expected_answers": ["Emna", "decorations", "likes", "Ryan", "promotion", "organized", "Emna", "music", "Emna", "decorations", "likes", "Emna", "music", "Ryan", "organized"]
             },
             {
@@ -708,7 +708,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "Ryan", "decorations", "music", "promotion", "food", "likes", "good", "songs", "art"],
                 "success_feedback": "Great job, [Player]! Your suggestions are spot-on! Let’s move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Nice work, [Player]! Let’s try one more task!",
-                "success_threshold": 6,
+                "success_threshold": 7,
                 "expected_answers": ["Emna", "decorations", "likes", "Emna", "songs", "Ryan", "promotion"]
             },
             {
@@ -746,7 +746,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "Ryan", "decorations", "music", "promotion", "food", "likes", "good", "songs", "art", "organized"],
                 "success_feedback": "Amazing, [Player]! Your reflections are ready for our cultural event! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "You're getting there, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!",
-                "success_threshold": 6,
+                "success_threshold": 15,
                 "expected_answers": ["Emna", "music", "likes", "Ryan", "decorations", "organized", "Emna", "music", "Emna", "music", "likes", "music", "Emna", "Ryan", "organized"]
             }
         ],
@@ -806,7 +806,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["because", "and", "for", "music", "decorations", "creative", "organized", "planning", "at", "with", "by", "creativity"],
                 "success_feedback": "Great job, [Player]! Your sentences are ready for our plan! Ready for [Step 2: Scheduling Meetings]?",
                 "remedial_feedback": "Nice try, [Player]! Let's practice more to make our plans shine!",
-                "success_threshold": 6,
+                "success_threshold": 10,
                 "expected_answers": ["because", "because", "for", "music", "at", "decorations", "and", "music", "with", "planning"]
             },
             {
@@ -844,7 +844,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
     "word_bank": ["chose", "picked", "Emna", "Ryan", "music", "decorations", "will", "organized", "creative", "at", "for", "works", "helps"],
     "success_feedback": "Fantastic, [Player]! Your story is perfect! Ready for [Step 2: Scheduling Meetings]?",
     "remedial_feedback": "Good work, [Player]! Let's try one more task to boost our event!",
-    "success_threshold": 6,
+    "success_threshold": 13,
     "expected_answers": ["chose", "music", "Ryan", "decorations", "organized", "will", "music", "Emna", "music", "Ryan", "at", "works", "everyone"]
 },
             {
@@ -882,7 +882,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "Ryan", "music", "decorations", "creative", "organized", "teamwork", "planning", "success", "culture", "handles", "chose"],
                 "success_feedback": "Amazing, [Player]! Your confirmations are ready! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "You're close, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!",
-                "success_threshold": 6,
+                "success_threshold": 15,
                 "expected_answers": ["Emna", "music", "creative", "Ryan", "decorations", "organized", "Emna", "music", "Emna", "music", "creative", "music", "Emna", "teamwork", "success"]
             }
       ],
@@ -966,7 +966,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "Ryan", "music", "decorations", "because", "will", "handle", "creative", "organized", "experience"],
                 "success_feedback": "Great work, [Player]! Your confirmations are perfect! Ready for [Step 2: Scheduling Meetings]?",
                 "remedial_feedback": "Nice effort, [Player]! Let's try another task to polish our plans!",
-                "success_threshold": 6,
+                "success_threshold": 18,
                 "expected_answers": ["Emna", "music", "creative", "Ryan", "decorations", "organized", "Emna", "music", "experience", "Ryan", "decorations", "promotion", "Emna", "music", "creative", "Ryan", "decorations", "organized"]
             },
             {
@@ -1004,7 +1004,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
     "word_bank": ["music", "decorations", "organization", "creativity", "Emna", "Ryan", "traditions", "teamwork", "atmosphere", "vibrant", "organized"],
     "success_feedback": "Fantastic, [Player]! Your reflections make our event shine! Let's move to [Step 2: Scheduling Meetings]!",
     "remedial_feedback": "Good work, [Player]! Let's try one more task to boost our event's vibe!",
-    "success_threshold": 6,
+    "success_threshold": 14,
     "expected_answers": ["music", "cultural", "organization", "organized", "planning", "music", "atmosphere", "Emna", "vibrant", "music", "traditions", "authenticity", "teamwork", "succeed"]
 },
             {
@@ -1042,7 +1042,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
     "word_bank": ["Emna", "Ryan", "music", "decorations", "Tunisian atmosphere", "Malouf music", "cultural heritage", "culturally authentic", "celebrate heritage"],
     "success_feedback": "Amazing, [Player]! Your story brings our event to life! Let's move to [Step 2: Scheduling Meetings]!",
     "remedial_feedback": "You're close, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!",
-    "success_threshold": 6,
+    "success_threshold": 15,
     "expected_answers": ["Emna", "music", "she loves songs", "Emna", "Tunisian atmosphere", "cultural heritage", "Malouf music", "Emna", "Emna", "music coordination", "she understands culture", "culturally authentic", "it includes Tunisian traditions", "celebrate heritage", "it showcases traditions"]
 }
     ]
