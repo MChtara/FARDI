@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Activities</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6 max-w-4xl">
+        <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">Practice Activities</h1>
+        <p class="text-center text-lg mb-6">Let's strengthen your skills before moving forward!</p>
+        <p class="text-center text-md mb-8">{{ current_activity + 1 }}/{{ total_activities }}</p>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div class="flex items-center mb-4">
+                <img src="/static/images/avatars/{{ activity.speaker|lower }}.png" alt="{{ activity.speaker }}" class="w-16 h-16 mr-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-blue-600">{{ activity.speaker }}</h2>
+                    <p class="text-lg">{{ activity.instruction }}</p>
+                </div>
+            </div>
+
+            {% if activity.task_type == 'matching' %}
+            <h3 class="text-2xl font-semibold text-blue-600 mb-4">Match the Items</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    {% for key, value in activity.get('matching_items', {}).items() %}
+                    <div class="draggable bg-blue-200 p-2 rounded cursor-move" data-role="{{ key }}">{{ key }}</div>
+                    {% endfor %}
+                </div>
+                <div class="space-y-2">
+                    {% for key, value in activity.get('matching_items', {}).items() %}
+                    <div class="droppable bg-gray-200 p-2 rounded" data-correct="{{ key }}">{{ value }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% elif activity.task_type == 'fill_gaps' %}
+            <h3 class="text-2xl font-semibold text-blue-600 mb-4">{{ activity.title }}</h3>
+            <div class="space-y-4">
+                {% for sentence in activity.get('sentences', []) %}
+                <div>{{ sentence.text|safe }}</div>
+                {% endfor %}
+            </div>
+            {% elif activity.task_type == 'dialogue' %}
+            <h3 class="text-2xl font-semibold text-blue-600 mb-4">{{ activity.title }}</h3>
+            <div class="space-y-4">
+                {% for line in activity.get('dialogue', []) %}
+                <div class="p-3 bg-gray-50 rounded">
+                    {% if line.type == 'character' %}
+                    <div class="mb-2">
+                        <strong class="text-blue-600">{{ line.speaker }}:</strong> 
+                        <span class="text-gray-800">{{ line.text }}</span>
+                    </div>
+                    {% elif line.type == 'user_input' %}
+                    <div class="mb-2">
+                        <strong class="text-green-600">You:</strong>
+                        <div class="mt-1">
+                            {{ line.text|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <h3 class="text-2xl font-semibold text-blue-600 mb-4">{{ activity.get('title', 'Practice Activity') }}</h3>
+            <div class="space-y-4">
+                {% for sentence in activity.get('sentences', []) %}
+                <input type="text" class="w-full border p-2" placeholder="{{ sentence.text }}">
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if activity.get('word_bank') %}
+            <div class="mt-4">
+                <h4 class="text-lg font-semibold">Word Bank:</h4>
+                <div class="flex flex-wrap gap-2">
+                    {% for word in activity.word_bank %}
+                    <span class="bg-gray-300 px-2 py-1 rounded">{{ word }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mt-4 flex gap-4">
+                <button id="check-work" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Check My Work</button>
+                <button id="submit-continue" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit & Continue</button>
+            </div>
+            <p id="feedback" class="mt-4 text-lg"></p>
+        </div>
+
+        <div class="text-center">
+            <a href="{{ url_for('phase2_step', step_id=step_id) }}" class="text-blue-600 hover:underline">Back to Main Activity</a>
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+            
+            // Drag-and-drop for matching tasks
+            $(".draggable").draggable({ revert: "invalid" });
+            $(".droppable").droppable({
+                accept: ".draggable",
+                drop: function(event, ui) {
+                    // Clear any previous item in this drop zone
+                    $(this).find('.draggable').remove();
+                    
+                    // Place the dragged item in this drop zone
+                    ui.draggable.css({ top: 0, left: 0, position: 'relative' });
+                    $(this).append(ui.draggable);
+                    
+                    // Store the match for later checking
+                    $(this).data('matched-item', ui.draggable.data("role"));
+                    ui.draggable.data('dropped-in', $(this).data("correct"));
+                }
+            });
+            
+            $("#check-work").click(function() {
+                const taskType = "{{ activity.task_type }}";
+                const currentStep = "{{ step_id }}";
+                let score = 0;
+                let responses = {};
+                let correctAnswers = [];
+                let userAnswers = [];
+
+                // ⭐ DEBUG INITIAL
+                console.log("=== REMEDIAL ACTIVITY DEBUG ===");
+                console.log(`Step: {{ step_id }}`);
+                console.log(`Level: {{ level }}`);
+                console.log(`Activity: {{ activity.id }}`);
+                console.log(`Task Type: ${taskType}`);
+                console.log(`Current Activity: {{ current_activity + 1 }}/{{ total_activities }}`);
+
+                if (taskType === "matching") {
+                    score = 0;
+                    console.log("MATCHING - Checking answers:");
+                    
+                    $(".droppable").each(function() {
+                        const correctAnswer = $(this).data("correct");
+                        const userAnswer = $(this).data('matched-item') || "";
+                        
+                        console.log(`  Expected: "${correctAnswer}" | User: "${userAnswer}"`);
+                        
+                        if (correctAnswer === userAnswer) {
+                            score++;
+                            $(this).addClass("bg-green-200"); // Show correct matches
+                            $(this).find('.draggable').addClass("bg-green-200");
+                        } else if (userAnswer) {
+                            $(this).addClass("bg-red-200"); // Show incorrect matches
+                            $(this).find('.draggable').addClass("bg-red-200");
+                        }
+                    });
+                    
+                    console.log(`MATCHING - Score: ${score}/6`);
+                } else if (taskType === "dialogue") {
+                    console.log("DIALOGUE - Checking answers:");
+                    
+                    // Check both text inputs (A1/A2) and select dropdowns (B1)
+                    $("input[type='text'], select.word-bank").each(function(i) {
+                        const value = $(this).val().toLowerCase().trim();
+                        const originalValue = $(this).val();
+                        responses[`input_${i}`] = originalValue;
+                        
+                        console.log(`  Question ${i+1}: "${originalValue}"`);
+                        
+                        // Score based on having any valid selection/input
+                        let hasValidAnswer = false;
+                        if (value && value !== '' && value !== 'select') {
+                            score++;
+                            hasValidAnswer = true;
+                        }
+                        
+                        console.log(`    → Valid answer: ${hasValidAnswer ? '✓' : '✗'} (Score: ${hasValidAnswer ? '+1' : '0'})`);
+                    });
+                    console.log(`DIALOGUE - Total Score: ${score}/6`);
+                    
+                } else if (taskType === "fill_gaps") {
+                    console.log("FILL_GAPS - Checking answers:");
+                    $("input[type='text'], select").each(function(i) {
+                        const value = $(this).val();
+                        responses[`input_${i}`] = value;
+                        
+                        console.log(`  Gap ${i+1}: "${value}"`);
+                        
+                        let hasValidAnswer = false;
+                        if (value && value !== '' && value !== 'Select') {
+                            score++;
+                            hasValidAnswer = true;
+                        }
+                        
+                        console.log(`    → Valid: ${hasValidAnswer ? '✓' : '✗'} (Score: ${hasValidAnswer ? '+1' : '0'})`);
+                    });
+                    console.log(`FILL_GAPS - Total Score: ${score}/6`);
+                }
+
+                // ⭐ LOGIQUE CORRIGÉE
+    let feedback = "";
+    let nextAction = "";
+    let progressionLevel = "";
+    
+    console.log(`\n=== PROGRESSION LOGIC ===`);
+    console.log(`Current Step: ${currentStep}`);
+    
+    if (score === 6) {
+        progressionLevel = "B2";
+        feedback = "Excellent work! Ready to move forward!";
+        
+        // Déterminer la prochaine destination selon le step
+        if (currentStep === "step_1") {
+            nextAction = "/phase2/step/step_2";
+        } else if (currentStep === "step_2") {
+            nextAction = "/phase2/step/step_3";
+        } else if (currentStep === "step_3") {
+            nextAction = "/phase2/step/final_writing";
+        } else {
+            nextAction = "/phase2/complete";
+        }
+        console.log(`Score 6 → B2 → PROCEED TO NEXT STEP: ${nextAction}`);
+        
+    } else if (score === 5) {
+        progressionLevel = "B1";
+        feedback = "Great job! Let's practice more to perfect our skills!";
+        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
+        console.log(`Score 5 → B1 → REMEDIAL B1 in ${currentStep}`);
+        
+    } else if (score >= 3 && score <= 4) {
+        progressionLevel = "A2";
+        feedback = "Good effort! Let's try A2 level activities!";
+        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity=0`;
+        console.log(`Score ${score} → A2 → REMEDIAL A2 in ${currentStep}`);
+        
+    } else if (score >= 1 && score <= 2) {
+        progressionLevel = "A1";
+        feedback = "Let's continue with A1 exercises!";
+        nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity={{ current_activity + 1 }}`;
+        console.log(`Score ${score} → A1 → NEXT A1 EXERCISE in ${currentStep}`);
+        
+    } else { // score = 0
+        progressionLevel = "A1";
+        feedback = "Let's go back and review the fundamentals!";
+        
+        // ⭐ LOGIQUE SPÉCIALE : Score 0 = retour au step précédent
+        if (currentStep === "step_2") {
+            nextAction = "/phase2/remedial/step_1/A1?activity=0";
+            console.log(`Score 0 in step_2 → BACK TO STEP_1 A1`);
+        } else if (currentStep === "step_3") {
+            nextAction = "/phase2/remedial/step_2/A1?activity=0";
+            console.log(`Score 0 in step_3 → BACK TO STEP_2 A1`);
+        } else if (currentStep === "final_writing") {
+            nextAction = "/phase2/remedial/step_3/A1?activity=0";
+            console.log(`Score 0 in final_writing → BACK TO STEP_3 A1`);
+        } else {
+            // Si déjà en step_1, retry same
+            nextAction = `/phase2/remedial/${currentStep}/${progressionLevel}?activity={{ current_activity }}`;
+            console.log(`Score 0 in step_1 → RETRY SAME EXERCISE`);
+        }
+    }
+
+    console.log(`\nFINAL DECISION:`);
+    console.log(`  Current Step: ${currentStep}`);
+    console.log(`  Current Level: {{ level }}`);
+    console.log(`  Score: ${score}/6`);
+    console.log(`  New Level: ${progressionLevel}`);
+    console.log(`  Next Action: ${nextAction}`);
+
+
+
+                // Afficher le feedback
+                $("#feedback").html(feedback);
+                $("#feedback").removeClass().addClass("mt-4 text-lg font-medium " + 
+                    (score >= 5 ? "text-green-600" : score >= 3 ? "text-blue-600" : "text-orange-600"));
+                
+                // Désactiver les boutons
+                $("#check-work").prop('disabled', true).text('Checking...');
+                $("#submit-continue").prop('disabled', true);
+
+                // ⭐ DEBUG AVANT SOUMISSION
+                console.log("\n=== SUBMITTING TO BACKEND ===");
+                console.log(`URL: /api/submit-remedial-activity`);
+                console.log(`Data:`, {
+                    step_id: "{{ step_id }}",
+                    level: "{{ level }}",
+                    activity_id: "{{ activity.id }}",
+                    responses: responses,
+                    score: score,
+                    progression_level: progressionLevel
+                });
+
+                // Submit to backend
+                $.ajax({
+                    url: "/api/submit-remedial-activity",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        step_id: "{{ step_id }}",
+                        level: "{{ level }}",
+                        activity_id: "{{ activity.id }}",
+                        responses: responses,
+                        score: score,
+                        progression_level: progressionLevel
+                    }),
+                    success: function(response) {
+                        console.log("\n=== BACKEND RESPONSE ===");
+                        console.log('Server response:', response);
+                        
+                        // ⭐ REDIRECTION CORRIGÉE
+                        setTimeout(() => {
+                            console.log(`\n=== REDIRECTING ===`);
+                            if (score >= 6) {
+                                console.log(`→ Going to Step 2: /phase2/step/step_2`);
+                                window.location.href = "/phase2/step/step_2";
+                            } else {
+                                console.log(`→ Going to: ${nextAction}`);
+                                window.location.href = nextAction;
+                            }
+                        }, 3000);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('\n=== AJAX ERROR ===');
+                        console.error('Error:', error);
+                        console.error('Status:', status);
+                        console.error('Response:', xhr.responseText);
+                        
+                        $("#feedback").text('Error submitting activity. Please try again.');
+                        $("#feedback").removeClass().addClass("mt-4 text-lg font-medium text-red-600");
+                        $("#check-work").prop('disabled', false).text('Check My Work');
+                        $("#submit-continue").prop('disabled', false);
+                    }
+                });
+            });
+            
+
+            $("#submit-continue").click(function() {
+                $("#check-work").click(); // Trigger check-work to submit and move to next
+            });
+        });
+    </script>
+</body>
+</html>

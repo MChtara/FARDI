@@ -4,9 +4,7 @@ from dotenv import load_dotenv
 import logging
 from datetime import datetime, timedelta
 from flask_session import Session
-
-# Import our custom modules
-from models.game_data import NPCS, DIALOGUE_QUESTIONS, CEFR_LEVELS, BADGES, ACHIEVEMENTS, PROGRESS_LEVELS
+from models.game_data import NPCS, DIALOGUE_QUESTIONS, CEFR_LEVELS, BADGES, ACHIEVEMENTS, PROGRESS_LEVELS, PHASE_2_STEPS, PHASE_2_REMEDIAL_ACTIVITIES, PHASE_2_POINTS, PHASE_2_SUCCESS_THRESHOLD
 from services.ai_service import AIService
 from services.audio_service import AudioService
 from services.assessment_service import AssessmentService
@@ -16,8 +14,6 @@ from utils.helpers import (
     calculate_achievements, 
     calculate_xp
 )
-
-# Import authentication modules
 from routes.auth_routes import auth_bp, db_manager, user_manager, assessment_history, login_required, guest_only
 
 load_dotenv()
@@ -229,6 +225,9 @@ def results():
     else:
         logger.error(f"Failed to save assessment for user {user_id}")
 
+    session['phase1_completed'] = True  # Mark Phase 1 as completed
+    session.modified = True
+    
     return render_template(
         'results.html',
         player_name=player_name,
@@ -365,6 +364,279 @@ def clear_session():
     flash('Session cleared successfully.', 'info')
     return redirect(url_for('index'))
 
+@app.route('/phase2')
+@login_required
+def phase2_intro():
+    """Phase 2 introduction page"""
+    player_name = session.get('player_name', 'Player')
+    
+    # Check if user has completed Phase 1
+    if not session.get('phase1_completed'):
+        flash('Please complete Phase 1 first!', 'warning')
+        return redirect(url_for('index'))
+    
+    # Initialize Phase 2 session data
+    session['phase2_current_step'] = 'step_1'
+    session['phase2_responses'] = {}
+    session['phase2_assessments'] = {}
+    session['phase2_scores'] = {}
+    
+    return render_template('phase2/intro.html', 
+                         player_name=player_name,
+                         npcs=NPCS)
+
+@app.route('/phase2/step/<step_id>')
+@login_required
+def phase2_step(step_id):
+    """Handle Phase 2 steps"""
+    if step_id not in PHASE_2_STEPS:
+        flash('Invalid step!', 'error')
+        return redirect(url_for('phase2_intro'))
+    
+    player_name = session.get('player_name', 'Player')
+    current_step = PHASE_2_STEPS[step_id]
+    
+    # Get current progress
+    current_action_item = session.get(f'phase2_{step_id}_current_item', 0)
+    total_items = len(current_step['action_items'])
+    
+    # Check if step is completed
+    if current_action_item >= total_items:
+        return redirect(url_for('phase2_step_results', step_id=step_id))
+    
+    action_item = current_step['action_items'][current_action_item]
+    
+    return render_template('phase2/step.html',
+                         player_name=player_name,
+                         step=current_step,
+                         step_id=step_id,
+                         action_item=action_item,
+                         current_item=current_action_item,
+                         total_items=total_items,
+                         npcs=NPCS)
+
+@app.route('/phase2/submit-response', methods=['POST'])
+@login_required
+def phase2_submit_response():
+    """Submit Phase 2 response"""
+    step_id = request.form.get('step_id')
+    action_item_id = request.form.get('action_item_id')
+    response = request.form.get('response', '')
+    
+    # Assess the response using Phase 2 criteria
+    assessment = assessment_service.assess_phase2_response(
+        step_id, action_item_id, response
+    )
+    
+    # Store response and assessment
+    if 'phase2_responses' not in session:
+        session['phase2_responses'] = {}
+    if 'phase2_assessments' not in session:
+        session['phase2_assessments'] = {}
+    
+    session['phase2_responses'][f"phase2_{step_id}_{action_item_id}"] = response
+    session['phase2_assessments'][f"phase2_{step_id}_{action_item_id}"] = assessment
+    
+    # DEBUG: Ajoutez ceci pour vérifier
+    print(f"DEBUG - Stored assessment with key: phase2_{step_id}_{action_item_id}")
+    print(f"DEBUG - Assessment level: {assessment.get('level')}")
+    print(f"DEBUG - Assessment points: {assessment.get('points')}")
+    
+    # Move to next action item
+    current_item = session.get(f'phase2_{step_id}_current_item', 0)
+    session[f'phase2_{step_id}_current_item'] = current_item + 1
+    
+    return redirect(url_for('phase2_step', step_id=step_id))
+
+@app.route('/phase2/step/<step_id>/results')
+@login_required
+def phase2_step_results(step_id):
+    """Show step results and determine if remedial activities are needed"""
+    if step_id not in PHASE_2_STEPS:
+        flash('Invalid step!', 'error')
+        return redirect(url_for('phase2_intro'))
+    
+    player_name = session.get('player_name', 'Player')
+    step_data = PHASE_2_STEPS[step_id]
+    
+    # Calculate total score for this step
+    total_score = 0
+    assessments = session.get('phase2_assessments', {})
+    
+    # DEBUG: Ajoutez ces lignes ici ⬇️
+    print(f"DEBUG - Step ID: {step_id}")
+    print(f"DEBUG - All assessment keys: {list(assessments.keys())}")
+    print(f"DEBUG - Looking for keys starting with: phase2_{step_id}_")
+    
+    for key, assessment in assessments.items():
+        if key.startswith(f'phase2_{step_id}_'):
+            level = assessment.get('level', 'A1')
+            points = PHASE_2_POINTS.get(level, 1)
+            total_score += points
+            print(f"DEBUG - Found key: {key}, level: {level}, points: {points}")
+    
+    # DEBUG: Ajoutez ces lignes ici ⬇️
+    print(f"DEBUG - Total score: {total_score}")
+    print(f"DEBUG - Success threshold: {PHASE_2_SUCCESS_THRESHOLD}")
+    print(f"DEBUG - All assessments: {assessments}")
+    
+    # Determine user level and next action
+    success_threshold = PHASE_2_SUCCESS_THRESHOLD
+    
+    if total_score >= success_threshold:
+        # Success! Get next step info
+        next_step = get_next_phase2_step(step_id)
+        next_step_title = PHASE_2_STEPS[next_step]['title'] if next_step else "Phase 2 Complete"
+        
+        return render_template('phase2/step_results.html',
+                             player_name=player_name,
+                             step=step_data,
+                             step_id=step_id,
+                             total_score=total_score,
+                             success_threshold=success_threshold,
+                             success_feedback=step_data['success_feedback'],
+                             next_step=next_step,
+                             next_step_title=next_step_title,
+                             npcs=NPCS)
+    else:
+        # Need remedial activities
+        user_level = determine_phase2_level(total_score)
+        
+        print(f"DEBUG - User level determined: {user_level}")  # ⬅️ Ajoutez aussi ceci
+        
+        return render_template('phase2/step_results.html',
+                             player_name=player_name,
+                             step=step_data,
+                             step_id=step_id,
+                             total_score=total_score,
+                             success_threshold=success_threshold,
+                             remedial_feedback=step_data['remedial_feedback'],
+                             user_level=user_level,
+                             npcs=NPCS)
+    
+@app.route('/phase2/remedial/<step_id>/<level>')
+@login_required
+def phase2_remedial(step_id, level):
+    """Handle remedial activities based on user level"""
+    remedial_activities = PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}).get(level, [])
+    
+    if not remedial_activities:
+        flash('No remedial activities found for this level!', 'error')
+        return redirect(url_for('phase2_step', step_id=step_id))
+    
+    current_activity = session.get(f'phase2_remedial_{step_id}_{level}_current', 0)
+    
+    if current_activity >= len(remedial_activities):
+        # Completed all remedial activities, retry the main step
+        flash('Great job! You completed all practice activities. Ready to try the main activity again!', 'success')
+        return redirect(url_for('phase2_step', step_id=step_id))
+    
+    activity = remedial_activities[current_activity]
+    
+    return render_template('phase2/remedial.html',
+                         step_id=step_id,
+                         level=level,
+                         activity=activity,
+                         current_activity=current_activity,
+                         total_activities=len(remedial_activities))
+    
+# Helper functions
+def get_next_phase2_step(current_step):
+    """Get the next step in Phase 2"""
+    steps = ['step_1', 'step_2', 'step_3', 'final_writing']
+    try:
+        current_index = steps.index(current_step)
+        if current_index + 1 < len(steps):
+            return steps[current_index + 1]
+    except ValueError:
+        pass
+    return None
+
+def determine_phase2_level(score):
+    """Determine user level based on Phase 2 step score"""
+    if score >= 20:
+        return 'B2'  # 20+ points → Proceed to Step 2
+    elif score >= 15:
+        return 'B1'  # 15-19 points → Remedial B1
+    elif score >= 10:
+        return 'A2'  # 10-14 points → Remedial A2
+    else:
+        return 'A1'  # 5-9 points → Remedial A1
+    
+@app.route('/phase2/complete')
+@login_required
+def phase2_complete():
+    """Phase 2 completion page with results"""
+    player_name = session.get('player_name', 'Player')
+    
+    # Get Phase 2 assessment data
+    from routes.api_routes import get_phase2_overall_assessment
+    phase2_assessment = get_phase2_overall_assessment()
+    
+    if not phase2_assessment:
+        flash('Phase 2 data not found. Please restart Phase 2.', 'warning')
+        return redirect(url_for('phase2_intro'))
+    
+    # Mark Phase 2 as completed
+    session['phase2_completed'] = True
+    session.modified = True
+    
+    return render_template('phase2/complete.html',
+                         player_name=player_name,
+                         assessment=phase2_assessment,
+                         npcs=NPCS)
+    
+@app.route('/debug/complete-phase1')
+@login_required
+def debug_complete_phase1():
+    """Temporary route to mark Phase 1 as completed"""
+    session['phase1_completed'] = True
+    session.modified = True
+    flash('Phase 1 marked as completed!', 'success')
+    return redirect(url_for('results'))
+
+@app.route('/api/submit-remedial-activity', methods=['POST'])
+@login_required
+def submit_remedial_activity():
+    """Submit remedial activity and progress"""
+    try:
+        data = request.get_json()
+        
+        step_id = data.get('step_id')
+        level = data.get('level')
+        activity_id = data.get('activity_id')
+        responses = data.get('responses', {})
+        score = data.get('score', 0)
+        
+        # Move to next activity
+        current_activity = session.get(f'phase2_remedial_{step_id}_{level}_current', 0)
+        session[f'phase2_remedial_{step_id}_{level}_current'] = current_activity + 1
+        
+        # Check if there are more activities
+        remedial_activities = PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}).get(level, [])
+        
+        if current_activity + 1 >= len(remedial_activities):
+            # Completed all remedial activities
+            return jsonify({
+                'success': True,
+                'message': 'All practice activities completed!',
+                'next_activity': None
+            })
+        else:
+            # More activities available
+            return jsonify({
+                'success': True,
+                'message': 'Great job! Moving to next activity.',
+                'next_activity': url_for('phase2_remedial', step_id=step_id, level=level)
+            })
+            
+    except Exception as e:
+        logger.error(f"Error submitting remedial activity: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Error submitting activity. Please try again.'
+        }), 500
+        
 if __name__ == '__main__':
     # Create necessary directories
     os.makedirs('static/images/avatars', exist_ok=True)

@@ -1,0 +1,647 @@
+{% extends "base.html" %}
+
+{% block title %}Phase 2: Cultural Event Planning - CEFR Assessment{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
+<style>
+    .phase2-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .phase2-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="tunisian" patternUnits="userSpaceOnUse" width="20" height="20"><rect width="20" height="20" fill="transparent"/><circle cx="10" cy="10" r="2" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23tunisian)"/></svg>');
+        animation: float 20s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .phase2-badge {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .step-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+    
+    .step-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .step-card.step-1 { border-left-color: #007bff; }
+    .step-card.step-2 { border-left-color: #28a745; }
+    .step-card.step-3 { border-left-color: #ffc107; }
+    .step-card.step-final { border-left-color: #dc3545; }
+    
+    .tunisia-visual {
+        position: relative;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .tunisia-icon-large {
+        font-size: 8rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 2rem;
+        animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
+    }
+    
+    .cultural-icons-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .cultural-icon-item {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+    
+    .cultural-icon-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+    
+    .cultural-icon-item i {
+        font-size: 2rem;
+        color: #ffc107;
+        margin-bottom: 0.5rem;
+    }
+    
+    .welcome-speech {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        backdrop-filter: blur(10px);
+        position: relative;
+    }
+    
+    .welcome-speech::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: 30px;
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 15px solid rgba(255, 255, 255, 0.95);
+    }
+    
+    .team-member-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .team-member-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .member-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .member-avatar.mabrouki { background: linear-gradient(135deg, #007bff, #0056b3); }
+    .member-avatar.skander { background: linear-gradient(135deg, #28a745, #1e7e34); }
+    .member-avatar.emna { background: linear-gradient(135deg, #dc3545, #c82333); }
+    .member-avatar.ryan { background: linear-gradient(135deg, #ffc107, #e0a800); }
+    .member-avatar.lilia { background: linear-gradient(135deg, #6f42c1, #563d7c); }
+    
+    .start-phase2-section {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .start-phase2-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" patternUnits="userSpaceOnUse" width="15" height="15"><circle cx="7.5" cy="7.5" r="1.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    }
+    
+    .start-phase2-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        color: #333;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .phase2-start-btn {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        border: none;
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .phase2-start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+        color: white;
+    }
+    
+    .phase2-start-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .phase2-start-btn:hover::before {
+        left: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="phase2-hero hero-section">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+    </div>
+    
+    <div class="container hero-content">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="hero-text">
+                    <div class="phase2-badge">
+                        <i class="fas fa-rocket me-2"></i>Phase 2 Unlocked!
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        Welcome back, <span class="gradient-text">{{ player_name }}</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Congratulations on completing Phase 1! Now it's time to collaborate with your team to plan an authentic Tunisian cultural event. Your teamwork and communication skills will shine as you create something truly special.
+                    </p>
+                    
+                    <div class="hero-features">
+                        <div class="hero-feature">
+                            <i class="fas fa-users"></i>
+                            <span>Team Collaboration</span>
+                        </div>
+                        <div class="hero-feature">
+                            <i class="fas fa-calendar"></i>
+                            <span>Event Planning</span>
+                        </div>
+                        <div class="hero-feature">
+                            <i class="fas fa-palette"></i>
+                            <span>Cultural Immersion</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#start-phase2" class="btn hero-cta-btn">
+                        <span>Begin Phase 2</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="hero-visual">
+                    <div class="tunisia-visual">
+                        <i class="fas fa-users tunisia-icon-large"></i>
+                        <div class="cultural-icons-grid">
+                            <div class="cultural-icon-item">
+                                <i class="fas fa-music"></i>
+                                <div class="small text-white">Malouf Music</div>
+                            </div>
+                            <div class="cultural-icon-item">
+                                <i class="fas fa-palette"></i>
+                                <div class="small text-white">Decorations</div>
+                            </div>
+                            <div class="cultural-icon-item">
+                                <i class="fas fa-utensils"></i>
+                                <div class="small text-white">Cuisine</div>
+                            </div>
+                            <div class="cultural-icon-item">
+                                <i class="fas fa-handshake"></i>
+                                <div class="small text-white">Teamwork</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Welcome Message Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="welcome-speech">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <div class="member-avatar mabrouki">MB</div>
+                        </div>
+                        <div class="col-md-9">
+                            <h4 class="text-primary mb-3">
+                                <i class="fas fa-comment-dots me-2"></i>Ms. Mabrouki
+                            </h4>
+                            <p class="mb-0 fs-5">
+                                "Congratulations on completing Phase 1! You're now an essential member of our Cultural Event Planning Committee. In Phase 2, we'll work together to create a vibrant action plan for celebrating Tunisian culture. Your collaboration skills and cultural awareness will be key to our success!"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Phase 2 Overview Section -->
+<section class="committee-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-title">
+                    Phase 2 <span class="title-accent">Journey</span>
+                </h2>
+                <p class="section-subtitle">
+                    Work collaboratively through four engaging steps to create a comprehensive action plan for your cultural event.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4 mt-4">
+            <div class="col-md-6">
+                <div class="step-card step-1">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <div class="badge bg-primary rounded-circle p-3">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-primary">Step 1: Assigning Roles</h5>
+                            <p class="mb-0">Work with the team to assign roles for decorations, music, food, and promotion. Discover each member's strengths and create the perfect team dynamic.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="step-card step-2">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <div class="badge bg-success rounded-circle p-3">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-success">Step 2: Scheduling Meetings</h5>
+                            <p class="mb-0">Coordinate meeting times and agendas with your teammates. Master the art of effective scheduling and time management.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="step-card step-3">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <div class="badge bg-warning rounded-circle p-3">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-warning">Step 3: Planning Tasks</h5>
+                            <p class="mb-0">Organize specific tasks and assign responsibilities. Break down the event into manageable components and ensure nothing is overlooked.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="step-card step-final">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <div class="badge bg-danger rounded-circle p-3">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-danger">Final: Drafting the Action Plan</h5>
+                            <p class="mb-0">Create the comprehensive action plan document that brings everything together. Showcase your collaborative planning skills.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Meet Your Team Section -->
+<section class="cefr-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-title">
+                    Meet Your <span class="title-accent">Team</span>
+                </h2>
+                <p class="section-subtitle">
+                    Get reacquainted with your diverse team of committee members. Each brings unique skills and perspectives to the cultural event planning process.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4 mt-4">
+            {% for name, character in npcs.items() %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card team-member-card h-100">
+                    <div class="card-body text-center">
+                        <div class="member-avatar {{ name.lower().replace(' ', '').replace('.', '') }}">
+                            {{ name[0] }}{{ name.split()[-1][0] if ' ' in name else name[1] }}
+                        </div>
+                        <h5 class="card-title text-primary">{{ name }}</h5>
+                        <p class="card-subtitle text-muted mb-2">{{ character.role }}</p>
+                        <p class="card-text small">{{ character.description }}</p>
+                        
+                        {% if character.personality %}
+                        <div class="mt-auto">
+                            <span class="badge bg-light text-dark">{{ character.personality.split(',')[0] }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Cultural Context Section -->
+<section class="features-highlight">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h3>
+                    <i class="fas fa-mosque me-2"></i>Cultural Context
+                </h3>
+                <p class="mb-4">You'll be planning an authentic Tunisian cultural event that celebrates the rich heritage and traditions of Tunisia.</p>
+                
+                <div class="highlight-features">
+                    <div class="highlight-feature">
+                        <i class="fas fa-music"></i>
+                        <div>
+                            <h5>Traditional Malouf Music</h5>
+                            <p>Incorporate the beautiful sounds of traditional Tunisian music</p>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-feature">
+                        <i class="fas fa-palette"></i>
+                        <div>
+                            <h5>Tunisian Patterns & Decorations</h5>
+                            <p>Design authentic visual elements that reflect Tunisian artistry</p>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-feature">
+                        <i class="fas fa-utensils"></i>
+                        <div>
+                            <h5>Traditional Cuisine</h5>
+                            <p>Plan a menu featuring authentic Tunisian dishes and flavors</p>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-feature">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <h5>Community Engagement</h5>
+                            <p>Create activities that bring people together in celebration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Planning Steps</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">15-20</div>
+                        <div class="stat-label">Minutes Duration</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Team Members</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-title">
+                    How Phase 2 <span class="title-accent">Works</span>
+                </h2>
+                <p class="section-subtitle">
+                    Experience an immersive, interactive planning process that feels like real-world teamwork.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4 mt-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-comments feature-icon"></i>
+                    </div>
+                    <h4>Interactive Dialogue</h4>
+                    <p>Chat with team members through realistic conversations about event planning decisions.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-volume-up feature-icon"></i>
+                    </div>
+                    <h4>Audio Tasks</h4>
+                    <p>Listen to team suggestions and audio cues to enhance your comprehension skills.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-brain feature-icon"></i>
+                    </div>
+                    <h4>AI Assessment</h4>
+                    <p>Get real-time feedback on your collaboration and communication abilities.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-trophy feature-icon"></i>
+                    </div>
+                    <h4>Progress Tracking</h4>
+                    <p>Monitor your teamwork skills and cultural awareness development.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Start Phase 2 Section -->
+<section id="start-phase2" class="start-phase2-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="start-phase2-card p-5">
+                    <div class="text-center">
+                        <h2 class="mb-4">Ready to Start Planning?</h2>
+                        <p class="fs-5 mb-4">
+                            Join your team in creating an amazing cultural event action plan. Your collaboration journey begins now!
+                        </p>
+                        
+                        <div class="row text-center mb-4">
+                            <div class="col-md-4">
+                                <i class="fas fa-clock fa-2x text-primary mb-2"></i>
+                                <div><strong>15-20 minutes</strong></div>
+                                <div class="small text-muted">Estimated duration</div>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-users fa-2x text-success mb-2"></i>
+                                <div><strong>Team-based</strong></div>
+                                <div class="small text-muted">Collaborative activities</div>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-certificate fa-2x text-warning mb-2"></i>
+                                <div><strong>Skill Assessment</strong></div>
+                                <div class="small text-muted">Teamwork & planning</div>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ url_for('phase2_step', step_id='step_1') }}" class="btn phase2-start-btn">
+                            <i class="fas fa-rocket me-2"></i>
+                            Start Phase 2: Assigning Roles
+                        </a>
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Continue your language assessment journey through authentic teamwork scenarios
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script>
+$(document).ready(function() {
+    // Add smooth scrolling for anchor links
+    $('a[href^="#"]').on('click', function(event) {
+        var target = $(this.getAttribute('href'));
+        if( target.length ) {
+            event.preventDefault();
+            $('html, body').stop().animate({
+                scrollTop: target.offset().top - 80
+            }, 1000);
+        }
+    });
+    
+    // Animate cards on scroll
+    $(window).scroll(function() {
+        $('.step-card').each(function() {
+            var elementTop = $(this).offset().top;
+            var elementBottom = elementTop + $(this).outerHeight();
+            var viewportTop = $(window).scrollTop();
+            var viewportBottom = viewportTop + $(window).height();
+            
+            if (elementBottom > viewportTop && elementTop < viewportBottom) {
+                $(this).addClass('animate__animated animate__fadeInUp');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

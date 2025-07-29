@@ -385,3 +385,186 @@ class AssessmentService:
             "specific_areas_for_improvement": [],
             "tips_for_improvement": "Continue practicing with more complex sentences and vocabulary"
         }
+        
+    def assess_phase2_response(self, step_id, action_item_id, response):
+        """Assess Phase 2 responses with specific cultural event planning criteria"""
+        try:
+            from models.game_data import PHASE_2_STEPS, PHASE_2_POINTS
+            
+            # Get action item data
+            step_data = PHASE_2_STEPS.get(step_id, {})
+            action_items = step_data.get('action_items', [])
+            
+            action_item = None
+            for item in action_items:
+                if item['id'] == action_item_id:
+                    action_item = item
+                    break
+            
+            if not action_item:
+                return self._fallback_phase2_assessment(response)
+            
+            # Analyze response
+            keyword_analysis = self._get_keyword_analysis(response)
+            grammar_analysis = self._get_grammar_analysis(response)
+            cultural_keywords = ['tunisian', 'culture', 'tradition', 'music', 'malouf', 'heritage', 'food', 'art']
+            teamwork_keywords = ['team', 'together', 'collaborate', 'work with', 'suggest', 'agree']
+            has_cultural_ref = any(keyword in response.lower() for keyword in cultural_keywords)
+            has_teamwork_ref = any(keyword in response.lower() for keyword in teamwork_keywords)
+            
+            # Create Phase 2 specific assessment prompt
+            prompt = self._get_phase2_assessment_prompt(action_item, response, step_id)
+            
+            if self.ai_service.client:
+                response_obj = self.ai_service.client.chat.completions.create(
+                    model=self.ai_service.model,
+                    messages=[
+                        {
+                            "role": "system", 
+                            "content": "You are an expert assessor for Phase 2 cultural event planning activities, specializing in teamwork, cultural awareness, and communication skills."
+                        },
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=self.ai_service.max_tokens,
+                    temperature=0.3
+                )
+                
+                result = response_obj.choices[0].message.content
+                
+                try:
+                    assessment = json.loads(result)
+                    level = assessment.get("level", "B1")
+                    points = PHASE_2_POINTS.get(level, 1)
+                    
+                    # Adjust level based on cultural and teamwork references
+                    if level == "A1" and has_cultural_ref and has_teamwork_ref:
+                        level = "A2"
+                        points = PHASE_2_POINTS.get("A2", 2)
+                    elif level == "A2" and has_cultural_ref and has_teamwork_ref and grammar_analysis['has_complex_sentences']:
+                        level = "B1"
+                        points = PHASE_2_POINTS.get("B1", 3)
+                    
+                    return {
+                        "level": level,
+                        "points": points,
+                        "justification": assessment.get("justification", ""),
+                        "feedback": assessment.get("feedback", ""),
+                        "strengths": assessment.get("strengths", []),
+                        "improvements": assessment.get("improvements", []),
+                        "cultural_awareness": assessment.get("cultural_awareness", "Good" if has_cultural_ref else "Could be improved"),
+                        "teamwork_skills": assessment.get("teamwork_skills", "Good" if has_teamwork_ref else "Could be improved"),
+                        "communication_clarity": assessment.get("communication_clarity", "Clear" if level in ["B1", "B2"] else "Basic")
+                    }
+                    
+                except json.JSONDecodeError:
+                    logger.error(f"Failed to parse Phase 2 assessment JSON: {result}")
+                    return self._fallback_phase2_assessment(response)
+            else:
+                return self._fallback_phase2_assessment(response)
+                    
+        except Exception as e:
+            logger.error(f"Error in Phase 2 assessment: {str(e)}")
+            return self._fallback_phase2_assessment(response)
+    
+    def _get_phase2_assessment_prompt(self, action_item, response, step_id):
+        """Create assessment prompt for Phase 2 activities"""
+        from models.game_data import PHASE_2_POINTS
+        
+        expected_responses = action_item.get('expected_responses', {})
+        assessment_focus = action_item.get('assessment_focus', [])
+        
+        examples_text = ""
+        for level, example in expected_responses.items():
+            examples_text += f"{level} ({PHASE_2_POINTS.get(level, 1)} point): \"{example}\"\n"
+        
+        cultural_context = """
+        Cultural Event Planning Context:
+        - This is about planning a Tunisian cultural event
+        - Responses should show cultural awareness and sensitivity
+        - Students should demonstrate teamwork and collaboration skills
+        - References to Tunisian culture (music, food, traditions) are positive
+        - Professional communication skills are important
+        """
+        
+        return f"""
+        Assess this Phase 2 cultural event planning response using CEFR levels.
+        
+        Step: {step_id.replace('_', ' ').title()}
+        Action Item: {action_item.get('question', '')}
+        Student Response: "{response}"
+        
+        {cultural_context}
+        
+        Expected Response Examples:
+        {examples_text}
+        
+        Assessment Focus Areas: {', '.join(assessment_focus)}
+        
+        Phase 2 Scoring Criteria:
+        - A1 (1 point): Basic vocabulary, simple structures, minimal cultural awareness
+        - A2 (2 points): Elementary vocabulary, basic connectors, some cultural references
+        - B1 (3 points): Clear communication, moderate reasoning, good cultural connections
+        - B2 (4 points): Detailed communication, strong reasoning, excellent cultural depth
+        
+        Special Considerations:
+        - Teamwork language (collaboration, working together)
+        - Cultural sensitivity (references to Tunisian traditions)
+        - Professional communication (appropriate formality)
+        - Problem-solving approach (practical suggestions)
+        - Event planning terminology (organize, coordinate, schedule)
+        
+        Return JSON only:
+        {{
+            "level": "A1/A2/B1/B2",
+            "justification": "Brief explanation of level assignment",
+            "feedback": "Encouraging team-focused feedback",
+            "strengths": ["strength1", "strength2"],
+            "improvements": ["improvement1", "improvement2"],
+            "cultural_awareness": "Assessment of cultural sensitivity",
+            "teamwork_skills": "Assessment of collaboration approach",
+            "communication_clarity": "Assessment of clarity and professionalism"
+        }}
+        """
+
+    def _fallback_phase2_assessment(self, response):
+        """Fallback assessment for Phase 2 when AI is unavailable"""
+        from models.game_data import PHASE_2_POINTS
+        
+        word_count = len(response.split())
+        
+        # Simple rule-based assessment
+        if word_count < 5:
+            level = "A1"
+        elif word_count < 15:
+            level = "A2"
+        elif word_count < 30:
+            level = "B1"
+        else:
+            level = "B2"
+        
+        # Check for cultural keywords
+        cultural_keywords = ['tunisian', 'culture', 'tradition', 'music', 'malouf', 'heritage']
+        has_cultural_ref = any(keyword in response.lower() for keyword in cultural_keywords)
+        
+        # Check for teamwork keywords
+        teamwork_keywords = ['team', 'together', 'collaborate', 'work with', 'suggest', 'agree']
+        has_teamwork_ref = any(keyword in response.lower() for keyword in teamwork_keywords)
+        
+        # Adjust level based on keywords
+        if has_cultural_ref and has_teamwork_ref and level == "A1":
+            level = "A2"
+        elif has_cultural_ref and has_teamwork_ref and level == "A2":
+            level = "B1"
+        
+        return {
+            "level": level,
+            "points": PHASE_2_POINTS.get(level, 1),
+            "justification": f"Fallback assessment based on length ({word_count} words) and content analysis",
+            "feedback": "Good effort! Keep practicing with more detail and cultural references.",
+            "strengths": ["Attempted response", "Shows engagement"],
+            "improvements": ["Add more detail", "Include cultural references"],
+            "cultural_awareness": "Good" if has_cultural_ref else "Could be improved",
+            "teamwork_skills": "Good" if has_teamwork_ref else "Could be improved", 
+            "communication_clarity": "Clear" if level in ["B1", "B2"] else "Basic"
+        }
+
