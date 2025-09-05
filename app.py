@@ -15,6 +15,7 @@ from utils.helpers import (
     calculate_xp
 )
 from routes.auth_routes import auth_bp, db_manager, user_manager, assessment_history, login_required, guest_only
+from models.auth import admin_required
 
 load_dotenv()
 
@@ -67,9 +68,12 @@ def dashboard():
     """User dashboard showing stats and recent assessments"""
     user_id = session.get('user_id')
     
-    # Get user statistics
+    # Get user statistics including Phase 2 progress
     user_stats = assessment_history.get_user_stats(user_id)
     recent_assessments = assessment_history.get_user_assessments(user_id, limit=5)
+    
+    # Get Phase 2 progress
+    phase2_progress = assessment_history.get_phase2_progress(user_id)
     
     # Get user data
     user_data = user_manager.get_user_by_id(user_id)
@@ -77,9 +81,10 @@ def dashboard():
     return render_template('dashboard.html', 
                          user=user_data,
                          user_stats=user_stats, 
-                         recent_assessments=recent_assessments)
+                         recent_assessments=recent_assessments,
+                         phase2_progress=phase2_progress)
 
-@app.route('/start-game', methods=['POST'])
+@app.route('/start-game', methods=['GET', 'POST'])
 @login_required
 def start_game():
     """Initialize game session with player data - requires login"""
@@ -362,24 +367,33 @@ def clear_session():
     """Clear current session - useful for testing"""
     session.clear()
     flash('Session cleared successfully.', 'info')
-    return redirect(url_for('index'))
+    return redirect(url_for('welcome'))
 
 @app.route('/phase2')
 @login_required
 def phase2_intro():
-    """Phase 2 introduction page"""
-    player_name = session.get('player_name', 'Player')
+    """Phase 2 introduction page - Cultural Event Planning and Teamwork"""
+    player_name = session.get('player_name') or session.get('first_name') or session.get('username', 'Player')
+    user_id = session.get('user_id')
     
-    # Check if user has completed Phase 1
-    if not session.get('phase1_completed'):
-        flash('Please complete Phase 1 first!', 'warning')
+    # Check if user has completed Phase 1 (either current session or from database)
+    has_completed_phase1 = (session.get('overall_level') or 
+                           session.get('assessments') or 
+                           session.get('phase1_completed'))
+    
+    if not has_completed_phase1:
+        flash('Welcome! Please complete Phase 1 first to unlock Phase 2: Cultural Event Planning.', 'info')
         return redirect(url_for('index'))
     
-    # Initialize Phase 2 session data
+    # Initialize Phase 2 session data following the .docx specifications
+    session['phase2_player_name'] = player_name
+    session['phase2_user_id'] = user_id
     session['phase2_current_step'] = 'step_1'
     session['phase2_responses'] = {}
     session['phase2_assessments'] = {}
     session['phase2_scores'] = {}
+    session['phase2_start_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    session['phase2_total_points'] = 0
     
     return render_template('phase2/intro.html', 
                          player_name=player_name,
@@ -388,16 +402,29 @@ def phase2_intro():
 @app.route('/phase2/step/<step_id>')
 @login_required
 def phase2_step(step_id):
-    """Handle Phase 2 steps"""
+    """Handle Phase 2 steps with database persistence"""
     if step_id not in PHASE_2_STEPS:
         flash('Invalid step!', 'error')
         return redirect(url_for('phase2_intro'))
     
     player_name = session.get('player_name', 'Player')
+    user_id = session.get('user_id')
     current_step = PHASE_2_STEPS[step_id]
     
-    # Get current progress
-    current_action_item = session.get(f'phase2_{step_id}_current_item', 0)
+    # Get current progress from database first, then session
+    phase2_progress = assessment_history.get_phase2_progress(user_id)
+    current_action_item = 0
+    
+    # Find this step's progress in database
+    for step_progress in phase2_progress['steps']:
+        if step_progress['step_id'] == step_id and not step_progress['step_completed']:
+            current_action_item = step_progress['current_item']
+            break
+    
+    # Fallback to session if not in database
+    if current_action_item == 0:
+        current_action_item = session.get(f'phase2_{step_id}_current_item', 0)
+    
     total_items = len(current_step['action_items'])
     
     # Check if step is completed
@@ -405,6 +432,19 @@ def phase2_step(step_id):
         return redirect(url_for('phase2_step_results', step_id=step_id))
     
     action_item = current_step['action_items'][current_action_item]
+    
+    # Save/update progress in database
+    import uuid
+    session_id = session.get('phase2_session_id', str(uuid.uuid4()))
+    session['phase2_session_id'] = session_id
+    
+    progress_data = {
+        'current_item': current_action_item,
+        'total_items': total_items,
+        'step_score': 0,
+        'step_completed': False
+    }
+    assessment_history.save_phase2_progress(user_id, session_id, step_id, progress_data)
     
     return render_template('phase2/step.html',
                          player_name=player_name,
@@ -418,17 +458,37 @@ def phase2_step(step_id):
 @app.route('/phase2/submit-response', methods=['POST'])
 @login_required
 def phase2_submit_response():
-    """Submit Phase 2 response"""
+    """Submit Phase 2 response with database persistence"""
     step_id = request.form.get('step_id')
     action_item_id = request.form.get('action_item_id')
     response = request.form.get('response', '')
+    user_id = session.get('user_id')
+    session_id = session.get('phase2_session_id')
+    
+    # Check for AI-generated content
+    is_ai, ai_score, ai_reasons = assessment_service.check_ai_response(response)
+    
+    if is_ai and ai_score > 0.5:
+        flash(f"❌ AI content detected ({ai_score:.0%}). Please provide your own authentic response.", "error")
+        return redirect(url_for('phase2_step', step_id=step_id))
     
     # Assess the response using Phase 2 criteria
     assessment = assessment_service.assess_phase2_response(
         step_id, action_item_id, response
     )
     
-    # Store response and assessment
+    # Store response in database
+    response_data = {
+        'response_text': response,
+        'assessment_data': assessment,
+        'points_earned': assessment.get('points', 1),
+        'cefr_level': assessment.get('level', 'A1'),
+        'ai_detected': is_ai,
+        'ai_score': ai_score
+    }
+    assessment_history.save_phase2_response(user_id, session_id, step_id, action_item_id, response_data)
+    
+    # Store in session for backward compatibility
     if 'phase2_responses' not in session:
         session['phase2_responses'] = {}
     if 'phase2_assessments' not in session:
@@ -437,14 +497,24 @@ def phase2_submit_response():
     session['phase2_responses'][f"phase2_{step_id}_{action_item_id}"] = response
     session['phase2_assessments'][f"phase2_{step_id}_{action_item_id}"] = assessment
     
-    # DEBUG: Ajoutez ceci pour vérifier
-    print(f"DEBUG - Stored assessment with key: phase2_{step_id}_{action_item_id}")
-    print(f"DEBUG - Assessment level: {assessment.get('level')}")
-    print(f"DEBUG - Assessment points: {assessment.get('points')}")
-    
     # Move to next action item
     current_item = session.get(f'phase2_{step_id}_current_item', 0)
-    session[f'phase2_{step_id}_current_item'] = current_item + 1
+    new_current_item = current_item + 1
+    session[f'phase2_{step_id}_current_item'] = new_current_item
+    
+    # Update step progress in database
+    total_items = len(PHASE_2_STEPS[step_id]['action_items'])
+    step_completed = new_current_item >= total_items
+    
+    progress_data = {
+        'current_item': new_current_item,
+        'total_items': total_items,
+        'step_completed': step_completed,
+        'completed_at': datetime.now().isoformat() if step_completed else None
+    }
+    assessment_history.save_phase2_progress(user_id, session_id, step_id, progress_data)
+    
+    logger.info(f"Phase 2 response saved - User: {user_id}, Step: {step_id}, Item: {action_item_id}, Level: {assessment.get('level')}")
     
     return redirect(url_for('phase2_step', step_id=step_id))
 
@@ -517,18 +587,48 @@ def phase2_step_results(step_id):
 @app.route('/phase2/remedial/<step_id>/<level>')
 @login_required
 def phase2_remedial(step_id, level):
-    """Handle remedial activities based on user level"""
+    """Handle remedial activities with database persistence"""
     remedial_activities = PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}).get(level, [])
+    user_id = session.get('user_id')
     
     if not remedial_activities:
         flash('No remedial activities found for this level!', 'error')
         return redirect(url_for('phase2_step', step_id=step_id))
     
-    current_activity = session.get(f'phase2_remedial_{step_id}_{level}_current', 0)
+    # Get current activity from URL parameter or determine from database
+    current_activity = int(request.args.get('activity', 0))
+    
+    # Get remedial progress from database
+    phase2_progress = assessment_history.get_phase2_progress(user_id)
+    completed_activities = []
+    for rem_activity in phase2_progress['remedial_activities']:
+        if (rem_activity['step_id'] == step_id and 
+            rem_activity['level'] == level and 
+            rem_activity['completed']):
+            completed_activities.append(rem_activity['activity_index'])
+    
+    # If current activity is already completed, move to next uncompleted one
+    while current_activity in completed_activities and current_activity < len(remedial_activities):
+        current_activity += 1
+    
+    # Fallback to session if needed
+    if current_activity >= len(remedial_activities):
+        current_activity = session.get(f'phase2_remedial_{step_id}_{level}_current', 0)
     
     if current_activity >= len(remedial_activities):
-        # Completed all remedial activities, retry the main step
-        flash('Great job! You completed all practice activities. Ready to try the main activity again!', 'success')
+        # All activities completed
+        flash('🎉 Excellent! You completed all practice activities. Ready to try the main step again!', 'success')
+        
+        # Update step progress to allow retry
+        session_id = session.get('phase2_session_id')
+        progress_data = {
+            'current_item': 0,  # Reset to beginning of step
+            'step_completed': False,
+            'needs_remedial': False,
+            'remedial_level': None
+        }
+        assessment_history.save_phase2_progress(user_id, session_id, step_id, progress_data)
+        
         return redirect(url_for('phase2_step', step_id=step_id))
     
     activity = remedial_activities[current_activity]
@@ -586,6 +686,193 @@ def phase2_complete():
                          assessment=phase2_assessment,
                          npcs=NPCS)
     
+@app.route('/admin')
+@admin_required
+def admin_dashboard():
+    """Admin dashboard with user overview and statistics"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    search = request.args.get('search', '')
+    role_filter = request.args.get('role', '')
+    
+    # Get system statistics
+    stats = assessment_history.get_system_statistics()
+    
+    # Get users with pagination
+    offset = (page - 1) * per_page
+    users = assessment_history.get_all_users_progress_summary(limit=per_page, offset=offset)
+    
+    # Filter users if search or role filter is applied
+    if search or role_filter:
+        filtered_users = user_manager.get_all_users(
+            limit=per_page, 
+            offset=offset, 
+            search=search if search else None,
+            role=role_filter if role_filter else None
+        )
+        total_users = user_manager.get_user_count(
+            search=search if search else None,
+            role=role_filter if role_filter else None
+        )
+        users = filtered_users
+    else:
+        total_users = user_manager.get_user_count()
+    
+    # Calculate pagination
+    total_pages = (total_users + per_page - 1) // per_page
+    has_prev = page > 1
+    has_next = page < total_pages
+    
+    pagination = {
+        'page': page,
+        'pages': total_pages,
+        'has_prev': has_prev,
+        'has_next': has_next,
+        'prev_num': page - 1 if has_prev else None,
+        'next_num': page + 1 if has_next else None,
+        'total': total_users
+    }
+    
+    # Calculate some additional stats
+    import datetime
+    now = datetime.datetime.now()
+    this_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    new_users_this_month = 0
+    assessments_this_week = 0
+    active_users_today = 0
+    
+    try:
+        # These would be calculated from database queries
+        new_users_this_month = len([u for u in users if u.get('created_at') and u['created_at'] > this_month_start.isoformat()])
+        assessments_this_week = sum(u.get('total_assessments', 0) for u in users[-7:])  # Simplified
+        active_users_today = len([u for u in users if u.get('last_login') and (now - datetime.datetime.fromisoformat(u['last_login'].split('T')[0])).days == 0])
+    except Exception as e:
+        logger.error(f"Error calculating additional stats: {str(e)}")
+    
+    return render_template('admin/dashboard.html',
+                         users=users,
+                         stats=stats,
+                         pagination=pagination,
+                         new_users_this_month=new_users_this_month,
+                         assessments_this_week=assessments_this_week,
+                         active_users_today=active_users_today)
+
+@app.route('/admin/users/<int:user_id>')
+@admin_required
+def admin_user_detail(user_id):
+    """Get detailed information about a specific user"""
+    try:
+        user_details = assessment_history.get_user_detailed_progress(user_id)
+        
+        if not user_details.get('user_info'):
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+        
+        return jsonify({'success': True, 'user': user_details})
+        
+    except Exception as e:
+        logger.error(f"Error getting user details: {str(e)}")
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+
+@app.route('/admin/users/<int:user_id>/toggle', methods=['POST'])
+@admin_required
+def admin_toggle_user(user_id):
+    """Toggle user active status"""
+    try:
+        data = request.json
+        is_active = data.get('active', True)
+        
+        success = user_manager.update_user(user_id, is_active=is_active)
+        
+        if success:
+            action = 'activated' if is_active else 'deactivated'
+            logger.info(f"Admin {session.get('username')} {action} user {user_id}")
+            return jsonify({'success': True, 'message': f'User {action} successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to update user'}), 400
+            
+    except Exception as e:
+        logger.error(f"Error toggling user: {str(e)}")
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+
+@app.route('/admin/users/<int:user_id>/view-data')
+@admin_required
+def admin_view_user_data(user_id):
+    """View user data in a readable in-app format"""
+    try:
+        user_details = assessment_history.get_user_detailed_progress(user_id)
+        
+        if not user_details.get('user_info'):
+            flash('User not found.', 'error')
+            return redirect(url_for('admin_dashboard'))
+        
+        return render_template('admin/user_data_viewer.html', 
+                             user_data=user_details)
+        
+    except Exception as e:
+        logger.error(f"Error viewing user data: {str(e)}")
+        flash('Error loading user data.', 'error')
+        return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/export/users')
+@admin_required
+def admin_export_users():
+    """Export users data to CSV"""
+    try:
+        import csv
+        import io
+        from flask import make_response
+        
+        search = request.args.get('search', '')
+        role_filter = request.args.get('role', '')
+        
+        # Get all users (no pagination for export)
+        users = user_manager.get_all_users(
+            search=search if search else None,
+            role=role_filter if role_filter else None
+        )
+        
+        # Create CSV
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Headers
+        writer.writerow([
+            'ID', 'Username', 'Email', 'First Name', 'Last Name', 
+            'Role', 'Active', 'Created At', 'Last Login',
+            'Total Assessments', 'Best Level', 'Total XP'
+        ])
+        
+        # Get assessment data for each user
+        for user in users:
+            user_stats = assessment_history.get_user_stats(user['id'])
+            writer.writerow([
+                user['id'],
+                user['username'],
+                user['email'],
+                user.get('first_name', ''),
+                user.get('last_name', ''),
+                user.get('role', 'user'),
+                'Yes' if user.get('is_active') else 'No',
+                user.get('created_at', ''),
+                user.get('last_login', ''),
+                user_stats.get('total_assessments', 0),
+                user_stats.get('best_level', ''),
+                user_stats.get('total_xp', 0)
+            ])
+        
+        # Create response
+        response = make_response(output.getvalue())
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = f'attachment; filename=fardi_users_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Error exporting users: {str(e)}")
+        flash('Error exporting users data', 'error')
+        return redirect(url_for('admin_dashboard'))
+
 @app.route('/debug/complete-phase1')
 @login_required
 def debug_complete_phase1():
@@ -595,47 +882,27 @@ def debug_complete_phase1():
     flash('Phase 1 marked as completed!', 'success')
     return redirect(url_for('results'))
 
-@app.route('/api/submit-remedial-activity', methods=['POST'])
-@login_required
-def submit_remedial_activity():
-    """Submit remedial activity and progress"""
+@app.route('/debug/create-admin')
+def debug_create_admin():
+    """Create default admin user for testing"""
     try:
-        data = request.get_json()
+        admin_user, error = user_manager.create_admin_user(
+            username='admin',
+            email='admin@fardi.com',
+            password='admin123',
+            first_name='System',
+            last_name='Administrator'
+        )
         
-        step_id = data.get('step_id')
-        level = data.get('level')
-        activity_id = data.get('activity_id')
-        responses = data.get('responses', {})
-        score = data.get('score', 0)
-        
-        # Move to next activity
-        current_activity = session.get(f'phase2_remedial_{step_id}_{level}_current', 0)
-        session[f'phase2_remedial_{step_id}_{level}_current'] = current_activity + 1
-        
-        # Check if there are more activities
-        remedial_activities = PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}).get(level, [])
-        
-        if current_activity + 1 >= len(remedial_activities):
-            # Completed all remedial activities
-            return jsonify({
-                'success': True,
-                'message': 'All practice activities completed!',
-                'next_activity': None
-            })
+        if admin_user:
+            flash('Admin user created successfully! Username: admin, Password: admin123', 'success')
         else:
-            # More activities available
-            return jsonify({
-                'success': True,
-                'message': 'Great job! Moving to next activity.',
-                'next_activity': url_for('phase2_remedial', step_id=step_id, level=level)
-            })
-            
+            flash(f'Error creating admin user: {error}', 'error')
     except Exception as e:
-        logger.error(f"Error submitting remedial activity: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'Error submitting activity. Please try again.'
-        }), 500
+        flash(f'Error: {str(e)}', 'error')
+    
+    return redirect(url_for('welcome'))
+
         
 if __name__ == '__main__':
     # Create necessary directories
@@ -647,4 +914,4 @@ if __name__ == '__main__':
     # Initialize database
     db_manager.init_database()
     
-    app.run(debug=True)
+    app.run(debug=True, port=5010)

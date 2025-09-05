@@ -1,0 +1,998 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - FARDI{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+<style>
+    .admin-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .admin-header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card-admin {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #3b82f6;
+        transition: transform 0.2s ease;
+    }
+    
+    .stat-card-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-card-admin.success {
+        border-left-color: #10b981;
+    }
+    
+    .stat-card-admin.warning {
+        border-left-color: #f59e0b;
+    }
+    
+    .stat-card-admin.danger {
+        border-left-color: #ef4444;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #64748b;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .stat-change {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+    
+    .stat-change.positive {
+        color: #10b981;
+    }
+    
+    .stat-change.negative {
+        color: #ef4444;
+    }
+    
+    .users-table {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table-header {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    .level-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .level-badge.a1 { background: #fee2e2; color: #dc2626; }
+    .level-badge.a2 { background: #fef3c7; color: #d97706; }
+    .level-badge.b1 { background: #dbeafe; color: #2563eb; }
+    .level-badge.b2 { background: #dcfce7; color: #16a34a; }
+    .level-badge.c1 { background: #f3e8ff; color: #9333ea; }
+    
+    .activity-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    
+    .activity-indicator.active {
+        background: #10b981;
+        animation: pulse 2s infinite;
+    }
+    
+    .activity-indicator.inactive {
+        background: #d1d5db;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        height: 300px;
+    }
+    
+    .recent-activity {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .activity-icon.assessment {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+    
+    .activity-icon.phase2 {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    
+    .search-filters {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-admin {
+        background: #3b82f6;
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-admin:hover {
+        background: #2563eb;
+        color: white;
+    }
+    
+    .btn-admin.btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .progress-mini {
+        height: 4px;
+        background: #f1f5f9;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    
+    .progress-mini .progress-bar {
+        height: 100%;
+        background: #3b82f6;
+        transition: width 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="container-fluid">
+        
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2">
+                        <i class="fas fa-tachometer-alt me-3"></i>Admin Dashboard
+                    </h1>
+                    <p class="mb-0 opacity-75">Monitor user progress and system performance</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="d-flex align-items-center justify-content-end gap-3">
+                        <div class="text-end">
+                            <div class="small opacity-75">Welcome back,</div>
+                            <div class="fw-bold">{{ current_user.first_name or current_user.username }}</div>
+                        </div>
+                        <div class="user-avatar">
+                            {{ (current_user.first_name or current_user.username)[0].upper() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card-admin">
+                    <div class="stat-number">{{ stats.overall.total_users or 0 }}</div>
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up me-1"></i>+{{ new_users_this_month or 0 }} this month
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card-admin success">
+                    <div class="stat-number">{{ stats.overall.total_assessments or 0 }}</div>
+                    <div class="stat-label">Total Assessments</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-chart-line me-1"></i>{{ assessments_this_week or 0 }} this week
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card-admin warning">
+                    <div class="stat-number">{{ stats.overall.total_phase2_sessions or 0 }}</div>
+                    <div class="stat-label">Phase 2 Sessions</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-users me-1"></i>{{ active_users_today or 0 }} active today
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card-admin danger">
+                    <div class="stat-number">{{ "%.0f"|format(stats.overall.avg_xp or 0) }}</div>
+                    <div class="stat-label">Avg XP per User</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-star me-1"></i>Learning progress
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Users Management -->
+            <div class="col-lg-8">
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search users..." id="userSearch" value="{{ request.args.get('search', '') }}">
+                                <button class="btn btn-admin" type="button" onclick="searchUsers()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="roleFilter" onchange="filterUsers()">
+                                <option value="">All Roles</option>
+                                <option value="user" {% if request.args.get('role') == 'user' %}selected{% endif %}>Users</option>
+                                <option value="admin" {% if request.args.get('role') == 'admin' %}selected{% endif %}>Admins</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="btn-group w-100">
+                                <button class="btn btn-admin" onclick="exportUsers()">
+                                    <i class="fas fa-download me-1"></i>Export
+                                </button>
+                                <button class="btn btn-admin" onclick="refreshData()">
+                                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="users-table">
+                    <div class="table-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>Users Overview
+                            <span class="badge bg-primary ms-2">{{ users|length }} shown</span>
+                        </h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>User</th>
+                                    <th>Phase 1</th>
+                                    <th>Phase 2</th>
+                                    <th>Activity</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-3">
+                                                {{ (user.first_name or user.username)[0].upper() }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ user.first_name or user.username }}</div>
+                                                <div class="small text-muted">{{ user.email }}</div>
+                                                <div class="small text-muted">
+                                                    Joined: {{ user.created_at.split('T')[0] if 'T' in user.created_at else user.created_at }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if user.total_assessments > 0 %}
+                                        <div class="level-badge {{ user.best_level.lower() if user.best_level else 'a1' }}">
+                                            {{ user.best_level or 'N/A' }}
+                                        </div>
+                                        <div class="small text-muted mt-1">
+                                            {{ user.total_assessments }} assessments
+                                        </div>
+                                        <div class="small text-muted">
+                                            {{ user.total_xp or 0 }} XP total
+                                        </div>
+                                        {% else %}
+                                        <span class="text-muted">Not started</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.phase2_steps_attempted > 0 %}
+                                        <div class="progress-mini mb-1">
+                                            <div class="progress-bar" style="width: {{ (user.phase2_steps_completed / 4 * 100) if user.phase2_steps_completed else 0 }}%"></div>
+                                        </div>
+                                        <div class="small">{{ user.phase2_steps_completed or 0 }}/4 steps</div>
+                                        {% else %}
+                                        <span class="text-muted">Not started</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.last_login %}
+                                        <div class="d-flex align-items-center">
+                                            <div class="activity-indicator {{ 'active' if user.last_login else 'inactive' }} me-2"></div>
+                                            <div>
+                                                <div class="small">{{ user.last_login.split('T')[0] if 'T' in user.last_login else user.last_login }}</div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <span class="text-muted">Never</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-admin btn-sm" onclick="viewUser({{ user.id }})" title="Quick View">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <a href="{{ url_for('admin_view_user_data', user_id=user.id) }}" class="btn btn-admin btn-sm" title="Detailed Data View">
+                                                <i class="fas fa-file-alt"></i>
+                                            </a>
+                                            <button class="btn btn-admin btn-sm" onclick="editUser({{ user.id }})" title="Edit User">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            {% if not user.is_admin %}
+                                            <button class="btn btn-outline-danger btn-sm" onclick="toggleUser({{ user.id }}, {{ user.is_active }})" title="Toggle Status">
+                                                <i class="fas fa-{{ 'lock' if user.is_active else 'unlock' }}"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        {% if not users %}
+                        <div class="text-center p-4">
+                            <i class="fas fa-users text-muted mb-3" style="font-size: 3rem;"></i>
+                            <h5 class="text-muted">No users found</h5>
+                            <p class="text-muted">No users match your current filters.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                {% if pagination and pagination.pages > 1 %}
+                <nav class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        {% if pagination.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_dashboard', page=pagination.prev_num, search=request.args.get('search'), role=request.args.get('role')) }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for page_num in pagination.iter_pages() %}
+                        {% if page_num %}
+                        <li class="page-item {{ 'active' if page_num == pagination.page else '' }}">
+                            <a class="page-link" href="{{ url_for('admin_dashboard', page=page_num, search=request.args.get('search'), role=request.args.get('role')) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">…</span>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        
+                        {% if pagination.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_dashboard', page=pagination.next_num, search=request.args.get('search'), role=request.args.get('role')) }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+
+            <!-- Analytics Sidebar -->
+            <div class="col-lg-4">
+                
+                <!-- Level Distribution Chart -->
+                <div class="chart-container mb-4">
+                    <h6 class="mb-3">
+                        <i class="fas fa-chart-pie me-2"></i>CEFR Level Distribution
+                    </h6>
+                    <canvas id="levelChart" width="400" height="200"></canvas>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <h6 class="mb-3">
+                        <i class="fas fa-clock me-2"></i>Recent Activity
+                    </h6>
+                    
+                    {% for activity in stats.recent_activity %}
+                    <div class="activity-item">
+                        <div class="activity-icon {{ activity.type }}">
+                            <i class="fas fa-{{ 'clipboard-list' if activity.type == 'assessment' else 'users' }}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold small">{{ activity.first_name or activity.username }}</div>
+                            <div class="small text-muted">
+                                {% if activity.type == 'assessment' %}
+                                Completed assessment ({{ activity.level }})
+                                {% else %}
+                                Phase 2 response ({{ activity.level }})
+                                {% endif %}
+                            </div>
+                            <div class="small text-muted">{{ activity.timestamp.split('T')[0] if 'T' in activity.timestamp else activity.timestamp }}</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary">{{ activity.points }} pts</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if not stats.recent_activity %}
+                    <div class="text-center text-muted">
+                        <i class="fas fa-clock mb-2" style="font-size: 2rem;"></i>
+                        <p>No recent activity</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Detail Modal -->
+<div class="modal fade" id="userDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-circle me-2"></i>Comprehensive User Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userDetailContent" style="max-height: 80vh; overflow-y: auto;">
+                <!-- User details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="viewDetailedDataBtn" onclick="viewDetailedData()">
+                    <i class="fas fa-file-alt me-2"></i>View Detailed Data
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="exportUserData()">
+                    <i class="fas fa-download me-2"></i>Download JSON
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initLevelChart();
+});
+
+function initLevelChart() {
+    const ctx = document.getElementById('levelChart');
+    if (!ctx) return;
+    
+    const levelData = {{ stats.assessment_stats|tojson }};
+    
+    if (!levelData || levelData.length === 0) {
+        ctx.parentElement.innerHTML = '<div class="text-center text-muted p-4"><p>No assessment data available</p></div>';
+        return;
+    }
+    
+    const labels = levelData.map(stat => stat.overall_level);
+    const data = levelData.map(stat => stat.count);
+    const colors = ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899'];
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors.slice(0, data.length),
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+}
+
+function searchUsers() {
+    const search = document.getElementById('userSearch').value;
+    const role = document.getElementById('roleFilter').value;
+    const url = new URL(window.location);
+    
+    if (search) {
+        url.searchParams.set('search', search);
+    } else {
+        url.searchParams.delete('search');
+    }
+    
+    if (role) {
+        url.searchParams.set('role', role);
+    } else {
+        url.searchParams.delete('role');
+    }
+    
+    url.searchParams.delete('page'); // Reset to first page
+    window.location.href = url.toString();
+}
+
+function filterUsers() {
+    searchUsers();
+}
+
+function viewUser(userId) {
+    currentUserId = userId; // Store the current user ID
+    
+    // Show loading in modal
+    document.getElementById('userDetailContent').innerHTML = `
+        <div class="text-center p-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading user details...</p>
+        </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('userDetailModal'));
+    modal.show();
+    
+    // Fetch user details
+    fetch(`/admin/users/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                currentUserData = data.user; // Store for export functionality
+                displayUserDetails(data.user);
+            } else {
+                document.getElementById('userDetailContent').innerHTML = `
+                    <div class="alert alert-danger">Error loading user details</div>
+                `;
+            }
+        })
+        .catch(error => {
+            document.getElementById('userDetailContent').innerHTML = `
+                <div class="alert alert-danger">Error: ${error.message}</div>
+            `;
+        });
+}
+
+function displayUserDetails(user) {
+    const userInfo = user.user_info;
+    const phase1 = user.phase1_assessments || [];
+    const phase2Responses = user.phase2_responses || [];
+    const remedialActivities = user.remedial_activities || [];
+    
+    // Helper function to format level badges
+    const formatLevelBadge = (level) => {
+        const levelClass = level ? level.toLowerCase() : 'a1';
+        return `<span class="level-badge ${levelClass}">${level || 'N/A'}</span>`;
+    };
+    
+    // Helper function to format AI detection
+    const formatAIDetection = (isAI, score) => {
+        if (!isAI) return '<span class="badge bg-success">Human</span>';
+        return `<span class="badge bg-warning">AI Detected (${Math.round(score * 100)}%)</span>`;
+    };
+    
+    // Build Phase 1 detailed responses
+    let phase1Details = '';
+    if (phase1.length > 0 && phase1[0].responses) {
+        const responses = Array.isArray(phase1[0].responses) ? phase1[0].responses : [];
+        const assessments = Array.isArray(phase1[0].assessments) ? phase1[0].assessments : [];
+        
+        phase1Details = responses.map((response, index) => {
+            const assessment = assessments[index] || {};
+            return `
+                <div class="card mb-3 border-start border-primary border-3">
+                    <div class="card-header bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">
+                                <i class="fas fa-comment-dots me-2"></i>
+                                Step ${response.step}: ${response.type || 'Unknown'}
+                            </h6>
+                            <div>
+                                ${formatLevelBadge(assessment.level)}
+                                ${formatAIDetection(response.ai_generated, response.ai_score || 0)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Question:</h6>
+                                <p class="small bg-light p-2 rounded">${response.question || 'N/A'}</p>
+                                
+                                <h6 class="text-success">Student Response:</h6>
+                                <p class="small bg-light p-2 rounded">${response.response || 'N/A'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-info">Assessment Details:</h6>
+                                <div class="small">
+                                    <p><strong>Level:</strong> ${formatLevelBadge(assessment.level)}</p>
+                                    <p><strong>Justification:</strong> ${assessment.justification ? assessment.justification.substring(0, 200) + '...' : 'N/A'}</p>
+                                    ${assessment.specific_strengths && assessment.specific_strengths.length > 0 ? 
+                                        `<p><strong>Strengths:</strong> ${assessment.specific_strengths.join(', ')}</p>` : ''}
+                                    ${assessment.specific_areas_for_improvement && assessment.specific_areas_for_improvement.length > 0 ? 
+                                        `<p><strong>Areas for Improvement:</strong> ${assessment.specific_areas_for_improvement.slice(0, 3).join(', ')}</p>` : ''}
+                                    ${response.ai_generated ? 
+                                        `<p><strong>AI Reasons:</strong> ${(response.ai_reasons || []).join(', ')}</p>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Submitted: ${response.timestamp || 'Unknown'}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Build Phase 2 detailed responses
+    let phase2Details = '';
+    if (phase2Responses.length > 0) {
+        phase2Details = phase2Responses.map(response => {
+            const assessment = response.assessment_data || {};
+            return `
+                <div class="card mb-3 border-start border-warning border-3">
+                    <div class="card-header bg-light">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">
+                                <i class="fas fa-users me-2"></i>
+                                ${response.step_id} - ${response.action_item_id}
+                            </h6>
+                            <div>
+                                ${formatLevelBadge(response.cefr_level)}
+                                <span class="badge bg-info">${response.points_earned || 1} pts</span>
+                                ${formatAIDetection(response.ai_detected, response.ai_score || 0)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-success">Response:</h6>
+                        <p class="small bg-light p-2 rounded">${response.response_text || 'N/A'}</p>
+                        
+                        ${assessment.feedback ? `
+                            <h6 class="text-info">Assessment Feedback:</h6>
+                            <p class="small">${assessment.feedback}</p>
+                        ` : ''}
+                        
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Submitted: ${response.submitted_at || 'Unknown'}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Build remedial activities details
+    let remedialDetails = '';
+    if (remedialActivities.length > 0) {
+        remedialDetails = remedialActivities.map(activity => `
+            <div class="card mb-2 border-start border-secondary border-3">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${activity.step_id} - ${activity.level} Level Practice</h6>
+                            <p class="mb-0 small text-muted">Activity: ${activity.activity_id}</p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge ${activity.completed ? 'bg-success' : 'bg-warning'}">
+                                ${activity.score}/${activity.max_score || 6}
+                            </span>
+                            <br>
+                            <small class="text-muted">${activity.submitted_at || 'Unknown'}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    const content = `
+        <div class="row">
+            <!-- User Profile -->
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-3" style="width: 60px; height: 60px; font-size: 1.2rem;">
+                                ${(userInfo.first_name || userInfo.username)[0].toUpperCase()}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">${userInfo.first_name || userInfo.username} ${userInfo.last_name || ''}</h5>
+                                <p class="mb-1 text-muted">${userInfo.email}</p>
+                                <div class="d-flex gap-3">
+                                    <span class="badge bg-${userInfo.is_active ? 'success' : 'danger'}">${userInfo.is_active ? 'Active' : 'Inactive'}</span>
+                                    <span class="badge bg-secondary">${userInfo.role || 'user'}</span>
+                                    <small class="text-muted">Joined: ${userInfo.created_at ? userInfo.created_at.split('T')[0] : 'Unknown'}</small>
+                                    <small class="text-muted">Last login: ${userInfo.last_login ? userInfo.last_login.split('T')[0] : 'Never'}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="userDetailTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="phase1-tab" data-bs-toggle="tab" data-bs-target="#phase1" type="button" role="tab">
+                    <i class="fas fa-graduation-cap me-2"></i>Phase 1 Details (${phase1.length})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="phase2-tab" data-bs-toggle="tab" data-bs-target="#phase2" type="button" role="tab">
+                    <i class="fas fa-users me-2"></i>Phase 2 Details (${phase2Responses.length})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="remedial-tab" data-bs-toggle="tab" data-bs-target="#remedial" type="button" role="tab">
+                    <i class="fas fa-tools me-2"></i>Practice Activities (${remedialActivities.length})
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content mt-3" id="userDetailTabContent">
+            <!-- Phase 1 Tab -->
+            <div class="tab-pane fade show active" id="phase1" role="tabpanel">
+                ${phase1.length > 0 ? `
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-chart-line me-2"></i>Overall Progress Summary</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <h5>${phase1.length}</h5>
+                                    <small class="text-muted">Total Assessments</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>${formatLevelBadge(phase1[0].overall_level)}</h5>
+                                    <small class="text-muted">Best Level</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>${phase1.reduce((sum, a) => sum + (a.xp_earned || 0), 0)}</h5>
+                                    <small class="text-muted">Total XP</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>${Math.round(phase1.reduce((sum, a) => sum + (a.ai_usage_percentage || 0), 0) / phase1.length)}%</h5>
+                                    <small class="text-muted">Avg AI Usage</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h6><i class="fas fa-comments me-2"></i>Detailed Responses & Feedback</h6>
+                    <div style="max-height: 600px; overflow-y: auto;">
+                        ${phase1Details || '<p class="text-muted">No detailed responses available</p>'}
+                    </div>
+                ` : '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>No Phase 1 assessments completed yet</div>'}
+            </div>
+            
+            <!-- Phase 2 Tab -->
+            <div class="tab-pane fade" id="phase2" role="tabpanel">
+                ${phase2Responses.length > 0 ? `
+                    <h6><i class="fas fa-clipboard-list me-2"></i>Cultural Event Planning Responses</h6>
+                    <div style="max-height: 600px; overflow-y: auto;">
+                        ${phase2Details}
+                    </div>
+                ` : '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>No Phase 2 responses yet</div>'}
+            </div>
+            
+            <!-- Remedial Tab -->
+            <div class="tab-pane fade" id="remedial" role="tabpanel">
+                ${remedialActivities.length > 0 ? `
+                    <h6><i class="fas fa-dumbbell me-2"></i>Practice & Remedial Activities</h6>
+                    <div style="max-height: 600px; overflow-y: auto;">
+                        ${remedialDetails}
+                    </div>
+                ` : '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>No practice activities completed yet</div>'}
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('userDetailContent').innerHTML = content;
+}
+
+function editUser(userId) {
+    // Implement user editing functionality
+    alert('User editing functionality will be implemented');
+}
+
+function toggleUser(userId, isActive) {
+    const action = isActive ? 'deactivate' : 'activate';
+    if (confirm(`Are you sure you want to ${action} this user?`)) {
+        fetch(`/admin/users/${userId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ active: !isActive })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error updating user status');
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+    }
+}
+
+function exportUsers() {
+    const search = document.getElementById('userSearch').value;
+    const role = document.getElementById('roleFilter').value;
+    
+    let url = '/admin/export/users?';
+    if (search) url += `search=${encodeURIComponent(search)}&`;
+    if (role) url += `role=${encodeURIComponent(role)}&`;
+    
+    window.open(url, '_blank');
+}
+
+function refreshData() {
+    location.reload();
+}
+
+let currentUserData = null;
+let currentUserId = null;
+
+function viewDetailedData() {
+    if (!currentUserId) {
+        alert('No user selected');
+        return;
+    }
+    
+    // Open the detailed data viewer in a new tab
+    window.open(`/admin/users/${currentUserId}/view-data`, '_blank');
+}
+
+function exportUserData() {
+    if (!currentUserData) {
+        alert('No user data available to export');
+        return;
+    }
+    
+    const userInfo = currentUserData.user_info;
+    const dataToExport = {
+        user_info: userInfo,
+        phase1_assessments: currentUserData.phase1_assessments,
+        phase2_responses: currentUserData.phase2_responses,
+        remedial_activities: currentUserData.remedial_activities,
+        export_timestamp: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(dataToExport, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `user_${userInfo.username}_${userInfo.id}_detailed_export_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// Search on Enter key
+document.getElementById('userSearch').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchUsers();
+    }
+});
+</script>
+{% endblock %}

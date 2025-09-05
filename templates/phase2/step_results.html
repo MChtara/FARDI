@@ -4,26 +4,192 @@
 
 {% block extra_head %}
 <link href="{{ url_for('static', filename='css/results.css') }}" rel="stylesheet">
+<style>
+    .progress-container {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .step-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .step-progress::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+    
+    .step-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        border: 2px solid;
+    }
+    
+    .step-circle.completed {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+    }
+    
+    .step-circle.current {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+    }
+    
+    .step-circle.pending {
+        background: white;
+        border-color: #d1d5db;
+        color: #6b7280;
+    }
+    
+    .step-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-align: center;
+        max-width: 80px;
+        line-height: 1.2;
+    }
+    
+    .next-action-card {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: center;
+    }
+    
+    .remedial-action-card {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: center;
+    }
+    
+    .action-button {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .action-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row justify-content-center my-4">
         <div class="col-lg-10">
-            <!-- Congratulations header -->
+            
+            <!-- Progress Overview -->
+            <div class="progress-container">
+                <h3 class="text-center mb-4">Your Phase 2 Progress</h3>
+                <div class="step-progress">
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'step_1' %}current{% else %}completed{% endif %}">
+                            {% if step_id != 'step_1' %}✓{% else %}1{% endif %}
+                        </div>
+                        <div class="step-label">Assigning Roles</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'step_2' %}current{% elif step_id in ['step_3', 'final_writing'] %}completed{% else %}pending{% endif %}">
+                            {% if step_id in ['step_3', 'final_writing'] %}✓{% else %}2{% endif %}
+                        </div>
+                        <div class="step-label">Scheduling Meetings</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'step_3' %}current{% elif step_id == 'final_writing' %}completed{% else %}pending{% endif %}">
+                            {% if step_id == 'final_writing' %}✓{% else %}3{% endif %}
+                        </div>
+                        <div class="step-label">Planning Tasks</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'final_writing' %}current{% else %}pending{% endif %}">
+                            4
+                        </div>
+                        <div class="step-label">Final Action Plan</div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="text-gray-600 mb-0">
+                        {% if total_score >= success_threshold %}
+                            ✅ <strong>{{ step.title }}</strong> completed successfully!
+                        {% else %}
+                            📚 <strong>{{ step.title }}</strong> needs some practice first.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Results Header -->
             {% if total_score >= success_threshold %}
-            <div class="congrats-header">
-                <h1>Outstanding Work, {{ player_name }}!</h1>
-                <p class="lead mb-0">
-                    You've successfully completed {{ step.title }} with excellent collaboration skills.
-                </p>
+            <div class="next-action-card">
+                <h1>🎉 Excellent Work, {{ player_name }}!</h1>
+                <p class="mb-3">You've successfully completed <strong>{{ step.title }}</strong> with great collaboration skills.</p>
+                
+                {% if next_step %}
+                <p class="mb-0">Ready for the next challenge?</p>
+                <a href="{{ url_for('phase2_step', step_id=next_step) }}" class="action-button">
+                    Continue to {{ next_step_title }} →
+                </a>
+                {% else %}
+                <p class="mb-0">🏆 Congratulations! You've completed Phase 2!</p>
+                <a href="{{ url_for('dashboard') }}" class="action-button">
+                    View Your Achievement →
+                </a>
+                {% endif %}
             </div>
             {% else %}
-            <div class="congrats-header" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <h1>Great Effort, {{ player_name }}!</h1>
-                <p class="lead mb-0">
-                    Let's strengthen your collaboration skills with some targeted practice.
-                </p>
+            <div class="remedial-action-card">
+                <h1>💪 Keep Building Skills, {{ player_name }}!</h1>
+                <p class="mb-3">Let's practice <strong>{{ step.title }}</strong> with some targeted activities to strengthen your skills.</p>
+                <p class="mb-0">Don't worry - this extra practice will make you even stronger!</p>
+                <a href="{{ url_for('phase2_remedial', step_id=step_id, level=user_level) }}" class="action-button">
+                    Start Practice Activities →
+                </a>
             </div>
             {% endif %}
 

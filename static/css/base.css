@@ -1,24 +1,27 @@
 /* Base Styles and Theme */
 :root {
-    /* Tunisian-inspired color palette */
-    --primary-red: #e63946;
-    --primary-blue: #457b9d;
-    --secondary-blue: #1d3557;
-    --accent-cream: #f1faee;
-    --accent-light-blue: #a8dadc;
+    /* Minimalistic white and navy blue color palette */
+    --primary-blue: #1e3a8a;
+    --secondary-blue: #3730a3;
+    --tertiary-blue: #1e40af;
+    --accent-blue: #64748b;
+    --light-blue: #dbeafe;
+    --pure-white: #ffffff;
+    --off-white: #f8fafc;
+    --border-light: #e2e8f0;
     
     /* Semantic colors */
-    --success: #28a745;
-    --warning: #ffc107;
-    --danger: #dc3545;
-    --info: #17a2b8;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: var(--primary-blue);
     
-    /* CEFR Level colors */
-    --cefr-a1: #dc3545;
-    --cefr-a2: #fd7e14;
-    --cefr-b1: #ffc107;
-    --cefr-b2: #28a745;
-    --cefr-c1: #17a2b8;
+    /* CEFR Level colors - updated for new theme */
+    --cefr-a1: #ef4444;
+    --cefr-a2: #f59e0b;
+    --cefr-b1: #eab308;
+    --cefr-b2: #10b981;
+    --cefr-c1: #3b82f6;
     
     /* Typography */
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -56,9 +59,10 @@ body {
     font-family: var(--font-primary);
     font-size: 1rem;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa; 
+    color: var(--tertiary-blue);
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); 
     padding-top: 80px; /* Account for fixed navbar */
+    min-height: 100vh;
 }
 
 .font-display {
@@ -73,47 +77,51 @@ body {
 
 /* Navigation */
 .navbar-custom {
-    background: linear-gradient(135deg, var(--primary-red), var(--primary-blue));
-    backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-md);
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid var(--border-light);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: var(--transition-normal);
 }
 
 .navbar-custom .navbar-brand {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.5rem;
-    color: white !important;
+    font-size: 1.75rem;
+    color: var(--primary-blue) !important;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .navbar-custom .brand-text {
-    background: linear-gradient(45deg, #fff, var(--accent-cream));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary-blue);
 }
 
 .navbar-custom .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--accent-blue) !important;
     font-weight: 500;
     transition: var(--transition-fast);
-    border-radius: var(--border-radius-md);
-    padding: 0.5rem 1rem !important;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem !important;
     margin: 0 0.25rem;
+    position: relative;
 }
 
 .navbar-custom .nav-link:hover {
-    color: white !important;
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-1px);
+    color: var(--primary-blue) !important;
+    background: linear-gradient(135deg, var(--off-white) 0%, rgba(30, 58, 138, 0.05) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-custom .dropdown-menu {
-    border: none;
-    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
     border-radius: var(--border-radius-lg);
     padding: 0.5rem 0;
+    background: var(--pure-white);
 }
 
 .navbar-custom .dropdown-item {
@@ -121,16 +129,17 @@ body {
     border-radius: var(--border-radius-md);
     margin: 0 0.5rem;
     padding: 0.5rem 1rem;
+    color: var(--accent-blue);
 }
 
 .navbar-custom .dropdown-item:hover {
-    background-color: var(--accent-cream);
-    color: var(--secondary-blue);
+    background-color: var(--off-white);
+    color: var(--primary-blue);
 }
 
 /* Footer */
 .footer {
-    background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+    background: var(--primary-blue);
     color: white;
     padding: var(--spacing-xl) 0;
     margin-top: auto;
@@ -237,7 +246,7 @@ body {
 .form-control:focus,
 .form-select:focus,
 .nav-link:focus {
-    box-shadow: 0 0 0 0.25rem rgba(69, 123, 157, 0.25);
+    box-shadow: 0 0 0 0.25rem rgba(30, 58, 138, 0.15);
     outline: none;
 }
 

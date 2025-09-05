@@ -14,18 +14,13 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
+    
     <style>
-        :root {
-            --primary-red: #e63946;
-            --primary-blue: #457b9d;
-            --secondary-blue: #1d3557;
-            --accent-cream: #f1faee;
-            --accent-light-blue: #a8dadc;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #dc3545, var(--primary-red));
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 50%, var(--tertiary-blue) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;

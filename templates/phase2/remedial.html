@@ -3,119 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Activities</title>
+    <title>Practice Activities - Phase 2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Professional Minimalist Design */
+        .phase2-container {
+            background: #f8fafc;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .remedial-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .activity-card {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            margin: 0 auto;
+            max-width: 900px;
+        }
+        
+        .character-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            background: #f1f5f9;
+        }
+        
+        .audio-controls {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .draggable {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: move;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .draggable:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .droppable {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 60px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .droppable:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        
+        .droppable.ui-droppable-active {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
+        
+        .feedback-success {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #047857;
+            border-radius: 8px;
+        }
+        
+        .feedback-error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #dc2626;
+            border-radius: 8px;
+        }
+        
+        .progress-indicator {
+            background: #3b82f6;
+            height: 4px;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .action-button {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .action-button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .action-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .dialogue-bubble {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .fill-gap-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+        
+        .word-bank-item {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        h1, h2, h3 {
+            color: #1e293b;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+        
+        .text-gray-600 {
+            color: #64748b;
+        }
+        
+        .character-name {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        select.word-bank {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            background: white;
+            min-width: 120px;
+        }
+        
+        select.word-bank:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-6 max-w-4xl">
-        <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">Practice Activities</h1>
-        <p class="text-center text-lg mb-6">Let's strengthen your skills before moving forward!</p>
-        <p class="text-center text-md mb-8">{{ current_activity + 1 }}/{{ total_activities }}</p>
-
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <div class="flex items-center mb-4">
-                <img src="/static/images/avatars/{{ activity.speaker|lower }}.png" alt="{{ activity.speaker }}" class="w-16 h-16 mr-4">
-                <div>
-                    <h2 class="text-xl font-semibold text-blue-600">{{ activity.speaker }}</h2>
-                    <p class="text-lg">{{ activity.instruction }}</p>
+<body class="phase2-container">
+    <div class="container mx-auto p-6 max-w-5xl">
+        
+        <!-- Header -->
+        <div class="remedial-header text-center">
+            <h1 class="text-2xl font-semibold mb-2">Practice Activities</h1>
+            <p class="text-sm opacity-90 mb-4">Build your skills step by step</p>
+            
+            <!-- Clear Progress Explanation -->
+            <div class="bg-white bg-opacity-10 rounded-lg p-4 mb-6 text-left max-w-2xl mx-auto">
+                <div class="text-sm">
+                    <p class="mb-2"><strong>Your Journey:</strong></p>
+                    <p class="mb-2">1. Complete these {{ total_activities }} practice activities</p>
+                    <p class="mb-2">2. Build confidence with {{ level }} level exercises</p>
+                    <p class="mb-0">3. Return to the main activities when ready</p>
                 </div>
             </div>
+            
+            <div class="flex justify-center items-center space-x-6 text-sm">
+                <span class="bg-white bg-opacity-15 px-3 py-1 rounded-lg">
+                    Activity {{ current_activity + 1 }} of {{ total_activities }}
+                </span>
+                <span class="bg-white bg-opacity-15 px-3 py-1 rounded-lg">
+                    {{ level }} Level Practice
+                </span>
+            </div>
+            <div class="w-full max-w-md mx-auto bg-white bg-opacity-20 rounded-full h-1 mt-4">
+                <div class="progress-indicator" style="width: {{ ((current_activity) / total_activities * 100) }}%"></div>
+            </div>
+        </div>
 
+        <!-- Main Activity Card -->
+        <div class="activity-card">
+            <!-- Character Introduction -->
+            <div class="flex items-start mb-8">
+                <img src="/static/images/avatars/{{ activity.speaker|lower }}.png" 
+                     alt="{{ activity.speaker }}" 
+                     class="character-avatar mr-4"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="character-avatar mr-4 bg-slate-500 text-white flex items-center justify-center font-semibold text-sm" style="display:none;">
+                    {{ activity.speaker[0] }}
+                </div>
+                <div class="flex-1">
+                    <h2 class="character-name text-lg mb-2">{{ activity.speaker }}</h2>
+                    <p class="text-gray-600 leading-relaxed">{{ activity.instruction }}</p>
+                </div>
+            </div>
+            
+            <!-- Audio Section (if available) -->
+            {% if activity.get('audio_text') %}
+            <div class="audio-controls mb-8">
+                <div class="text-sm font-medium text-gray-700 mb-3">
+                    <i class="fas fa-volume-up mr-2"></i>Listen carefully
+                </div>
+                <div class="bg-slate-50 p-4 rounded-lg mb-4 text-gray-700 italic">
+                    "{{ activity.audio_text }}"
+                </div>
+                <button onclick="playAudio()" class="action-button">
+                    <i class="fas fa-play mr-2"></i>Play Audio
+                </button>
+            </div>
+            {% endif %}
+
+            <!-- Activity Content -->
             {% if activity.task_type == 'matching' %}
-            <h3 class="text-2xl font-semibold text-blue-600 mb-4">Match the Items</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    {% for key, value in activity.get('matching_items', {}).items() %}
-                    <div class="draggable bg-blue-200 p-2 rounded cursor-move" data-role="{{ key }}">{{ key }}</div>
-                    {% endfor %}
-                </div>
-                <div class="space-y-2">
-                    {% for key, value in activity.get('matching_items', {}).items() %}
-                    <div class="droppable bg-gray-200 p-2 rounded" data-correct="{{ key }}">{{ value }}</div>
-                    {% endfor %}
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold mb-4">Match the Items</h3>
+                <p class="text-gray-600 text-sm mb-6">Drag items from the left to their correct descriptions on the right.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Draggable Items -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-medium text-gray-700 mb-4 uppercase tracking-wide">Items</h4>
+                        {% for key, value in activity.get('matching_items', {}).items() %}
+                        <div class="draggable" data-role="{{ key }}">
+                            {{ key }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Drop Zones -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-medium text-gray-700 mb-4 uppercase tracking-wide">Descriptions</h4>
+                        {% for key, value in activity.get('matching_items', {}).items() %}
+                        <div class="droppable" data-correct="{{ key }}">
+                            <div class="text-gray-600">{{ value }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
+            
             {% elif activity.task_type == 'fill_gaps' %}
-            <h3 class="text-2xl font-semibold text-blue-600 mb-4">{{ activity.title }}</h3>
-            <div class="space-y-4">
-                {% for sentence in activity.get('sentences', []) %}
-                <div>{{ sentence.text|safe }}</div>
-                {% endfor %}
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold mb-4">{{ activity.title }}</h3>
+                <p class="text-gray-600 text-sm mb-6">Complete the sentences by selecting the correct options.</p>
+                <div class="fill-gap-container">
+                    {% for sentence in activity.get('sentences', []) %}
+                    <div class="mb-6 leading-relaxed">
+                        {{ sentence.text|safe }}
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
+            
             {% elif activity.task_type == 'dialogue' %}
-            <h3 class="text-2xl font-semibold text-blue-600 mb-4">{{ activity.title }}</h3>
-            <div class="space-y-4">
-                {% for line in activity.get('dialogue', []) %}
-                <div class="p-3 bg-gray-50 rounded">
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold mb-4">{{ activity.title }}</h3>
+                <p class="text-gray-600 text-sm mb-6">Complete the dialogue by selecting appropriate responses.</p>
+                <div class="space-y-4">
+                    {% for line in activity.get('dialogue', []) %}
                     {% if line.type == 'character' %}
-                    <div class="mb-2">
-                        <strong class="text-blue-600">{{ line.speaker }}:</strong> 
-                        <span class="text-gray-800">{{ line.text }}</span>
+                    <div class="dialogue-bubble">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-slate-500 rounded-lg flex items-center justify-center text-white font-medium text-xs mr-3">
+                                {{ line.speaker[0] }}
+                            </div>
+                            <div class="flex-1">
+                                <div class="character-name text-sm mb-1">{{ line.speaker }}</div>
+                                <div class="text-gray-700">{{ line.text }}</div>
+                            </div>
+                        </div>
                     </div>
                     {% elif line.type == 'user_input' %}
-                    <div class="mb-2">
-                        <strong class="text-green-600">You:</strong>
-                        <div class="mt-1">
-                            {{ line.text|safe }}
+                    <div class="dialogue-bubble bg-blue-50 border-l-4 border-blue-400">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-medium text-xs mr-3">
+                                You
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-blue-600 font-medium text-sm mb-1">Your response:</div>
+                                <div class="leading-relaxed">{{ line.text|safe }}</div>
+                            </div>
                         </div>
                     </div>
                     {% endif %}
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
+            
             {% else %}
-            <h3 class="text-2xl font-semibold text-blue-600 mb-4">{{ activity.get('title', 'Practice Activity') }}</h3>
-            <div class="space-y-4">
-                {% for sentence in activity.get('sentences', []) %}
-                <input type="text" class="w-full border p-2" placeholder="{{ sentence.text }}">
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            {% if activity.get('word_bank') %}
-            <div class="mt-4">
-                <h4 class="text-lg font-semibold">Word Bank:</h4>
-                <div class="flex flex-wrap gap-2">
-                    {% for word in activity.word_bank %}
-                    <span class="bg-gray-300 px-2 py-1 rounded">{{ word }}</span>
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold mb-4">{{ activity.get('title', 'Practice Activity') }}</h3>
+                <div class="fill-gap-container">
+                    {% for sentence in activity.get('sentences', []) %}
+                    <div class="mb-4">
+                        <input type="text" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent" placeholder="{{ sentence.text }}">
+                    </div>
                     {% endfor %}
                 </div>
             </div>
             {% endif %}
 
-            <div class="mt-4 flex gap-4">
-                <button id="check-work" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Check My Work</button>
-                <button id="submit-continue" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit & Continue</button>
+            <!-- Word Bank -->
+            {% if activity.get('word_bank') %}
+            <div class="mt-8 p-6 bg-slate-50 border border-slate-200 rounded-lg">
+                <h4 class="text-sm font-medium text-gray-700 mb-4 uppercase tracking-wide">Word Bank</h4>
+                <div class="flex flex-wrap gap-2">
+                    {% for word in activity.word_bank %}
+                    <span class="word-bank-item">{{ word }}</span>
+                    {% endfor %}
+                </div>
             </div>
-            <p id="feedback" class="mt-4 text-lg"></p>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
+                <button id="check-work" class="action-button">
+                    Check My Work
+                </button>
+                <button id="submit-continue" class="action-button" style="background: #10b981;">
+                    Submit & Continue
+                </button>
+            </div>
+            
+            <!-- Feedback Area -->
+            <div id="feedback" class="mt-6 p-4 rounded-lg hidden"></div>
         </div>
 
-        <div class="text-center">
-            <a href="{{ url_for('phase2_step', step_id=step_id) }}" class="text-blue-600 hover:underline">Back to Main Activity</a>
+        <!-- Navigation -->
+        <div class="text-center mt-8">
+            <a href="{{ url_for('phase2_step', step_id=step_id) }}" 
+               class="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors text-sm">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Main Activity
+            </a>
         </div>
     </div>
 
     <script>
+        // Audio playback functionality
+        function playAudio() {
+            const audioText = "{{ activity.get('audio_text', '') }}";
+            if (audioText && 'speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(audioText);
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                utterance.lang = 'en-US';
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        function showFeedback(message, type = 'info') {
+            const feedbackEl = $('#feedback');
+            feedbackEl.removeClass('hidden feedback-success feedback-error bg-blue-50 bg-green-50 bg-red-50 text-blue-700 text-green-700 text-red-700');
+            
+            if (type === 'success') {
+                feedbackEl.addClass('feedback-success');
+            } else if (type === 'error') {
+                feedbackEl.addClass('feedback-error');
+            } else {
+                feedbackEl.addClass('bg-blue-50 text-blue-700 border border-blue-200');
+            }
+            
+            feedbackEl.html(`
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-3"></i>
+                    <span>${message}</span>
+                </div>
+            `).removeClass('hidden');
+        }
+
         $(function() {
             
-            // Drag-and-drop for matching tasks
-            $(".draggable").draggable({ revert: "invalid" });
+            // Enhanced drag-and-drop for matching tasks
+            $(".draggable").draggable({ 
+                revert: "invalid",
+                helper: "clone",
+                cursor: "move",
+                zIndex: 1000,
+                start: function(event, ui) {
+                    $(this).addClass('opacity-50');
+                },
+                stop: function(event, ui) {
+                    $(this).removeClass('opacity-50');
+                }
+            });
+            
             $(".droppable").droppable({
                 accept: ".draggable",
+                hoverClass: "droppable-hover",
+                tolerance: "pointer",
                 drop: function(event, ui) {
                     // Clear any previous item in this drop zone
                     $(this).find('.draggable').remove();
                     
-                    // Place the dragged item in this drop zone
-                    ui.draggable.css({ top: 0, left: 0, position: 'relative' });
-                    $(this).append(ui.draggable);
+                    // Create a clone of the dragged item
+                    const clonedItem = ui.helper.clone();
+                    clonedItem.css({ 
+                        position: 'relative', 
+                        top: 0, 
+                        left: 0,
+                        width: 'auto',
+                        height: 'auto'
+                    });
+                    clonedItem.removeClass('ui-draggable-dragging opacity-50');
+                    clonedItem.addClass('bg-green-100 border-green-300');
+                    
+                    // Add the cloned item to the drop zone
+                    $(this).append(clonedItem);
+                    $(this).addClass('bg-green-50 border-green-300');
                     
                     // Store the match for later checking
                     $(this).data('matched-item', ui.draggable.data("role"));
-                    ui.draggable.data('dropped-in', $(this).data("correct"));
+                    
+                    // Add visual feedback
+                    $(this).prepend('<i class="fas fa-check text-green-500 absolute top-2 right-2"></i>');
                 }
             });
             
@@ -147,11 +484,13 @@
                         
                         if (correctAnswer === userAnswer) {
                             score++;
-                            $(this).addClass("bg-green-200"); // Show correct matches
-                            $(this).find('.draggable').addClass("bg-green-200");
+                            $(this).removeClass("bg-gray-50").addClass("bg-green-100 border-green-300");
+                            $(this).find('.draggable').removeClass("bg-blue-200").addClass("bg-green-200 border-green-400");
+                            $(this).prepend('<i class="fas fa-check-circle text-green-600 absolute top-2 right-2"></i>');
                         } else if (userAnswer) {
-                            $(this).addClass("bg-red-200"); // Show incorrect matches
-                            $(this).find('.draggable').addClass("bg-red-200");
+                            $(this).removeClass("bg-gray-50").addClass("bg-red-100 border-red-300");
+                            $(this).find('.draggable').removeClass("bg-blue-200").addClass("bg-red-200 border-red-400");
+                            $(this).prepend('<i class="fas fa-times-circle text-red-600 absolute top-2 right-2"></i>');
                         }
                     });
                     
@@ -288,10 +627,20 @@
                 console.log(`  Next Action: ${nextAction}`);
 
 
-                // Afficher le feedback
-                $("#feedback").html(feedback);
-                $("#feedback").removeClass().addClass("mt-4 text-lg font-medium " + 
-                    (score >= goodScore ? "text-green-600" : score >= okayScore ? "text-blue-600" : "text-orange-600"));
+                // Display enhanced feedback with progress info
+                const feedbackType = score >= goodScore ? 'success' : score >= okayScore ? 'info' : 'error';
+                
+                // Add progress information to feedback
+                let progressInfo = '';
+                if (score >= goodScore) {
+                    progressInfo = ` You're building strong skills! Ready for the next challenge.`;
+                } else if (score >= okayScore) {
+                    progressInfo = ` You're making good progress. Keep practicing to build confidence.`;
+                } else {
+                    progressInfo = ` Don't worry - every attempt helps you learn. Let's try again!`;
+                }
+                
+                showFeedback(feedback + progressInfo, feedbackType);
 
                 // Désactiver les boutons
                 $("#check-work").prop('disabled', true).text('Checking...');
@@ -326,12 +675,49 @@
                         console.log("\n=== BACKEND RESPONSE ===");
                         console.log('Server response:', response);
                         
-                        //  REDIRECTION CORRIGÉE
-                        setTimeout(() => {
-                        console.log(`\n=== REDIRECTING ===`);
-                        console.log(`→ Going to: ${nextAction}`);
-                        window.location.href = nextAction;
-                    }, 3000);
+                        if (response.success) {
+                            if (response.remedial_complete) {
+                                // All remedial activities completed - show celebration
+                                const celebrationMessage = response.message || "🎉 Congratulations! You've completed all practice activities and built strong skills.";
+                                showFeedback(celebrationMessage, 'success');
+                                
+                                setTimeout(() => {
+                                    showFeedback("✨ Redirecting you back to the main activities where you can apply your new skills...", 'info');
+                                }, 2000);
+                                
+                                setTimeout(() => {
+                                    window.location.href = response.next_url;
+                                }, 4000);
+                            } else if (response.next_action === "next_remedial") {
+                                // Move to next remedial activity with progress update
+                                const progressMessage = response.message || "Great work! Moving to the next practice activity...";
+                                showFeedback(progressMessage, 'success');
+                                
+                                setTimeout(() => {
+                                    window.location.href = response.next_url;
+                                }, 2500);
+                            } else {
+                                // Fallback to original logic
+                                setTimeout(() => {
+                                    console.log(`\n=== REDIRECTING ===`);
+                                    console.log(`→ Going to: ${nextAction}`);
+                                    window.location.href = nextAction;
+                                }, 3000);
+                            }
+                        } else {
+                            // Show detailed feedback for unsuccessful attempts
+                            let errorMessage = response.message || 'Please review and try again.';
+                            if (response.score_feedback) {
+                                errorMessage += ` ${response.score_feedback}`;
+                            }
+                            if (response.encouragement) {
+                                errorMessage += ` ${response.encouragement}`;
+                            }
+                            
+                            showFeedback(errorMessage, 'error');
+                            $("#check-work").prop('disabled', false).text('Check My Work');
+                            $("#submit-continue").prop('disabled', false);
+                        }
                     },
                     error: function(xhr, status, error) {
                         console.error('\n=== AJAX ERROR ===');
@@ -339,8 +725,7 @@
                         console.error('Status:', status);
                         console.error('Response:', xhr.responseText);
                         
-                        $("#feedback").text('Error submitting activity. Please try again.');
-                        $("#feedback").removeClass().addClass("mt-4 text-lg font-medium text-red-600");
+                        showFeedback('Error submitting activity. Please try again.', 'error');
                         $("#check-work").prop('disabled', false).text('Check My Work');
                         $("#submit-continue").prop('disabled', false);
                     }

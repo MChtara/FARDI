@@ -26,6 +26,7 @@ audio_service = AudioService()
 assessment_service = AssessmentService()
 
 @api_bp.route('/get-ai-feedback', methods=['POST'])
+@login_required
 def get_ai_feedback():
     """API endpoint to get AI feedback on a response with detailed language assessment"""
     data = request.json
@@ -126,6 +127,7 @@ def get_ai_feedback():
     })
 
 @api_bp.route('/language-tips', methods=['GET'])
+@login_required
 def language_tips():
     """API endpoint to get personalized language tips based on assessment history"""
     level = request.args.get('level', 'B1')
@@ -142,6 +144,7 @@ def language_tips():
     })
 
 @api_bp.route('/next-challenge', methods=['GET'])
+@login_required
 def next_challenge():
     """API endpoint to get a bonus challenge based on the user's current level"""
     level = request.args.get('level', 'B1')
@@ -160,6 +163,7 @@ def next_challenge():
     })
 
 @api_bp.route('/check-ai-response', methods=['POST'])
+@login_required
 def check_ai_response():
     """API endpoint to check if a response is AI-generated before submission"""
     try:
@@ -198,6 +202,7 @@ def check_ai_response():
         }), 200  # Return 200 to allow continuation in case of error
 
 @api_bp.route('/generate-audio', methods=['POST'])
+@login_required
 def api_generate_audio():
     """API endpoint to generate audio from text using Edge TTS"""
     data = request.json
@@ -219,6 +224,7 @@ def api_generate_audio():
         return jsonify({"error": str(e)}), 500
 
 @api_bp.route('/phase2/submit-response', methods=['POST'])
+@login_required
 def submit_phase2_response():
     """Submit a Phase 2 response and get assessment"""
     try:
@@ -280,6 +286,7 @@ def submit_phase2_response():
         return jsonify({"error": "Internal server error"}), 500
 
 @api_bp.route('/phase2/check-step-completion', methods=['POST'])
+@login_required
 def check_phase2_step_completion():
     """Check if a Phase 2 step is completed and determine next action"""
     try:
@@ -351,6 +358,7 @@ def check_phase2_step_completion():
         return jsonify({"error": "Internal server error"}), 500
     
 @api_bp.route('/phase2/submit-remedial', methods=['POST'])
+@login_required
 def submit_remedial_activity():
     """Submit a remedial activity response"""
     try:
@@ -386,7 +394,22 @@ def submit_remedial_activity():
         if not current_activity:
             return jsonify({"error": "Activity not found"}), 400
         
-        # Store remedial response
+        # Store remedial response in database
+        from routes.auth_routes import assessment_history
+        
+        user_id = session.get('user_id')
+        session_id = session.get('phase2_session_id')
+        
+        activity_data = {
+            'activity_id': activity_id,
+            'activity_index': activity_index,
+            'responses': responses,
+            'score': score,
+            'max_score': current_activity.get('success_threshold', 6),
+            'completed': False  # Will be updated below based on success
+        }
+        
+        # Store remedial response in session for backward compatibility
         session_key = f"remedial_{step_id}_{level}_{activity_id}"
         
         if 'phase2_remedial_responses' not in session:
@@ -402,6 +425,10 @@ def submit_remedial_activity():
         success_threshold = current_activity.get('success_threshold', 6)
         activity_passed = score >= success_threshold
         
+        # Update activity data with completion status and save to database
+        activity_data['completed'] = activity_passed
+        assessment_history.save_phase2_remedial(user_id, session_id, step_id, level, activity_data)
+        
         # Check if there are more activities
         next_activity_index = activity_index + 1
         has_next_activity = next_activity_index < len(remedial_activities)
@@ -412,9 +439,10 @@ def submit_remedial_activity():
                 "success": True,
                 "activity_passed": True,
                 "remedial_complete": True,
-                "message": "Great job! You've completed all practice activities.",
+                "message": "🎉 Excellent work! You've completed all practice activities and built strong skills. You're now ready to return to the main cultural event planning activities.",
                 "next_action": "return_to_step",
-                "next_url": f"/phase2/step/{step_id}"
+                "next_url": f"/phase2/step/{step_id}",
+                "celebration": True
             })
         elif activity_passed and has_next_activity:
             # Move to next remedial activity
@@ -423,19 +451,22 @@ def submit_remedial_activity():
                 "success": True,
                 "activity_passed": True,
                 "remedial_complete": False,
-                "message": "Excellent! Let's try the next practice activity.",
+                "message": f"✅ Great job! You're building strong skills. Let's continue with the next practice activity ({next_activity_index + 1} of {len(remedial_activities)}).",
                 "next_action": "next_remedial",
-                "next_url": f"/phase2/remedial/{step_id}/{level}?activity={next_activity_index}"
+                "next_url": f"/phase2/remedial/{step_id}/{level}?activity={next_activity_index}",
+                "progress_update": f"Activity {activity_index + 1} of {len(remedial_activities)} completed"
             })
         else:
-            # Activity not passed, try again or get feedback
+            # Activity not passed, provide encouraging feedback
             return jsonify({
                 "success": False,
                 "activity_passed": False,
                 "score": score,
                 "threshold": success_threshold,
-                "message": f"You got {score}/{success_threshold} correct. Try again for better results!",
-                "next_action": "retry"
+                "message": f"💪 Good effort! You scored {score} out of {success_threshold}. Let's review the concepts and try again. Practice makes perfect!",
+                "next_action": "retry",
+                "score_feedback": f"You need {success_threshold - score} more correct answers to pass this activity.",
+                "encouragement": "Every attempt helps you learn - keep going!"
             })
             
         session.modified = True
@@ -444,7 +475,15 @@ def submit_remedial_activity():
         logger.error(f"Error in remedial activity submission: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
+# Alias route for template compatibility
+@api_bp.route('/submit-remedial-activity', methods=['POST'])
+@login_required
+def submit_remedial_activity_alias():
+    """Alias for submit_remedial_activity for template compatibility"""
+    return submit_remedial_activity()
+
 @api_bp.route('/phase2/get-ai-feedback', methods=['POST'])
+@login_required
 def get_phase2_ai_feedback():
     """Get AI feedback specifically for Phase 2 responses"""
     try:
@@ -527,6 +566,7 @@ def get_phase2_ai_feedback():
         return jsonify({"error": "Internal server error"}), 500
 
 @api_bp.route('/phase2/generate-character-audio', methods=['POST'])
+@login_required
 def generate_character_audio():
     """Generate audio for character dialogue in Phase 2"""
     try:
@@ -566,6 +606,7 @@ def generate_character_audio():
         return jsonify({"error": str(e)}), 500
 
 @api_bp.route('/phase2/get-step-progress', methods=['GET'])
+@login_required
 def get_phase2_step_progress():
     """Get current progress for a Phase 2 step"""
     try:
@@ -619,6 +660,7 @@ def get_phase2_step_progress():
         return jsonify({"error": "Internal server error"}), 500
 
 @api_bp.route('/phase2/reset-step', methods=['POST'])
+@login_required
 def reset_phase2_step():
     """Reset a Phase 2 step (for testing or retrying)"""
     try:

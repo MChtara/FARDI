@@ -568,3 +568,187 @@ class AssessmentService:
             "communication_clarity": "Clear" if level in ["B1", "B2"] else "Basic"
         }
 
+    def assess_remedial_activity(self, step_id, level, activity_id, responses, score):
+        """Assess remedial activity performance and determine progression"""
+        try:
+            from models.game_data import PHASE_2_REMEDIAL_ACTIVITIES
+            
+            # Get remedial activity data
+            activities = PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}).get(level, [])
+            current_activity = None
+            
+            for activity in activities:
+                if activity['id'] == activity_id:
+                    current_activity = activity
+                    break
+            
+            if not current_activity:
+                return self._fallback_remedial_assessment(score)
+            
+            # Get activity metadata
+            task_type = current_activity.get('task_type', 'unknown')
+            success_threshold = current_activity.get('success_threshold', 6)
+            expected_answers = current_activity.get('expected_answers', [])
+            
+            # Calculate performance metrics
+            total_possible = len(expected_answers) if expected_answers else success_threshold
+            accuracy_percentage = (score / total_possible) * 100 if total_possible > 0 else 0
+            
+            # Determine CEFR level based on performance
+            if accuracy_percentage >= 90:
+                assessed_level = "B2"
+                level_confidence = "High"
+            elif accuracy_percentage >= 75:
+                assessed_level = "B1" 
+                level_confidence = "Good"
+            elif accuracy_percentage >= 50:
+                assessed_level = "A2"
+                level_confidence = "Moderate"
+            else:
+                assessed_level = "A1"
+                level_confidence = "Developing"
+            
+            # Generate task-specific feedback
+            task_feedback = self._get_task_specific_feedback(task_type, score, total_possible)
+            
+            # Analyze response patterns for more detailed feedback
+            strengths = []
+            improvements = []
+            
+            if accuracy_percentage >= 80:
+                strengths.append("Strong comprehension of task requirements")
+                strengths.append("Good attention to detail")
+            
+            if accuracy_percentage >= 60:
+                strengths.append("Understanding of basic concepts")
+            else:
+                improvements.append("Review basic vocabulary and concepts")
+                improvements.append("Practice with similar exercises")
+            
+            if task_type == "matching" and score >= success_threshold * 0.7:
+                strengths.append("Good pattern recognition skills")
+            elif task_type == "dialogue" and score >= success_threshold * 0.7:
+                strengths.append("Good conversational awareness")
+            elif task_type == "fill_gaps" and score >= success_threshold * 0.7:
+                strengths.append("Good grammatical understanding")
+            
+            # Cultural and teamwork assessment for Phase 2
+            cultural_awareness = "Good"
+            teamwork_skills = "Good"
+            
+            # Check responses for cultural keywords
+            response_text = " ".join(str(v) for v in responses.values() if v)
+            cultural_keywords = ['tunisian', 'culture', 'tradition', 'music', 'malouf', 'heritage', 'food', 'art']
+            teamwork_keywords = ['team', 'together', 'collaborate', 'work with', 'suggest', 'agree']
+            
+            has_cultural_ref = any(keyword in response_text.lower() for keyword in cultural_keywords)
+            has_teamwork_ref = any(keyword in response_text.lower() for keyword in teamwork_keywords)
+            
+            if not has_cultural_ref:
+                cultural_awareness = "Could be improved"
+                improvements.append("Include more cultural references")
+            
+            if not has_teamwork_ref and task_type == "dialogue":
+                teamwork_skills = "Could be improved"
+                improvements.append("Show more collaborative language")
+            
+            return {
+                "level": assessed_level,
+                "level_confidence": level_confidence,
+                "score": score,
+                "total_possible": total_possible,
+                "accuracy_percentage": round(accuracy_percentage, 1),
+                "task_type": task_type,
+                "success_threshold": success_threshold,
+                "passed": score >= success_threshold,
+                "feedback": task_feedback,
+                "strengths": strengths,
+                "improvements": improvements,
+                "cultural_awareness": cultural_awareness,
+                "teamwork_skills": teamwork_skills,
+                "assessment_details": {
+                    "task_specific_performance": f"{score}/{total_possible} correct",
+                    "progression_recommendation": self._get_progression_recommendation(score, success_threshold, level),
+                    "next_focus_areas": improvements[:2] if improvements else ["Continue practicing"]
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in remedial activity assessment: {str(e)}")
+            return self._fallback_remedial_assessment(score)
+    
+    def _get_task_specific_feedback(self, task_type, score, total_possible):
+        """Generate professional, structured feedback specific to the task type"""
+        percentage = (score / total_possible) * 100 if total_possible > 0 else 0
+        
+        if task_type == "matching":
+            if percentage >= 90:
+                return "Excellent pattern recognition. Your understanding of concept relationships is strong."
+            elif percentage >= 70:
+                return "Good performance. You demonstrate solid comprehension of the material."
+            elif percentage >= 50:
+                return "Adequate progress. Consider reviewing the concepts for better accuracy."
+            else:
+                return "Additional practice needed. Focus on understanding concept relationships."
+                
+        elif task_type == "dialogue":
+            if percentage >= 90:
+                return "Outstanding conversational skills. You show excellent pragmatic awareness."
+            elif percentage >= 70:
+                return "Good dialogue completion. Your conversational intuition is developing well."
+            elif percentage >= 50:
+                return "Fair progress. Practice more conversational patterns and contexts."
+            else:
+                return "Focus needed on dialogue context and appropriate response selection."
+                
+        elif task_type == "fill_gaps":
+            if percentage >= 90:
+                return "Excellent language accuracy. Your grammar and vocabulary skills are strong."
+            elif percentage >= 70:
+                return "Good structural understanding. You show solid grasp of sentence patterns."
+            elif percentage >= 50:
+                return "Adequate performance. Review grammar rules and expand vocabulary."
+            else:
+                return "Focus on fundamental grammar patterns and vocabulary building."
+                
+        else:
+            if percentage >= 70:
+                return "Good overall performance on this language task."
+            else:
+                return "Continue practicing to strengthen your language skills."
+    
+    def _get_progression_recommendation(self, score, success_threshold, current_level):
+        """Recommend next steps based on performance"""
+        if score >= success_threshold:
+            if current_level == "A1":
+                return "Ready to advance to A2 level activities"
+            elif current_level == "A2":
+                return "Ready to advance to B1 level activities"
+            else:
+                return "Ready to return to main Phase 2 activities"
+        else:
+            return f"Continue practicing {current_level} level activities"
+    
+    def _fallback_remedial_assessment(self, score):
+        """Fallback assessment when detailed analysis fails"""
+        return {
+            "level": "A1" if score < 3 else "A2" if score < 5 else "B1",
+            "level_confidence": "Low",
+            "score": score,
+            "total_possible": 6,
+            "accuracy_percentage": round((score / 6) * 100, 1),
+            "task_type": "unknown",
+            "success_threshold": 6,
+            "passed": score >= 4,
+            "feedback": "Activity completed. Continue practicing to improve your skills.",
+            "strengths": ["Attempted the activity"],
+            "improvements": ["Review the material", "Practice similar exercises"],
+            "cultural_awareness": "Unknown",
+            "teamwork_skills": "Unknown",
+            "assessment_details": {
+                "task_specific_performance": f"{score}/6 attempted",
+                "progression_recommendation": "Continue with current level",
+                "next_focus_areas": ["Review basics", "Practice more"]
+            }
+        }
+

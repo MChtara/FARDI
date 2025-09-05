@@ -655,21 +655,21 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "id": "a1_matching",
                 "task_type": "matching",
                 "speaker": "SKANDER",
-                "instruction": "Let’s warm up for our action plan! Match 6 event roles to their descriptions to get ready for planning.",
+                "instruction": "Let's warm up for our action plan! Match 6 event roles to their descriptions to get ready for planning.",
                 "title": "Cultural Role Matching Game",
                 "matching_items": {
-                    "Decorations": "Make the room colorful and cultural",
-                    "Music": "Play Tunisian songs for the event",
-                    "Food": "Prepare traditional dishes",
-                    "Promotion": "Share event news with students",
-                    "Art": "Skill for drawing or design",
-                    "Organized": "Skill for planning and order"
+                    "decorations": "Make the room colorful and cultural",
+                    "music": "Play Tunisian songs for the event",
+                    "food": "Prepare traditional dishes",
+                    "promotion": "Share event news with students",
+                    "art": "Skill for drawing or design",
+                    "organized": "Skill for planning and order"
                 },
-                "word_bank": ["Decorations", "Music", "Organized", "Promotion", "Art", "Food"],
-                "success_feedback": "Amazing, [Player]! Your role knowledge is ready for our cultural event! Let’s move to [Step 2: Scheduling Meetings]!",
-                "remedial_feedback": "Nice try, [Player]! Let’s practice more to make our action plan shine. Join me for the next task!",
+                "word_bank": ["decorations", "music", "organized", "promotion", "art", "food"],
+                "success_feedback": "Amazing, [Player]! Your role knowledge is ready for our cultural event! Let's move to [Step 2: Scheduling Meetings]!",
+                "remedial_feedback": "Nice try, [Player]! Let's practice more to make our action plan shine. Join me for the next task!",
                 "success_threshold": 6,
-                "expected_answers": []
+                "expected_answers": ["decorations", "music", "food", "promotion", "art", "organized"]
             },
             {
                 "id": "a1_fill_gaps",
@@ -1055,7 +1055,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "speaker": "SKANDER",
                 "instruction": "Let's practice scheduling! Match 6 meeting details to their purposes.",
                 "task_type": "matching",
-                "items": {
+                "matching_items": {
                     "Friday 3 PM": "Best time for team to meet",
                     "music": "Plan Tunisian songs",
                     "decorations": "Plan cultural visuals",
@@ -1063,34 +1063,171 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                     "budget": "Discuss event costs",
                     "teamwork": "Work together"
                 },
-                "success_threshold": 6
+                "word_bank": ["Friday 3 PM", "music", "decorations", "quiet time", "budget", "teamwork"],
+                "success_feedback": "Awesome, [Player]! Your schedule is ready! Let's move to [Step 3]!",
+                "remedial_feedback": "Nice try! Let's practice more for our plan!",
+                "success_threshold": 6,
+                "expected_answers": ["Friday 3 PM", "music", "decorations", "quiet time", "budget", "teamwork"]
+            },
+            {
+                "id": "schedule_sentence_builder",
+                "title": "Schedule Sentence Builder",
+                "speaker": "Emna",
+                "instruction": "Let's build sentences for our schedule! Fill in 6 gaps.",
+                "task_type": "fill_gaps",
+                "sentences": [
+                    {
+                        "text": "Meet <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Friday</option><option>Monday</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>3 PM</option><option>5 PM</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>because</option><option>when</option></select> team is free.",
+                        "blanks": ["Friday", "3 PM", "because"]
+                    },
+                    {
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Emna</option><option>Ryan</option></select> helps plan <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>music</option><option>decorations</option></select>.",
+                        "blanks": ["Emna", "music"]
+                    },
+                    {
+                        "text": "I suggest <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Friday</option><option>Monday</option></select> to <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>discuss</option><option>plan</option></select> music.",
+                        "blanks": ["Friday", "discuss"]
+                    }
+                ],
+                "word_bank": ["Friday", "3 PM", "because", "Emna", "music", "discuss", "team"],
+                "success_feedback": "Perfect, [Player]! Ready for [Step 3]!",
+                "remedial_feedback": "Good effort! Let's try another task!",
+                "success_threshold": 6,
+                "expected_answers": ["Friday", "3 PM", "because", "Emna", "music", "Friday", "discuss"]
+            },
+            {
+                "id": "schedule_dialogue",
+                "title": "Schedule Dialogue",
+                "speaker": "Ryan",
+                "instruction": "Let's talk about scheduling! Fill in 6 gaps.",
+                "task_type": "dialogue",
+                "dialogue": [
+                    {"type": "character", "speaker": "Ryan", "text": "When's the meeting?"},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Friday</option><option>Monday</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>3 PM</option><option>5 PM</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>because</option><option>when</option></select> team is free.",
+                        "blanks": ["Friday", "3 PM", "because"]
+                    },
+                    {"type": "character", "speaker": "Ryan", "text": "What will we discuss?"},
+                    {
+                        "type": "user_input",
+                        "text": "We will <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>discuss</option><option>plan</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>music</option><option>decorations</option></select> and <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>budget</option><option>schedule</option></select>.",
+                        "blanks": ["discuss", "music", "budget"]
+                    }
+                ],
+                "word_bank": ["Friday", "3 PM", "because", "discuss", "music", "budget", "team"],
+                "success_feedback": "Great job, [Player]! Let's move to [Step 3]!",
+                "remedial_feedback": "Nice work! Let's try one more task!",
+                "success_threshold": 6,
+                "expected_answers": ["Friday", "3 PM", "because", "discuss", "music", "budget"]
+            },
+            {
+                "id": "schedule_confirmation_writing",
+                "title": "Schedule Confirmation Writing",
+                "speaker": "Lilia",
+                "instruction": "Confirm our schedule! Write 6 sentences.",
+                "task_type": "fill_gaps",
+                "sentences": [
+                    {
+                        "text": "Meeting is <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Friday</option><option>Monday</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>3 PM</option><option>5 PM</option></select> because <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>team is free</option><option>room is quiet</option></select>.",
+                        "blanks": ["Friday", "3 PM", "team is free"]
+                    },
+                    {
+                        "text": "We <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>will discuss</option><option>can plan</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>music</option><option>decorations</option></select> selection.",
+                        "blanks": ["will discuss", "music"]
+                    },
+                    {
+                        "text": "The meeting helps our <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>cultural event</option><option>team planning</option></select>.",
+                        "blanks": ["cultural event"]
+                    }
+                ],
+                "word_bank": ["Friday", "3 PM", "team is free", "will discuss", "music", "cultural event"],
+                "success_feedback": "Amazing, [Player]! Ready for [Step 3]!",
+                "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
+                "success_threshold": 6,
+                "expected_answers": ["Friday", "3 PM", "team is free", "will discuss", "music", "cultural event"]
             }
         ],
         "A2": [
             {
-                "id": "schedule_dialogue",
+                "id": "schedule_roleplay_dialogue",
                 "title": "Schedule Role-Play Dialogue",
                 "speaker": "SKANDER",
                 "instruction": "Let's practice scheduling dialogues! Fill in 6 gaps.",
                 "task_type": "dialogue",
                 "dialogue": [
-                    {"type": "character", "speaker": "SKANDER", "text": "Let's plan decorations with Tunisian patterns."},
-                    {"type": "user_input", "placeholder": "I agree, _____ should _____ _____ because _____."},
-                    {"type": "character", "speaker": "SKANDER", "text": "What about music?"},
-                    {"type": "user_input", "placeholder": "I suggest _____ to _____ _____ because _____."}
+                    {"type": "character", "speaker": "SKANDER", "text": "Who's good for decorations?"},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Emna</option><option>Ryan</option></select> should do <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>decorations</option><option>music</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>because</option><option>since</option></select> she <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>likes</option><option>loves</option></select> art.",
+                        "blanks": ["Emna", "decorations", "because", "likes"]
+                    },
+                    {"type": "character", "speaker": "SKANDER", "text": "What about Ryan?"},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>I think</option><option>Maybe</option></select> Ryan is good <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>because</option><option>since</option></select> he is organized.",
+                        "blanks": ["I think", "because"]
+                    }
                 ],
-                "word_bank": ["Emna", "Malouf music", "Ryan", "Tunisian patterns"],
-                "success_threshold": 6
+                "word_bank": ["Emna", "Ryan", "decorations", "music", "because", "since", "likes", "loves", "I think", "Maybe"],
+                "success_feedback": "Awesome, [Player]! Your suggestions are perfect! Ready for [Step 3]?",
+                "remedial_feedback": "Good effort, [Player]! Let's try another task to strengthen our plan!",
+                "success_threshold": 6,
+                "expected_answers": ["Emna", "decorations", "because", "likes", "I think", "because"]
+            },
+            {
+                "id": "sentence_expansion_schedule",
+                "title": "Schedule Sentence Expansion Challenge",
+                "speaker": "Emna",
+                "instruction": "Let's expand our ideas for the schedule! Rewrite 6 short sentences.",
+                "task_type": "fill_gaps",
+                "sentences": [
+                    {
+                        "text": "Meet Friday → Meet Friday at <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>3 PM</option><option>5 PM</option></select> because <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>team is free</option><option>room is quiet</option></select>.",
+                        "blanks": ["3 PM", "team is free"]
+                    },
+                    {
+                        "text": "Discuss music → Discuss music <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>and</option><option>with</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>decorations</option><option>budget</option></select> for event.",
+                        "blanks": ["and", "decorations"]
+                    },
+                    {
+                        "text": "Team works → Team works <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>together</option><option>well</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>for</option><option>on</option></select> cultural event.",
+                        "blanks": ["together", "for"]
+                    }
+                ],
+                "word_bank": ["3 PM", "team is free", "and", "decorations", "together", "for", "with", "budget"],
+                "success_feedback": "Great job, [Player]! Your sentences are ready for our plan! Ready for [Step 3]?",
+                "remedial_feedback": "Nice try, [Player]! Let's practice more to make our plans shine!",
+                "success_threshold": 6,
+                "expected_answers": ["3 PM", "team is free", "and", "decorations", "together", "for"]
             }
         ],
         "B1": [
             {
-                "id": "negotiation_schedule",
+                "id": "negotiation_schedule_roleplay",
                 "title": "Negotiation Schedule Role-Play",
                 "speaker": "SKANDER",
                 "instruction": "Negotiate the schedule! Fill in 6 gaps.",
                 "task_type": "dialogue",
-                "success_threshold": 6
+                "dialogue": [
+                    {"type": "character", "speaker": "SKANDER", "text": "I suggest Friday at 3 PM for our cultural event meeting."},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>I agree</option><option>I think</option></select> Friday works <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>because</option><option>since</option></select> the team <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>is available</option><option>can meet</option></select>.",
+                        "blanks": ["I agree", "because", "is available"]
+                    },
+                    {"type": "character", "speaker": "SKANDER", "text": "What should we focus on in the meeting?"},
+                    {
+                        "type": "user_input",
+                        "text": "We should <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>prioritize</option><option>focus on</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>music selection</option><option>decoration planning</option></select> and <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>budget discussion</option><option>timeline review</option></select>.",
+                        "blanks": ["focus on", "music selection", "budget discussion"]
+                    }
+                ],
+                "word_bank": ["I agree", "I think", "because", "since", "is available", "can meet", "prioritize", "focus on", "music selection", "decoration planning", "budget discussion", "timeline review"],
+                "success_feedback": "Excellent, [Player]! Your negotiation skills are ready! Let's move to [Step 3]!",
+                "remedial_feedback": "Good job, [Player]! Let's practice more to perfect our plan!",
+                "success_threshold": 6,
+                "expected_answers": ["I agree", "because", "is available", "focus on", "music selection", "budget discussion"]
             }
         ]
     },
@@ -1103,39 +1240,187 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "instruction": "Listen to my detailed task plan for our cultural event!",
                 "task_type": "matching",
                 "audio_text": "We need decorations with Tunisian patterns, Malouf music to highlight culture, and a poster to promote the event. Emna is good for music, Ryan for decorations, and Lilia for posters.",
-                "items": {
+                "matching_items": {
                     "decorations": "Creates cultural visuals",
                     "Tunisian patterns": "Designs with traditional style",
-                    "Malouf music": "Vibrant cultural music",
+                    "Malouf music": "Chooses traditional music",
                     "poster": "Promotes the event",
                     "Emna": "Music team member",
                     "Ryan": "Decorations team member",
                     "Lilia": "Poster team member",
                     "culture": "Event theme"
                 },
-                "success_threshold": 8
+                "word_bank": ["decorations", "Tunisian patterns", "Malouf music", "poster", "Emna", "Ryan", "Lilia", "culture"],
+                "success_feedback": "Wow, [Player]! Your listening and matching are perfect! Let's move to the [Final Writing Activity]!",
+                "remedial_feedback": "Good start, [Player]! Let's practice more listening and tasks to shine!",
+                "success_threshold": 8,
+                "expected_answers": ["decorations", "Tunisian patterns", "Malouf music", "poster", "Emna", "Ryan", "Lilia", "culture"]
+            },
+            {
+                "id": "task_listening_dialogue",
+                "title": "Task Listening and Dialogue Completion",
+                "speaker": "Emna",
+                "instruction": "Listen to our task discussion and complete the dialogue!",
+                "task_type": "dialogue",
+                "audio_text": "I think Emna should pick Malouf music because it's traditional. Ryan can design decorations with Tunisian patterns. What do you suggest?",
+                "dialogue": [
+                    {"type": "character", "speaker": "Emna", "text": "I think Emna should pick Malouf music because it's traditional."},
+                    {
+                        "type": "user_input",
+                        "text": "I agree, <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Emna</option><option>Ryan</option></select> should <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>pick</option><option>choose</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>music</option><option>decorations</option></select> because <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>traditional</option><option>cultural</option></select>.",
+                        "blanks": ["Emna", "pick", "music", "traditional"]
+                    },
+                    {"type": "character", "speaker": "Emna", "text": "What about decorations?"},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Ryan</option><option>Lilia</option></select> can <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>design</option><option>make</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>decorations</option><option>posters</option></select> to show <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>culture</option><option>traditions</option></select>.",
+                        "blanks": ["Ryan", "design", "decorations", "culture"]
+                    }
+                ],
+                "word_bank": ["Emna", "Ryan", "Lilia", "pick", "choose", "design", "make", "music", "decorations", "posters", "traditional", "cultural", "culture", "traditions"],
+                "success_feedback": "Fantastic, [Player]! Your listening and dialogue are perfect! Ready for the [Final Writing Activity]?",
+                "remedial_feedback": "Good effort, [Player]! Let's keep building our event story!",
+                "success_threshold": 8,
+                "expected_answers": ["Emna", "pick", "music", "traditional", "Ryan", "design", "decorations", "culture"]
+            },
+            {
+                "id": "task_story_writing",
+                "title": "Task Listening and Story Writing",
+                "speaker": "Ryan",
+                "instruction": "Listen to our task story and complete it!",
+                "task_type": "fill_gaps", 
+                "audio_text": "Listen carefully: Our team plans decorations with Tunisian patterns and Malouf music. Emna picks music, Ryan designs decorations, and Lilia makes posters. This creates a vibrant cultural event.",
+                "sentences": [
+                    {
+                        "text": "Our team plans <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>decorations</option><option>music</option></select> with <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Tunisian patterns</option><option>cultural themes</option></select>.",
+                        "blanks": ["decorations", "Tunisian patterns"]
+                    },
+                    {
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Emna</option><option>Ryan</option></select> picks <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Malouf music</option><option>traditional songs</option></select> for <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>cultural appeal</option><option>entertainment</option></select>.",
+                        "blanks": ["Emna", "Malouf music", "cultural appeal"]
+                    },
+                    {
+                        "text": "This creates a <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>vibrant</option><option>successful</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>cultural event</option><option>team project</option></select>.",
+                        "blanks": ["vibrant", "cultural event"]
+                    }
+                ],
+                "word_bank": ["decorations", "music", "Tunisian patterns", "cultural themes", "Emna", "Ryan", "Malouf music", "traditional songs", "cultural appeal", "entertainment", "vibrant", "successful", "cultural event", "team project"],
+                "success_feedback": "Amazing story, [Player]! Your listening and creativity are perfect! Let's move to the [Final Writing Activity]!",
+                "remedial_feedback": "Good work, [Player]! Let's try one more listening task!",
+                "success_threshold": 7,
+                "expected_answers": ["decorations", "Tunisian patterns", "Emna", "Malouf music", "cultural appeal", "vibrant", "cultural event"]
+            },
+            {
+                "id": "task_proposal_writing",
+                "title": "Task Listening and Proposal Writing",
+                "speaker": "Lilia",
+                "instruction": "Listen to my task proposal and write your response!",
+                "task_type": "fill_gaps",
+                "audio_text": "I propose poster creation and Malouf music selection for our cultural event. These tasks will showcase Tunisian traditions and attract students to our vibrant celebration.",
+                "sentences": [
+                    {
+                        "text": "Lilia proposes <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>poster creation</option><option>music selection</option></select> and <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Malouf music</option><option>traditional food</option></select>.",
+                        "blanks": ["poster creation", "Malouf music"]
+                    },
+                    {
+                        "text": "These tasks will <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>showcase</option><option>display</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Tunisian traditions</option><option>cultural heritage</option></select>.",
+                        "blanks": ["showcase", "Tunisian traditions"]
+                    },
+                    {
+                        "text": "I <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>agree</option><option>support</option></select> because it creates a <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>vibrant celebration</option><option>successful event</option></select>.",
+                        "blanks": ["agree", "vibrant celebration"]
+                    }
+                ],
+                "word_bank": ["poster creation", "music selection", "Malouf music", "traditional food", "showcase", "display", "Tunisian traditions", "cultural heritage", "agree", "support", "vibrant celebration", "successful event"],
+                "success_feedback": "Incredible, [Player]! Your listening and proposal are ready! Let's move to the [Final Writing Activity]!",
+                "remedial_feedback": "You're getting there, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!",
+                "success_threshold": 6,
+                "expected_answers": ["poster creation", "Malouf music", "showcase", "Tunisian traditions", "agree", "vibrant celebration"]
             }
         ],
         "A2": [
             {
-                "id": "task_dialogue",
+                "id": "task_roleplay_dialogue", 
                 "title": "Task Listening and Role-Play Dialogue",
                 "speaker": "SKANDER",
-                "instruction": "Listen to my task role-play!",
+                "instruction": "Listen to my task role-play and respond!",
                 "task_type": "dialogue",
-                "audio_text": "Let's plan decorations with Tunisian patterns and Malouf music for culture. Who should do these?",
-                "success_threshold": 8
+                "audio_text": "Let's plan decorations with Tunisian patterns and Malouf music for culture. Who should handle these important tasks for our cultural event?",
+                "dialogue": [
+                    {"type": "character", "speaker": "SKANDER", "text": "Let's plan decorations with Tunisian patterns and Malouf music for culture."},
+                    {
+                        "type": "user_input",
+                        "text": "I suggest <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Emna</option><option>Ryan</option></select> for <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>music</option><option>decorations</option></select> because she <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>loves</option><option>understands</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>traditional songs</option><option>cultural music</option></select>.",
+                        "blanks": ["Emna", "music", "loves", "traditional songs"]
+                    },
+                    {"type": "character", "speaker": "SKANDER", "text": "Good! What about decorations?"},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Ryan</option><option>Lilia</option></select> can <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>design</option><option>create</option></select> decorations with <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Tunisian patterns</option><option>cultural themes</option></select> because he is <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>organized</option><option>creative</option></select>.",
+                        "blanks": ["Ryan", "design", "Tunisian patterns", "organized"]
+                    }
+                ],
+                "word_bank": ["Emna", "Ryan", "Lilia", "music", "decorations", "loves", "understands", "traditional songs", "cultural music", "design", "create", "Tunisian patterns", "cultural themes", "organized", "creative"],
+                "success_feedback": "Great, [Player]! Your listening and dialogue are perfect! Ready for the [Final Writing Activity]?",
+                "remedial_feedback": "Good effort! Let's try another listening task!",
+                "success_threshold": 8,
+                "expected_answers": ["Emna", "music", "loves", "traditional songs", "Ryan", "design", "Tunisian patterns", "organized"]
+            },
+            {
+                "id": "task_sentence_completion",
+                "title": "Task Listening and Sentence Completion",
+                "speaker": "Emna",
+                "instruction": "Listen to my task explanation and complete the sentences!",
+                "task_type": "fill_gaps",
+                "audio_text": "Our cultural event needs specific tasks: decorations featuring Tunisian patterns, Malouf music selection, and promotional posters. Each team member contributes their unique skills.",
+                "sentences": [
+                    {
+                        "text": "Our event needs <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>decorations</option><option>music</option></select> featuring <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Tunisian patterns</option><option>traditional designs</option></select>.",
+                        "blanks": ["decorations", "Tunisian patterns"]
+                    },
+                    {
+                        "text": "We also need <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Malouf music</option><option>traditional music</option></select> and <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>promotional posters</option><option>advertising materials</option></select>.",
+                        "blanks": ["Malouf music", "promotional posters"]
+                    },
+                    {
+                        "text": "Each member contributes <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>unique skills</option><option>special talents</option></select> for <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>cultural success</option><option>event success</option></select>.",
+                        "blanks": ["unique skills", "cultural success"]
+                    }
+                ],
+                "word_bank": ["decorations", "music", "Tunisian patterns", "traditional designs", "Malouf music", "traditional music", "promotional posters", "advertising materials", "unique skills", "special talents", "cultural success", "event success"],
+                "success_feedback": "Perfect, [Player]! Your listening and sentences shine! Ready for the [Final Writing Activity]?",
+                "remedial_feedback": "Nice try, [Player]! Let's practice more to make our plans shine!",
+                "success_threshold": 6,
+                "expected_answers": ["decorations", "Tunisian patterns", "Malouf music", "promotional posters", "unique skills", "cultural success"]
             }
         ],
         "B1": [
             {
-                "id": "task_negotiation",
+                "id": "task_negotiation_roleplay",
                 "title": "Task Listening and Negotiation Role-Play",
                 "speaker": "SKANDER",
-                "instruction": "Listen to my task negotiation!",
+                "instruction": "Listen to my task negotiation and respond!",
                 "task_type": "dialogue",
-                "audio_text": "I propose food planning for Tunisian cuisine and decorations with Tunisian patterns. What do you think?",
-                "success_threshold": 8
+                "audio_text": "I propose food planning for authentic Tunisian cuisine and decorations with traditional Tunisian patterns. These elements will create cultural authenticity. What's your perspective on this approach?",
+                "dialogue": [
+                    {"type": "character", "speaker": "SKANDER", "text": "I propose food planning for authentic Tunisian cuisine and decorations with traditional patterns."},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>I agree</option><option>I appreciate</option></select> your approach because <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>cultural authenticity</option><option>traditional elements</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>enhances</option><option>improves</option></select> our event.",
+                        "blanks": ["I agree", "cultural authenticity", "enhances"]
+                    },
+                    {"type": "character", "speaker": "SKANDER", "text": "How should we prioritize these tasks?"},
+                    {
+                        "type": "user_input",
+                        "text": "I suggest we <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>prioritize</option><option>focus on</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>food planning</option><option>decoration design</option></select> first, then <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>coordinate</option><option>integrate</option></select> with <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>decorative elements</option><option>visual components</option></select>.",
+                        "blanks": ["prioritize", "food planning", "coordinate", "decorative elements"]
+                    }
+                ],
+                "word_bank": ["I agree", "I appreciate", "cultural authenticity", "traditional elements", "enhances", "improves", "prioritize", "focus on", "food planning", "decoration design", "coordinate", "integrate", "decorative elements", "visual components"],
+                "success_feedback": "Excellent, [Player]! Your listening and negotiation are perfect! Ready for the [Final Writing Activity]?",
+                "remedial_feedback": "Good work, [Player]! Let's try one more task to boost our event's vibe!",
+                "success_threshold": 8,
+                "expected_answers": ["I agree", "cultural authenticity", "enhances", "prioritize", "food planning", "coordinate", "decorative elements"]
             }
         ]
     },
@@ -1148,7 +1433,7 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "instruction": "Listen to my detailed action plan!",
                 "task_type": "matching",
                 "audio_text": "Emna handles Malouf music to make the event vibrant. Ryan designs decorations with Tunisian tiles. We meet Friday at 3 PM to plan. Lilia makes posters for promotion.",
-                "items": {
+                "matching_items": {
                     "Emna": "Handles traditional music",
                     "Malouf music": "Vibrant cultural music",
                     "Ryan": "Designs cultural visuals",
@@ -1158,29 +1443,96 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                     "posters": "Poster team member",
                     "culture": "Event theme"
                 },
-                "success_threshold": 8
+                "word_bank": ["Emna", "Malouf music", "Ryan", "Tunisian tiles", "Friday 3 PM", "Lilia", "posters", "culture"],
+                "success_feedback": "Awesome, [Player]! Your listening and matching are perfect! You've completed Phase 2!",
+                "remedial_feedback": "Nice try! Let's practice more listening and planning!",
+                "success_threshold": 8,
+                "expected_answers": ["Emna", "Malouf music", "Ryan", "Tunisian tiles", "Friday 3 PM", "Lilia", "posters", "culture"]
+            },
+            {
+                "id": "plan_dialogue_completion",
+                "title": "Plan Listening and Dialogue Completion",
+                "speaker": "Emna",
+                "instruction": "Listen to our plan discussion and complete the dialogue!",
+                "task_type": "dialogue",
+                "audio_text": "Emna handles Malouf music because it's traditional. Ryan designs decorations with Tunisian tiles. We meet Friday at 3 PM. What's your feedback on our action plan?",
+                "dialogue": [
+                    {"type": "character", "speaker": "Emna", "text": "Emna handles Malouf music because it's traditional."},
+                    {
+                        "type": "user_input",
+                        "text": "I agree, <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Emna</option><option>Ryan</option></select> should <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>handle</option><option>manage</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>music</option><option>decorations</option></select> because <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>traditional</option><option>cultural</option></select>.",
+                        "blanks": ["Emna", "handle", "music", "traditional"]
+                    },
+                    {"type": "character", "speaker": "Emna", "text": "What about decorations?"},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Ryan</option><option>Lilia</option></select> designs <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>decorations</option><option>posters</option></select> to <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>showcase</option><option>display</option></select> because <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>organized</option><option>creative</option></select>.",
+                        "blanks": ["Ryan", "decorations", "showcase", "organized"]
+                    }
+                ],
+                "word_bank": ["Emna", "Ryan", "Lilia", "handle", "manage", "music", "decorations", "posters", "traditional", "cultural", "showcase", "display", "organized", "creative"],
+                "success_feedback": "Perfect, [Player]! Your listening and dialogue are ready! You've completed Phase 2!",
+                "remedial_feedback": "Good effort! Let's try another listening task!",
+                "success_threshold": 8,
+                "expected_answers": ["Emna", "handle", "music", "traditional", "Ryan", "decorations", "showcase", "organized"]
             }
         ],
         "A2": [
             {
-                "id": "plan_dialogue",
+                "id": "plan_roleplay_dialogue",
                 "title": "Plan Listening and Role-Play Dialogue",
                 "speaker": "SKANDER",
-                "instruction": "Listen to my plan role-play!",
+                "instruction": "Listen to my plan role-play and respond!",
                 "task_type": "dialogue",
-                "audio_text": "Let's assign Malouf music to Emna and decorations with Tunisian tiles to Ryan. What's your idea?",
-                "success_threshold": 8
+                "audio_text": "Let's assign Malouf music to Emna and decorations with Tunisian tiles to Ryan. These assignments utilize their strengths effectively. What's your assessment of this plan?",
+                "dialogue": [
+                    {"type": "character", "speaker": "SKANDER", "text": "Let's assign Malouf music to Emna and decorations with Tunisian tiles to Ryan."},
+                    {
+                        "type": "user_input",
+                        "text": "I think <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>assigning</option><option>giving</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Malouf music</option><option>traditional music</option></select> to <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Emna</option><option>Ryan</option></select> works because she <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>understands</option><option>appreciates</option></select> culture.",
+                        "blanks": ["assigning", "Malouf music", "Emna", "understands"]
+                    },
+                    {"type": "character", "speaker": "SKANDER", "text": "How about the decorations?"},
+                    {
+                        "type": "user_input",
+                        "text": "<select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Ryan</option><option>Lilia</option></select> can <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>create</option><option>design</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>beautiful decorations</option><option>cultural displays</option></select> with <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>Tunisian tiles</option><option>traditional patterns</option></select>.",
+                        "blanks": ["Ryan", "create", "beautiful decorations", "Tunisian tiles"]
+                    }
+                ],
+                "word_bank": ["assigning", "giving", "Malouf music", "traditional music", "Emna", "Ryan", "Lilia", "understands", "appreciates", "create", "design", "beautiful decorations", "cultural displays", "Tunisian tiles", "traditional patterns"],
+                "success_feedback": "Great work, [Player]! Your listening and plan are perfect! You've completed Phase 2!",
+                "remedial_feedback": "Nice effort, [Player]! Let's try another task to polish our plans!",
+                "success_threshold": 8,
+                "expected_answers": ["assigning", "Malouf music", "Emna", "understands", "Ryan", "create", "beautiful decorations", "Tunisian tiles"]
             }
         ],
         "B1": [
             {
-                "id": "plan_negotiation",
+                "id": "plan_negotiation_roleplay",
                 "title": "Plan Listening and Negotiation Role-Play",
                 "speaker": "SKANDER",
-                "instruction": "Listen to my plan negotiation!",
+                "instruction": "Listen to my plan negotiation and provide your professional assessment!",
                 "task_type": "dialogue",
-                "audio_text": "I suggest Malouf music and Tunisian tiles for decorations.",
-                "success_threshold": 8
+                "audio_text": "I suggest prioritizing Malouf music selection and coordinating Tunisian tiles for decorations. This integrated approach ensures cultural authenticity while maintaining aesthetic coherence. How do you evaluate this comprehensive strategy?",
+                "dialogue": [
+                    {"type": "character", "speaker": "SKANDER", "text": "I suggest prioritizing Malouf music selection and coordinating Tunisian tiles for decorations."},
+                    {
+                        "type": "user_input",
+                        "text": "I <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>appreciate</option><option>support</option></select> this <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>integrated approach</option><option>comprehensive strategy</option></select> because it <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>ensures</option><option>maintains</option></select> <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>cultural authenticity</option><option>traditional values</option></select>.",
+                        "blanks": ["appreciate", "integrated approach", "ensures", "cultural authenticity"]
+                    },
+                    {"type": "character", "speaker": "SKANDER", "text": "How should we implement this plan effectively?"},
+                    {
+                        "type": "user_input",
+                        "text": "I recommend we <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>coordinate</option><option>synchronize</option></select> the <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>musical elements</option><option>decorative components</option></select> with <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>visual aesthetics</option><option>artistic design</option></select> to achieve <select class='word-bank form-control d-inline w-auto'><option value=''>Select</option><option>aesthetic coherence</option><option>cultural harmony</option></select>.",
+                        "blanks": ["coordinate", "musical elements", "visual aesthetics", "aesthetic coherence"]
+                    }
+                ],
+                "word_bank": ["appreciate", "support", "integrated approach", "comprehensive strategy", "ensures", "maintains", "cultural authenticity", "traditional values", "coordinate", "synchronize", "musical elements", "decorative components", "visual aesthetics", "artistic design", "aesthetic coherence", "cultural harmony"],
+                "success_feedback": "Outstanding, [Player]! Your listening and negotiation demonstrate excellent professional communication! You've completed Phase 2!",
+                "remedial_feedback": "Good job, [Player]! Let's practice more to perfect our plan!",
+                "success_threshold": 8,
+                "expected_answers": ["appreciate", "integrated approach", "ensures", "cultural authenticity", "coordinate", "musical elements", "visual aesthetics", "aesthetic coherence"]
             }
         ]
     }

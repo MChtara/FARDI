@@ -6,19 +6,51 @@
 <link href="{{ url_for('static', filename='css/game.css') }}" rel="stylesheet">
 <style>
     .phase2-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
         min-height: 100vh;
         padding: 1rem 0;
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    .phase2-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="tunisian-flag" patternUnits="userSpaceOnUse" width="20" height="20"><rect width="20" height="20" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="10" r="3" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/><polygon points="10,7 11,9 13,9 11.5,10.5 12,12.5 10,11.5 8,12.5 8.5,10.5 7,9 9,9" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23tunisian-flag)"/></svg>') repeat;
+        opacity: 0.3;
+        animation: subtle-move 20s ease-in-out infinite;
+    }
+    
+    @keyframes subtle-move {
+        0%, 100% { transform: translateX(0) translateY(0); }
+        50% { transform: translateX(10px) translateY(-10px); }
     }
     
     .committee-scene-header {
-        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), 
-                    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="tunisian" patternUnits="userSpaceOnUse" width="15" height="15"><rect width="15" height="15" fill="%23f8f9fa"/><circle cx="7.5" cy="7.5" r="2" fill="%23dc3545" opacity="0.6"/></pattern></defs><rect width="100" height="100" fill="url(%23tunisian)"/></svg>');
+        background: linear-gradient(135deg, rgba(25, 25, 25, 0.95) 0%, rgba(40, 40, 40, 0.9) 100%);
         color: white;
-        padding: 2rem;
-        border-radius: 15px 15px 0 0;
+        padding: 3rem 2rem;
+        border-radius: 20px 20px 0 0;
         position: relative;
         overflow: hidden;
+        border: 3px solid rgba(220, 38, 38, 0.3);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .committee-scene-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="tunisian-geometric" patternUnits="userSpaceOnUse" width="25" height="25"><rect width="25" height="25" fill="transparent"/><circle cx="12.5" cy="12.5" r="8" fill="none" stroke="rgba(220,38,38,0.15)" stroke-width="1"/><polygon points="12.5,6 15,11 20,11 16.5,14 18,19 12.5,16 7,19 8.5,14 5,11 10,11" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23tunisian-geometric)"/></svg>') repeat;
+        opacity: 0.4;
+        pointer-events: none;
     }
     
     .committee-scene-header::before {
@@ -80,18 +112,21 @@
     }
     
     .character-avatar-large {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
-        border: 4px solid #fff;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        transition: transform 0.3s ease;
+        border: 6px solid #dc2626;
+        box-shadow: 0 15px 40px rgba(220, 38, 38, 0.3);
+        transition: all 0.4s ease;
         position: relative;
         overflow: hidden;
+        background: linear-gradient(135deg, #f3f4f6, #ffffff);
     }
     
     .character-avatar-large:hover {
-        transform: scale(1.05);
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 20px 50px rgba(220, 38, 38, 0.4);
+        border-color: #ef4444;
     }
     
     .character-avatar-large::after {
@@ -111,33 +146,60 @@
     }
     
     .dialogue-bubble-modern {
-        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-        border-radius: 20px;
-        padding: 2rem;
-        margin: 1rem 0;
-        border-left: 5px solid #007bff;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 25px;
+        padding: 2.5rem;
+        margin: 1.5rem 0;
+        border: 3px solid #dc2626;
+        box-shadow: 0 15px 40px rgba(220, 38, 38, 0.15);
         position: relative;
         backdrop-filter: blur(10px);
+        transform: perspective(1000px) rotateX(2deg);
+        transition: all 0.3s ease;
+    }
+    
+    .dialogue-bubble-modern:hover {
+        transform: perspective(1000px) rotateX(0deg) translateY(-5px);
+        box-shadow: 0 20px 50px rgba(220, 38, 38, 0.2);
     }
     
     .dialogue-bubble-modern::before {
         content: '';
         position: absolute;
-        left: -15px;
-        top: 30px;
-        border: 15px solid transparent;
-        border-right-color: #007bff;
+        left: -18px;
+        top: 35px;
+        border: 18px solid transparent;
+        border-right-color: #dc2626;
+        z-index: 1;
     }
     
     .response-area-modern {
-        background: rgba(255,255,255,0.95);
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.95) 100%);
+        border-radius: 25px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 45px rgba(0,0,0,0.12);
         margin-top: 2rem;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(220, 38, 38, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .response-area-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #dc2626, #ef4444, #dc2626);
+        background-size: 200% 100%;
+        animation: progress-glow 3s ease-in-out infinite;
+    }
+    
+    @keyframes progress-glow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
     
     .hint-box-modern {
@@ -213,23 +275,26 @@
     }
     
     .submit-btn-modern {
-        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
         border: none;
         color: white;
-        padding: 1rem 2rem;
+        padding: 1.2rem 2.5rem;
         border-radius: 50px;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: bold;
         transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
         position: relative;
         overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     
     .submit-btn-modern:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 35px rgba(220, 38, 38, 0.5);
         color: white;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
     }
     
     .submit-btn-modern::before {
@@ -273,9 +338,76 @@
     }
     
     .response-textarea-modern:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 20px rgba(0, 123, 255, 0.1);
-        transform: scale(1.01);
+        border-color: #dc2626;
+        box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+        transform: scale(1.02);
+    }
+    
+    /* Step Progress Indicators */
+    .step-progress-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .step-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.7);
+        transition: all 0.4s ease;
+        margin-bottom: 0.5rem;
+    }
+    
+    .step-progress-item.active .step-circle {
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        border-color: #ffffff;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 5px 20px rgba(220, 38, 38, 0.4);
+    }
+    
+    .step-progress-item.completed .step-circle {
+        background: linear-gradient(135deg, #16a34a, #22c55e);
+        border-color: #ffffff;
+        color: white;
+        box-shadow: 0 3px 15px rgba(22, 163, 74, 0.3);
+    }
+    
+    .step-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        transition: color 0.3s ease;
+    }
+    
+    .step-progress-item.active .step-label,
+    .step-progress-item.completed .step-label {
+        color: white;
+    }
+    
+    .step-connector {
+        flex: 1;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.3);
+        margin: 0 1rem;
+        position: relative;
+        top: -25px;
+        transition: all 0.4s ease;
+    }
+    
+    .step-connector.completed {
+        background: linear-gradient(90deg, #16a34a, #22c55e);
+        box-shadow: 0 0 10px rgba(22, 163, 74, 0.3);
     }
 </style>
 {% endblock %}
@@ -311,11 +443,59 @@
                     <!-- Scene Header -->
                     <div class="committee-scene-header">
                         <div class="text-center">
+                            <!-- Cultural Event Planning Progress -->
+                            <div class="bg-white bg-opacity-15 rounded-xl p-4 mb-4 mx-auto backdrop-blur-md border border-white border-opacity-20" style="max-width: 700px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="step-progress-item {% if step_id == 'step_1' %}active{% elif step_id in ['step_2', 'step_3', 'final_writing'] %}completed{% endif %}">
+                                        <div class="step-circle">
+                                            {% if step_id == 'step_1' %}
+                                                <i class="fas fa-users-cog"></i>
+                                            {% else %}
+                                                <i class="fas fa-check"></i>
+                                            {% endif %}
+                                        </div>
+                                        <span class="step-label">Assigning Roles</span>
+                                    </div>
+                                    <div class="step-connector {% if step_id in ['step_2', 'step_3', 'final_writing'] %}completed{% endif %}"></div>
+                                    <div class="step-progress-item {% if step_id == 'step_2' %}active{% elif step_id in ['step_3', 'final_writing'] %}completed{% endif %}">
+                                        <div class="step-circle">
+                                            {% if step_id == 'step_2' %}
+                                                <i class="fas fa-calendar-alt"></i>
+                                            {% elif step_id in ['step_3', 'final_writing'] %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <i class="fas fa-calendar-alt"></i>
+                                            {% endif %}
+                                        </div>
+                                        <span class="step-label">Scheduling Meetings</span>
+                                    </div>
+                                    <div class="step-connector {% if step_id in ['step_3', 'final_writing'] %}completed{% endif %}"></div>
+                                    <div class="step-progress-item {% if step_id == 'step_3' %}active{% elif step_id == 'final_writing' %}completed{% endif %}">
+                                        <div class="step-circle">
+                                            {% if step_id == 'step_3' %}
+                                                <i class="fas fa-tasks"></i>
+                                            {% elif step_id == 'final_writing' %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <i class="fas fa-tasks"></i>
+                                            {% endif %}
+                                        </div>
+                                        <span class="step-label">Planning Tasks</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <h2 class="mb-3">
                                 <i class="fas fa-users me-2"></i>{{ step.title }}
                             </h2>
                             <p class="lead mb-3">{{ step.scenario }}</p>
-                            <div>
+                            
+                            <!-- Current Activity Progress -->
+                            <div class="bg-white bg-opacity-10 rounded px-3 py-2 d-inline-block">
+                                Activity {{ current_item + 1 }} of {{ total_items }}
+                            </div>
+                            
+                            <div class="mt-3">
                                 <div class="tunisian-decoration"></div>
                                 <div class="tunisian-decoration"></div>
                                 <div class="tunisian-decoration"></div>

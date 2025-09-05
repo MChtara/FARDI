@@ -78,6 +78,8 @@ def login():
             session['email'] = user['email']
             session['first_name'] = user['first_name']
             session['last_name'] = user['last_name']
+            session['is_admin'] = user.get('is_admin', False)
+            session['role'] = user.get('role', 'user')
             
             # Set session permanence based on remember me
             session.permanent = remember_me
@@ -87,8 +89,13 @@ def login():
             if next_page:
                 return redirect(next_page)
             
-            flash(f'Welcome back, {user["first_name"] or user["username"]}!', 'success')
-            return redirect(url_for('index'))  # Changed from dashboard to index
+            # Redirect admins to admin dashboard, regular users to regular dashboard
+            if user.get('is_admin'):
+                flash(f'Welcome back, Administrator {user["first_name"] or user["username"]}!', 'success')
+                return redirect(url_for('admin_dashboard'))
+            else:
+                flash(f'Welcome back, {user["first_name"] or user["username"]}!', 'success')
+                return redirect(url_for('dashboard'))
         else:
             flash('Invalid username/email or password. Please try again.', 'danger')
     
@@ -178,27 +185,46 @@ def logout():
     session.clear()
     
     flash(f'Goodbye, {username}! You have been logged out successfully.', 'info')
-    return redirect(url_for('index'))
+    return redirect(url_for('welcome'))
 
 @auth_bp.route('/profile')
 @login_required
 def profile():
     """User profile page"""
-    user_id = session.get('user_id')
-    user_data = user_manager.get_user_by_id(user_id)
-    
-    if not user_data:
-        flash('User not found. Please log in again.', 'danger')
-        return redirect(url_for('auth.logout'))
-    
-    # Get user statistics
-    user_stats = assessment_history.get_user_stats(user_id)
-    recent_assessments = assessment_history.get_user_assessments(user_id, limit=5)
-    
-    return render_template('auth/profile.html', 
-                         user=user_data, 
-                         stats=user_stats, 
-                         recent_assessments=recent_assessments)
+    try:
+        user_id = session.get('user_id')
+        if not user_id:
+            flash('Session expired. Please log in again.', 'warning')
+            return redirect(url_for('auth.login'))
+            
+        user_data = user_manager.get_user_by_id(user_id)
+        
+        if not user_data:
+            flash('User not found. Please log in again.', 'danger')
+            return redirect(url_for('auth.logout'))
+        
+        # Get user statistics with error handling
+        try:
+            user_stats = assessment_history.get_user_stats(user_id)
+        except Exception as e:
+            logger.error(f"Error getting user stats: {str(e)}")
+            user_stats = {}
+        
+        try:
+            recent_assessments = assessment_history.get_user_assessments(user_id, limit=5)
+        except Exception as e:
+            logger.error(f"Error getting recent assessments: {str(e)}")
+            recent_assessments = []
+        
+        return render_template('auth/profile.html', 
+                             user=user_data, 
+                             stats=user_stats, 
+                             recent_assessments=recent_assessments)
+                             
+    except Exception as e:
+        logger.error(f"Error in profile route: {str(e)}")
+        flash('An error occurred loading your profile. Please try again.', 'danger')
+        return redirect(url_for('dashboard'))
 
 @auth_bp.route('/profile/edit', methods=['GET', 'POST'])
 @login_required

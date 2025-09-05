@@ -10,7 +10,7 @@
         align-items: center;
         justify-content: center;
         padding: var(--spacing-xl) 0;
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        background: linear-gradient(135deg, var(--off-white), var(--light-blue));
     }
 
     .error-card {
@@ -28,7 +28,7 @@
     .error-icon {
         width: 120px;
         height: 120px;
-        background: linear-gradient(135deg, var(--danger), #ff7d8c);
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -49,7 +49,7 @@
         font-family: var(--font-display);
         font-size: 4rem;
         font-weight: 700;
-        color: var(--danger);
+        color: var(--primary-blue);
         margin-bottom: var(--spacing-md);
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -58,7 +58,7 @@
         font-family: var(--font-display);
         font-size: 2rem;
         font-weight: 600;
-        color: var(--secondary-blue);
+        color: var(--primary-blue);
         margin-bottom: var(--spacing-lg);
     }
 
@@ -90,13 +90,13 @@
     }
 
     .error-btn.primary {
-        background: linear-gradient(135deg, var(--primary-blue), var(--primary-red));
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         color: white;
         border: none;
     }
 
     .error-btn.primary:hover {
-        background: linear-gradient(135deg, #3d6e8d, #d52b39);
+        background: linear-gradient(135deg, var(--secondary-blue), var(--tertiary-blue));
         transform: translateY(-2px);
         box-shadow: var(--shadow-md);
         color: white;
@@ -104,12 +104,12 @@
 
     .error-btn.secondary {
         background: transparent;
-        color: var(--secondary-blue);
-        border: 2px solid var(--secondary-blue);
+        color: var(--primary-blue);
+        border: 2px solid var(--primary-blue);
     }
 
     .error-btn.secondary:hover {
-        background: var(--secondary-blue);
+        background: var(--primary-blue);
         color: white;
         transform: translateY(-2px);
     }
@@ -117,13 +117,13 @@
     .error-details {
         margin-top: var(--spacing-xxl);
         padding: var(--spacing-lg);
-        background: #f8f9fa;
+        background: var(--off-white);
         border-radius: var(--border-radius-lg);
-        border-left: 4px solid var(--danger);
+        border-left: 4px solid var(--primary-blue);
     }
 
     .error-details h5 {
-        color: var(--secondary-blue);
+        color: var(--primary-blue);
         margin-bottom: var(--spacing-md);
         display: flex;
         align-items: center;
@@ -144,11 +144,11 @@
     .help-section {
         margin-top: var(--spacing-xl);
         padding-top: var(--spacing-xl);
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid var(--border-light);
     }
 
     .help-section h6 {
-        color: var(--secondary-blue);
+        color: var(--primary-blue);
         margin-bottom: var(--spacing-md);
         display: flex;
         align-items: center;
@@ -174,7 +174,7 @@
     }
 
     .help-link:hover {
-        color: var(--primary-red);
+        color: var(--tertiary-blue);
         text-decoration: underline;
     }
 

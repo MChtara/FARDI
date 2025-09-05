@@ -20,7 +20,12 @@ class AIService:
         self.temperature = 0.7
         
         if self.groq_api_key:
-            self.client = groq.Client(api_key=self.groq_api_key)
+            try:
+                self.client = groq.Groq(api_key=self.groq_api_key)
+            except Exception as e:
+                logger.error(f"Error initializing Groq client: {str(e)}")
+                logger.warning("Groq client unavailable. AI responses will be disabled.")
+                self.client = None
         else:
             self.client = None
             logger.warning("Groq API key not found. AI responses will be disabled.")
