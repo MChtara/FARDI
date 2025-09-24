@@ -1,0 +1,216 @@
+Phase 2 - Step 2: Scheduling Meetings
+Learning Outcomes (For Implementers):
+By the end of this step, students should demonstrate:
+* A1 (Basic): Suggest simple meeting times and purposes with basic vocabulary, respond to suggestions with minimal reasoning, and describe basic plans.
+* A2 (Elementary): Propose meeting schedules with basic connectors (e.g., "because"), respond to suggestions with simple reasoning, and describe plans with some detail.
+* B1 (Intermediate): Suggest clear meeting schedules with moderate reasoning, respond politely with explanations, and describe plans with cultural connections.
+* B2 (Upper-Intermediate): Propose detailed meeting schedules with strong reasoning, negotiate fluently with polite responses, and describe plans with cultural depth.
+Implementer Notes: Use CEFR-aligned outcomes for feedback/scoring. Never display CEFR levels/scores to students. Use thematic feedback (e.g., "Great idea! Let's add more details!").
+Scenario:
+You're back in the lively committee room, filled with energy and colorful Tunisian decorations. The team is ready to schedule meetings to organize the cultural event's tasks (e.g., decorations, music, food, promotion). Your action plan needs a clear schedule to keep everyone on track. Work with Ms. Mabrouki and the team to propose meeting times, discuss their purpose, and ensure the plan aligns with the cultural theme from Phase 1.
+Action Items:
+1. Meeting Proposal Task
+Instructions: Ms. Mabrouki says, "Let's schedule our first planning meeting! When should we meet, and why is that time perfect for our team?" Type or say a short proposal (2-3 sentences) suggesting a day, time, and reason tied to the team's needs or event goals.
+Implementer Notes:
+o Integration: Display Ms. Mabrouki's question with her avatar in the committee room (e.g., with Tunisian event posters). Provide a text box or voice input (if Grok's voice mode is enabled). Include a "Hint" button suggesting "Suggest a day and time, like 'Friday at 3 PM,' and a reason."
+o Answers: Expect:
+* A1: "Meet Friday. It good for team."
+* A2: "I suggest Friday at 3 PM because team is free."
+* B1: "Let's meet on Friday at 3 PM since most team members are available then."
+* B2: "I propose Friday at 3 PM for our meeting, as it suits everyone's schedule and gives us time to plan the cultural event."
+o Feedback: Use NLP to analyze vocabulary (e.g., "good" vs. "suits"), grammar (e.g., simple present vs. complex structures), and relevance to team needs. Deliver feedback via Ms. Mabrouki's avatar, e.g., "Nice suggestion, [Player]! Try 'Friday at 3 PM because everyone is free' for clarity." Never mention CEFR levels or technical terms.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+2. Purpose Explanation Task
+Instructions: Emna says, "Why is this meeting important for our cultural event?" Type or say a short response (1-2 sentences) explaining how the meeting will help the team (e.g., plan decorations or music) and connect to the cultural theme.
+Implementer Notes:
+o Integration: Show Emna's question with her avatar (e.g., a student with a musical instrument). Provide a text box or voice input. Include a "Hint" button suggesting "Mention a task like decorations or music."
+o Answers: Expect:
+* A1: "Meeting help plan event."
+* A2: "Meeting is for plan music and decorations."
+* B1: "The meeting will help us plan music and decorations for the cultural event."
+* B2: "This meeting will help us organize music and decorations to showcase Tunisian traditions in our event."
+o Feedback: Analyze vocabulary (e.g., "help" vs. "organize"), grammar, and cultural connections. Deliver feedback via Emna's avatar, e.g., "Good idea, [Player]! Try mentioning 'Tunisian traditions' to tie it to our theme." Never mention CEFR levels.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+3. Schedule Negotiation Task
+Instructions: SKANDER says, "I think Wednesday at 5 PM works better because it's quieter on campus. What's your take?" Type or say your response, agreeing with SKANDER or proposing another time with a reason.
+Implementer Notes:
+o Integration: Display SKANDER's dialogue with his avatar (e.g., a student leader with a planner). Provide a text box or voice input. Include a "Hint" button suggesting "Agree politely or suggest another time with a reason."
+o Answers: Expect:
+* A1: "Okay, Wednesday good."
+* A2: "Maybe Wednesday at 5 PM is good because quiet."
+* B1: "I agree, Wednesday at 5 PM works since it's quieter on campus."
+* B2: "I see your point; Wednesday at 5 PM is great because the quiet campus helps us focus on our action plan."
+o Feedback: Analyze politeness (e.g., "I agree"), vocabulary (e.g., "good" vs. "focus"), and reasoning clarity. Deliver feedback via SKANDER's avatar, e.g., "Nice teamwork, [Player]! Try 'I see your point' to strengthen our discussion." Never mention CEFR levels.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+4. Agenda Setting Task
+Instructions: Ryan says, "What should we discuss in this meeting to keep our action plan on track?" Type or say a short response (1-2 sentences) suggesting two topics (e.g., decorations budget, music selection) for the meeting agenda.
+Implementer Notes:
+o Integration: Show Ryan's question with his avatar (e.g., a student with a checklist). Provide a text box or voice input with a sample agenda template. Include a "Hint" button suggesting "Suggest topics like music or decorations."
+o Answers: Expect:
+* A1: "Talk music and decorations."
+* A2: "We discuss music selection and decorations budget."
+* B1: "We should discuss the music selection and decorations budget to plan the event."
+* B2: "Let's discuss the music selection and decorations budget to ensure our cultural event shines."
+o Feedback: Analyze vocabulary (e.g., "talk" vs. "discuss"), grammar, and relevance to the event. Deliver feedback via Ryan's avatar, e.g., "Great topics, [Player]! Try 'discuss music selection' for a clearer plan." Never mention CEFR levels.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+5. Meeting Confirmation Task
+Instructions: Lilia says, "Let's confirm our meeting details for the action plan!" Type or say one or two sentences to confirm the meeting day, time, and one key topic, ensuring it fits the cultural event's goals.
+Implementer Notes:
+o Integration: Show Lilia's question with her avatar (e.g., a student with a Tunisian flag). Provide a text box or voice input with a confirmation template. Include a "Hint" button suggesting "Confirm the day, time, and a topic like music."
+o Answers: Expect:
+* A1: "Meet Friday. Talk music."
+* A2: "Meeting is Friday at 3 PM to talk music."
+* B1: "We'll meet on Friday at 3 PM to discuss music selection."
+* B2: "Our meeting is set for Friday at 3 PM to discuss music selection for our cultural event."
+o Feedback: Analyze grammar (e.g., "meet" vs. "is set"), vocabulary, and cultural relevance. Deliver feedback via Lilia's avatar, e.g., "Clear plan, [Player]! Try 'is set for Friday' to match our action plan." Never mention CEFR levels.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+Response Table (For Implementers, Not Students):
+Action Item
+Question
+A1 Response
+A2 Response
+B1 Response
+B2 Response
+Meeting Proposal
+"When should we meet, and why is that time perfect for our team?"
+"Meet Friday. It good for team."
+"I suggest Friday at 3 PM because team is free."
+"Let's meet on Friday at 3 PM since most team members are available then."
+"I propose Friday at 3 PM for our meeting, as it suits everyone's schedule and gives us time to plan the cultural event."
+Purpose Explanation
+"Why is this meeting important for our cultural event?"
+"Meeting help plan event."
+"Meeting is for plan music and decorations."
+"The meeting will help us plan music and decorations for the cultural event."
+"This meeting will help us organize music and decorations to showcase Tunisian traditions in our event."
+Schedule Negotiation
+(SKANDER: "I think Wednesday at 5 PM works better because it's quieter on campus. What's your take?")
+"Okay, Wednesday good."
+"Maybe Wednesday at 5 PM is good because quiet."
+"I agree, Wednesday at 5 PM works since it's quieter on campus."
+"I see your point; Wednesday at 5 PM is great because the quiet campus helps us focus on our action plan."
+Agenda Setting
+"What should we discuss in this meeting to keep our action plan on track?"
+"Talk music and decorations."
+"We discuss music selection and decorations budget."
+"We should discuss the music selection and decorations budget to plan the event."
+"Let's discuss the music selection and decorations budget to ensure our cultural event shines."
+Meeting Confirmation
+"Let's confirm our meeting details for the action plan!"
+"Meet Friday. Talk music."
+"Meeting is Friday at 3 PM to talk music."
+"We'll meet on Friday at 3 PM to discuss music selection."
+"Our meeting is set for Friday at 3 PM to discuss music selection for our cultural event."
+Assessment Focus (For Implementers):
+* Vocabulary Range: Check for basic terms (e.g., "good," "talk") vs. precise terms (e.g., "suits," "discuss"). Encourage event-specific language.
+* Grammar and Syntax: Evaluate sentence structure (e.g., simple present vs. complex structures). Suggest clarity improvements.
+* Connection to Phase 1: Ensure responses reference the cultural theme or teamwork from Phase 1.
+* Coherence and Negotiation: Assess clarity in proposals, politeness in negotiation, and cohesion in confirmations. Deliver feedback as team encouragement.
+Implementer Notes: Use NLP to assign internal scores (A1 = 1, A2 = 2, B1 = 3, B2 = 4). Never display CEFR levels or scores to students. Present feedback via avatars with event-focused language (e.g., "Great idea! Let's add more details!").
+Success Feedback (Displayed for B2-Level Performance Across All Action Items):
+Ms. Mabrouki's avatar claps enthusiastically: "Fantastic, [Player]! Your meeting schedule is perfectly planned, setting our cultural event on the right track! Ready to organize tasks? Let's move to [Step 3: Planning Tasks]!"
+Remedial Feedback (Displayed for A1-B1 Performance):
+Ms. Mabrouki's avatar smiles warmly: "Great start, [Player]! Your scheduling ideas are coming together, but let's polish them with some fun action items to prepare for the next step!"
+Remedial Action Items (for A1-B1 Students):
+Students scoring <20 points engage in remedial action items (A, B, C, D) based on their level (A1, A2, B1). Feedback is delivered via avatars, and CEFR levels/scores are hidden from students.
+* A1 Level:
+1. Remedial Action Item A: Schedule Matching Game
+Instructions: SKANDER's avatar says, "Let's practice scheduling! Match 6 meeting details to their purposes." Drag items to descriptions.
+Task: Match: Friday 3 PM, music, decorations, quiet time, budget, teamwork to:
+* "Best time for team to meet" → __________
+* "Plan Tunisian songs" → __________
+* "Plan cultural visuals" → __________
+* "Good for focus" → __________
+* "Discuss event costs" → __________
+* "Work together" → __________
+Purpose: Build scheduling vocabulary, linking to Step 1 roles.
+Implementer Notes: Use drag-and-drop interface with cultural visuals. Feedback via SKANDER's avatar, e.g., "Correct! 'Friday 3 PM' is great for the team." Hide CEFR/scores.
+* Scoring: 6 correct = B2 (proceed to Step 3); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item B).
+Feedback:
+* B2: "Awesome, [Player]! Your schedule is ready! Let's move to [Step 3]!"
+* A1-B1: "Nice try! Let's practice more for our plan!"
+2. Remedial Action Item B: Schedule Sentence Builder
+Instructions: Emna's avatar says, "Let's build sentences for our schedule! Fill in 6 gaps." Use word bank (e.g., Friday, 3 PM, music, because, discuss, team).
+Task:
+* Meet __________ __________ __________ team is free.
+* __________ helps plan __________.
+* I suggest __________ to __________ music.
+Purpose: Practice simple scheduling sentences.
+Implementer Notes: Use dropdowns. Feedback via Emna's avatar, e.g., "Great! Try 'because team is free.'" Hide CEFR/scores.
+* Scoring: 6 correct = B2; 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item C).
+Feedback:
+* B2: "Perfect, [Player]! Ready for [Step 3]!"
+* A1-B1: "Good effort! Let's try another task!"
+3. Remedial Action Item C: Schedule Dialogue
+Instructions: Ryan's avatar says, "Let's talk about scheduling! Fill in 6 gaps." Use word bank (e.g., Friday, 3 PM, because, discuss, music, good).
+Task:
+* Ryan: "When's the meeting?"
+* You: "__________ __________ __________ team is free."
+Purpose: Practice scheduling dialogues.
+Implementer Notes: Dialogue interface. Feedback via Ryan's avatar, e.g., "Nice! Try 'discuss music.'" Hide CEFR/scores.
+* Scoring: 6 clear = B2; 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item D).
+Feedback:
+* B2: "Great job, [Player]! Let's move to [Step 3]!"
+* A1-B1: "Nice work! Let's try one more task!"
+4. Remedial Action Item D: Schedule Confirmation Writing
+Instructions: Lilia's avatar says, "Confirm our schedule! Write 6 sentences."
+Task:
+* Meeting is __________ __________ because __________.
+* We __________ __________ music.
+Purpose: Practice writing schedule confirmations.
+Implementer Notes: Text box. Feedback via Lilia's avatar, e.g., "Great! Try 'is set for Friday.'" Hide CEFR/scores.
+* Scoring: 6 detailed = B2; 5 = B1; 3-4 = A2; 1-2 = A1 (repeat Action Item D or consult implementer).
+Feedback:
+* B2: "Amazing, [Player]! Ready for [Step 3]!"
+* A1-B1: "You're close! Let's review with Ms. Mabrouki!"
+* A2 Level: Similar tasks with increased complexity (e.g., more connectors).
+1. Remedial Action Item A: Schedule Role-Play Dialogue
+Instructions: SKANDER's avatar says, "Let's practice scheduling dialogues! Fill in 6 gaps." Use word bank (e.g., Friday, 3 PM, because, discuss, music, team).
+Task: Similar to A1 but with connectors like "because" or "since."
+Purpose: Practice scheduling with reasoning.
+Implementer Notes: Dialogue interface. Feedback via SKANDER's avatar. Hide CEFR/scores.
+* Scoring: 6 clear = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+2. Remedial Action Item B: Schedule Sentence Expansion
+Instructions: Emna's avatar says, "Expand sentences for our schedule! Rewrite 6 sentences."
+Task: Add connectors and details (e.g., "Meet Friday → Meet Friday at 3 PM because...").
+Purpose: Practice sentence expansion.
+Implementer Notes: Text box. Feedback via Emna's avatar. Hide CEFR/scores.
+* Scoring: 6 detailed = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+3. Remedial Action Item C: Schedule Story Rewrite
+Instructions: Ryan's avatar says, "Rewrite a story about our schedule! Fill in 6 gaps."
+Task: Include cultural details (e.g., "Meeting plans Tunisian music...").
+Purpose: Practice storytelling with scheduling.
+Implementer Notes: Text box. Feedback via Ryan's avatar. Hide CEFR/scores.
+* Scoring: 6 detailed = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+4. Remedial Action Item D: Schedule Confirmation Practice
+Instructions: Lilia's avatar says, "Confirm the schedule! Write 6 sentences."
+Task: Write detailed confirmations (e.g., "Meeting is set for Friday...").
+Purpose: Practice writing confirmations.
+Implementer Notes: Text box. Feedback via Lilia's avatar. Hide CEFR/scores.
+* Scoring: 6 detailed = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+* B1 Level: Tasks focus on detailed reasoning and cultural connections.
+1. Remedial Action Item A: Negotiation Schedule Role-Play
+Instructions: SKANDER's avatar says, "Negotiate the schedule! Fill in 6 gaps."
+Task: Use polite phrases (e.g., "I agree," "I suggest").
+Purpose: Practice polite negotiation.
+Implementer Notes: Dialogue interface. Feedback via SKANDER's avatar. Hide CEFR/scores.
+* Scoring: 6 polite = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+2. Remedial Action Item B: Schedule Confirmation Writing
+Instructions: Emna's avatar says, "Confirm the schedule! Write 6 sentences."
+Task: Include reasoning and cultural details.
+Purpose: Practice detailed confirmations.
+Implementer Notes: Text box. Feedback via Emna's avatar. Hide CEFR/scores.
+* Scoring: 6 detailed = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+3. Remedial Action Item C: Cultural Schedule Reflection
+Instructions: Ryan's avatar says, "Reflect on the schedule's impact! Fill in 6 gaps."
+Task: Link schedule to cultural goals.
+Purpose: Practice cultural reflection.
+Implementer Notes: Text box. Feedback via Ryan's avatar. Hide CEFR/scores.
+* Scoring: 6 detailed = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+4. Remedial Action Item D: Schedule Storytelling
+Instructions: Lilia's avatar says, "Write a story about our schedule! Write 6 sentences."
+Task: Include cultural and scheduling details.
+Purpose: Practice storytelling.
+Implementer Notes: Text box. Feedback via Lilia's avatar. Hide CEFR/scores.
+* Scoring: 6 detailed = B2; 5 = B1; 3-4 = A2; 1-2 = A1.
+Implementer Notes: Use NLP for scoring (A1 = 1, A2 = 2, B1 = 3, B2 = 4). Hide CEFR/scores. Feedback via avatars with thematic language.

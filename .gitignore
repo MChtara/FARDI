@@ -35,3 +35,5 @@ build/
 
 # Windows specific files
 Thumbs.db
+frontend/node_modules/
+frontend/build/

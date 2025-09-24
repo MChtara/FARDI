@@ -1,103 +1,71 @@
-# CLAUDE.md
+# FARDI - Language Assessment Platform
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This is a full-stack CEFR (Common European Framework of Reference for Languages) assessment game with separate frontend and backend components.
 
-## Development Commands
+## Project Structure
 
-### Core Development
-```bash
-# Start the Flask application
-python app.py
+```
+FARDI/
+├── backend/          # Flask API server
+│   ├── app.py        # Main Flask application
+│   ├── models/       # Database models and game data
+│   ├── routes/       # API endpoints and authentication
+│   ├── services/     # AI, audio, and assessment services
+│   ├── utils/        # Helper functions
+│   ├── templates/    # Server-side templates
+│   ├── static/       # Static assets
+│   ├── sessions/     # Session storage
+│   ├── requirements.txt
+│   └── CLAUDE.md     # Backend-specific documentation
+│
+└── frontend/         # React SPA
+    ├── src/          # React source code
+    ├── dist/         # Built files (served by Flask)
+    ├── package.json
+    └── vite.config.js
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### Environment Setup
-- Copy `.env.example` to `.env` and configure:
-  - `GROQ_API_KEY`: Required for AI-powered language assessment
-  - `SAPLING_API_KEY`: Optional for AI content detection
-  - `SECRET_KEY`: Flask session security
+## Quick Start
 
-## Architecture Overview
+### Backend (Flask API)
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
+```
 
-This is a Flask-based CEFR (Common European Framework of Reference for Languages) assessment game with a modular service-oriented architecture:
+### Frontend (React SPA)
+```bash
+cd frontend
+npm install
+npm run build  # For production
+# OR
+npm run dev    # For development
+```
 
-### Core Application Structure
-- **`app.py`**: Main Flask application with route definitions and session management
-- **`config.py`**: Configuration classes for different environments (development, production, testing)
-- **`requirements.txt`**: Python dependencies (note: file appears to have encoding issues)
+## Development Workflow
 
-### Service Layer (`services/`)
-- **`ai_service.py`**: Groq API integration for AI responses and Sapling API for AI detection
-- **`assessment_service.py`**: CEFR level assessment logic and listening comprehension evaluation
-- **`audio_service.py`**: Edge TTS integration for text-to-speech generation
+1. **Backend Development**: Work in `backend/` directory
+2. **Frontend Development**: Work in `frontend/` directory
+3. **Full Stack**: Run both servers independently or build frontend and serve via Flask
 
-### Data Layer (`models/`)
-- **`game_data.py`**: Game constants including NPCs, dialogue questions, CEFR levels, achievements, and badges
-- **`auth.py`**: User authentication and database models
+## Access Points
 
-### Routing (`routes/`)
-- **`auth_routes.py`**: Authentication endpoints and user management
-- **`api_routes.py`**: API endpoints for AI feedback, language tips, and audio generation
+- **Backend API**: `http://localhost:5010/api/`
+- **React SPA**: `http://localhost:5010/app/`
+- **Legacy Templates**: `http://localhost:5010/`
 
-### Utilities (`utils/`)
-- **`helpers.py`**: Helper functions for level determination, skill assessment, and XP calculation
+## Documentation
 
-## Game Flow Architecture
+- See `backend/CLAUDE.md` for backend-specific documentation
+- Frontend documentation is included in the backend CLAUDE.md file
 
-The application follows a structured assessment flow:
-1. User authentication and session management
-2. 9-step dialogue sequence with different NPCs
-3. Real-time CEFR assessment of each response
-4. AI-powered feedback generation
-5. Overall assessment and certificate generation
+## Environment Setup
 
-## Key Technical Patterns
-
-### Session Management
-- Filesystem-based sessions stored in `sessions/` directory
-- 30-day persistent sessions for "remember me" functionality
-- Session data includes game state, user responses, and assessment results
-
-### AI Integration
-- Groq API for language assessment and character responses
-- Fallback mechanisms when API keys are unavailable
-- Sapling API for AI-generated content detection
-
-### Audio System
-- Edge TTS for character voice generation
-- Character-specific voice mapping
-- Audio files stored in `static/audio/`
-
-### Assessment System
-- Multi-criteria CEFR evaluation (grammar, vocabulary, coherence)
-- Specialized listening comprehension assessment
-- Point-based scoring system with level thresholds
-
-## Database and Persistence
-
-- SQLite database (`fardi.db`) for user data and assessment history
-- Filesystem sessions for temporary game state
-- Static file organization for avatars, audio, and assets
-
-## Development Notes
-
-- The application uses a blueprint pattern for authentication routes
-- Game data is centralized in `models/game_data.py` for easy modification
-- Assessment prompts and criteria are defined in the service layer
-- Character avatars are SVG files stored in `static/images/avatars/`
-- The system supports multiple environments through config classes
-
-## API Integration Points
-
-- `/api/get-ai-feedback`: Real-time response evaluation
-- `/api/language-tips`: Personalized learning recommendations
-- `/api/check-ai-response`: AI content detection
-- `/api/generate-audio`: Custom audio generation
-
-This architecture supports a scalable language assessment platform with clear separation of concerns between game logic, AI services, and user management.
+Copy `backend/.env.example` to `backend/.env` and configure:
+- `GROQ_API_KEY`: Required for AI-powered language assessment
+- `SAPLING_API_KEY`: Optional for AI content detection
+- `SECRET_KEY`: Flask session security

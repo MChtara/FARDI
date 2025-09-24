@@ -1,0 +1,365 @@
+Phase 2 - Cultural Event Planning and Teamwork
+Welcome, [Player]!
+You're an essential member of the Cultural Event Planning Committee at your Tunisian university, ready to create a vibrant celebration of Tunisian culture! In Phase 1, you joined the orientation, received an email invitation, chose a cultural event theme, and brainstormed roles with Ms. Mabrouki (Event Coordinator), SKANDER (Student Council President), Emna, Ryan, and Lilia. Now, in Phase 2, you'll build the action plan through three steps-assigning roles, scheduling meetings, and planning tasks-culminating in a final action plan draft. Your AI Assistant, ChatGuide, will guide you with feedback to make your contributions shine. Let's make this event unforgettable!
+How It Works:
+* Engage in action items that feel like real event planning, such as sharing stories, suggesting roles, scheduling meetings, and drafting plans.
+* Character avatars will provide feedback to keep you on track, encouraging you to move forward or practice more with fun, thematic tasks.
+* Your goal is to develop the action plan while practicing your English in a lively, immersive way.
+* Enjoy the journey and show your teamwork spirit
+
+Phase 2 - Step 1: Assigning Roles
+Learning Outcomes (For Implementers):
+By the end of this step, students should demonstrate:
+* A1 (Basic): Share simple stories about Phase 1, suggest and confirm roles with basic vocabulary, and reflect minimally on the event's cultural impact.
+* A2 (Elementary): Tell short stories with basic connectors (e.g., "because"), make role suggestions with simple reasoning, and reflect with some cultural details.
+* B1 (Intermediate): Narrate clear Phase 1 experiences, justify role suggestions with balanced reasoning, and reflect on roles with cultural connections.
+* B2 (Upper-Intermediate): Craft engaging stories linking to Phase 1, provide detailed role justifications, and reflect fluently on the event's cultural significance.
+Implementer Notes: Use these CEFR-aligned outcomes to calibrate feedback and scoring, but never display "A1," "A2," "B1," "B2," or scores to students. Present feedback as team encouragement (e.g., "Great start! Let's add more cultural details!") to maintain immersion in the cultural event planning context.
+
+Scenario:
+You're gathered in the vibrant committee room at the university, surrounded by colorful posters of past cultural events. Ms. Mabrouki, SKANDER, Emna, Ryan, and Lilia are buzzing with excitement about the event. Your action plan starts here: reflect on your Phase 1 journey, assign roles for tasks like decorations, music, food, and promotion, and ensure everyone's on board. Let's make this event a celebration of Tunisian culture!
+Action Items:
+1. Storytelling Introduction Task
+Instructions: Ms. Mabrouki smiles and says, "Let's start by sharing how our orientation in Phase 1 inspired us for this event. What did you learn about our team or the event theme that excites you for planning?" Type or say a short story (2-3 sentences) about your experience from Phase 1 (e.g., orientation meeting, email invitation, choosing the event theme, role brainstorming). Make it lively to inspire the team!
+Implementer Notes:
+o Integration: Display Ms. Mabrouki's question in a speech bubble next to her animated avatar (e.g., a coordinator in Tunisian attire) in a committee room with cultural visuals (e.g., Tunisian tiles, event posters). Provide a text box for typing or a microphone icon for voice input (if Grok's voice mode is enabled). Include a "Hint" button suggesting "Mention the cultural theme or a teammate's idea from Phase 1."
+o Answers: Expect:
+* A1: "I like orientation. Theme is culture."
+* A2: "In Phase 1, I learn about team. Theme is fun."
+* B1: "In Phase 1, we chose a cultural theme, and I liked Emna's idea for music."
+* B2: "During Phase 1's orientation, we selected a vibrant Tunisian cultural theme, and SKANDER's leadership inspired me to plan this event."
+o Feedback: Use NLP to analyze vocabulary (e.g., "culture" vs. "vibrant"), grammar (e.g., simple past vs. complex structures), and relevance to Phase 1. Deliver feedback via Ms. Mabrouki's avatar, e.g., "Great story, [Player]! Try 'we chose a theme' to make it clearer for our team." Never mention CEFR levels or terms like "grammar."
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores from students.
+2. Role Suggestion Task
+Instructions: Ms. Mabrouki says, "Let's shape our action plan! Who would be great for creating the decorations, and what makes them perfect for it?" Type or say your suggestion, explaining why the person fits the role based on their skills or interests.
+Implementer Notes:
+o Integration: Show Ms. Mabrouki's question with her avatar in the committee room interface. Provide a text box or voice input option. Include a "Hint" button suggesting "Mention a skill like creativity or teamwork."
+o Answers: Expect:
+* A1: "Emna do decorations. She like art."
+* A2: "I think Emna for decorations because she likes art."
+* B1: "I suggest Emna for decorations since she's creative and good at art."
+* B2: "I propose Emna for the decoration role in our action plan, as her creativity and artistic skills will create a vibrant atmosphere."
+o Feedback: Use NLP to analyze vocabulary (e.g., "art" vs. "creativity"), grammar (e.g., simple present "do" vs. complex "is ideal"), and relevance (e.g., skill-based reasoning). Deliver feedback via Ms. Mabrouki's avatar, e.g., "Nice idea, [Player]! Try 'Emna should do decorations' to sound more confident in our action plan." Never mention CEFR levels or technical terms.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+3. Peer Negotiation Task
+Instructions: SKANDER says, "I think Ryan would be perfect for decorations because he's so organized. What's your take?" Type or say your response, agreeing with SKANDER or defending your choice. Be polite and explain your thoughts to build the action plan together.
+Implementer Notes:
+o Integration: Display SKANDER's dialogue in a speech bubble with his avatar (e.g., a student leader with a notebook). Provide a text box or voice input. Include a "Hint" button suggesting "Try agreeing or explaining your choice politely."
+o Answers: Expect:
+* A1: "Okay, Ryan do it."
+* A2: "Maybe Ryan is good because he is organized."
+* B1: "I agree, Ryan's organization skills could work well for decorations."
+* B2: "I see your point; Ryan's organizational skills make him a strong candidate for decorations in our action plan."
+o Feedback: Analyze politeness (e.g., "I agree"), vocabulary (e.g., "good" vs. "organizational"), and reasoning clarity. Deliver feedback via SKANDER's avatar, e.g., "Good teamwork, [Player]! Try 'I see your point' to make our discussion smoother." Never mention CEFR levels or technical terms.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+4. Role Confirmation Task
+Instructions: Write one or two sentences to confirm the final roles for two team members (e.g., Emna and Ryan) in the action plan. Make sure your sentences are clear and fit the team's vision for the cultural event.
+Implementer Notes:
+o Integration: Provide a text box with a checklist of roles (e.g., decorations, music) for context. Show a team avatar cheering in the committee room. Include a "Hint" button suggesting "Mention who does what clearly."
+o Answers: Expect:
+* A1: "Emna do music. Ryan do decorations."
+* A2: "Emna is for music, and Ryan is for decorations."
+* B1: "Emna will handle music, and Ryan will manage decorations."
+* B2: "Emna is assigned to music, while Ryan will oversee decorations with his organizational skills for our action plan."
+o Feedback: Analyze grammar (e.g., "do" vs. "will handle"), vocabulary (e.g., "do" vs. "oversee"), and coherence. Deliver feedback via Ms. Mabrouki's avatar, e.g., "Clear plan, [Player]! Try 'Emna will handle music' to match our action plan's tone." Never mention CEFR levels or technical terms.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+5. Team Reflection Task
+Instructions: Lilia says, "How do these roles help our cultural event come to life?" Type or say a short response (1-2 sentences) explaining how the assigned roles (e.g., Emna's music, Ryan's decorations) will make the event special. Connect it to the cultural theme from Phase 1.
+Implementer Notes:
+o Integration: Show Lilia's question with her avatar (e.g., a student with a Tunisian flag). Provide a text box or voice input. Include a "Hint" button suggesting "Link roles to the cultural theme."
+o Answers: Expect:
+* A1: "Music is good for event."
+* A2: "Emna's music make event fun."
+* B1: "Emna's music will make the event lively, and Ryan's decorations will show our culture."
+* B2: "Emna's music will bring Tunisian traditions to life, while Ryan's decorations will create a vibrant cultural atmosphere for our event."
+o Feedback: Analyze vocabulary (e.g., "fun" vs. "vibrant"), grammar, and cultural connections to Phase 1. Deliver feedback via Lilia's avatar, e.g., "Nice reflection, [Player]! Try mentioning 'Tunisian traditions' to tie it to our theme." Never mention CEFR levels or technical terms.
+o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
+Response Table (For Implementers, Not Students):
+Action Item
+Question
+A1 Response
+A2 Response
+B1 Response
+B2 Response
+Storytelling Introduction
+"What did you learn about our team or the event theme that excites you for planning?"
+"I like orientation. Theme is culture."
+"In Phase 1, I learn about team. Theme is fun."
+"In Phase 1, we chose a cultural theme, and I liked Emna's idea for music."
+"During Phase 1's orientation, we selected a vibrant Tunisian cultural theme, and SKANDER's leadership inspired me to plan this event."
+Role Suggestion
+"Who would be great for creating the decorations, and what makes them perfect for it?"
+"Emna do decorations. She like art."
+"I think Emna for decorations because she likes art."
+"I suggest Emna for decorations since she's creative and good at art."
+"I propose Emna for the decoration role in our action plan, as her creativity and artistic skills will create a vibrant atmosphere."
+Peer Negotiation
+(SKANDER: "I think Ryan would be perfect for decorations because he's so organized. What's your take?")
+"Okay, Ryan do it."
+"Maybe Ryan is good because he is organized."
+"I agree, Ryan's organization skills could work well for decorations."
+"I see your point; Ryan's organizational skills make him a strong candidate for decorations in our action plan."
+Role Confirmation
+"Confirm the final roles for two team members."
+"Emna do music. Ryan do decorations."
+"Emna is for music, and Ryan is for decorations."
+"Emna will handle music, and Ryan will manage decorations."
+"Emna is assigned to music, while Ryan will oversee decorations with his organizational skills for our action plan."
+Team Reflection
+"How do these roles help our cultural event come to life?"
+"Music is good for event."
+"Emna's music make event fun."
+"Emna's music will make the event lively, and Ryan's decorations will show our culture."
+"Emna's music will bring Tunisian traditions to life, while Ryan's decorations will create a vibrant cultural atmosphere for our event."
+Assessment Focus (For Implementers):
+* Vocabulary Range: Check for basic terms (e.g., "culture," "art") vs. precise, relevant terminology (e.g., "vibrant atmosphere," "creativity"). Encourage event-specific language.
+* Grammar and Syntax: Evaluate sentence structure (e.g., simple present "do" vs. complex "is ideal"). Suggest clarity improvements.
+* Connection to Phase 1: Ensure responses reference Phase 1 elements (e.g., cultural theme, teamwork) for narrative continuity.
+* Coherence and Negotiation: Assess storytelling clarity, negotiation politeness, and confirmation/reflection cohesion. Deliver feedback as team encouragement.
+Implementer Notes: Use NLP to assign internal scores (A1 = 1, A2 = 2, B1 = 3, B2 = 4). Never display CEFR levels or scores to students. Present feedback via character avatars with event-focused language (e.g., "Great idea, [Player]! Let's add more cultural details!").
+Success Feedback (Displayed for B2-Level Performance Across All Action Items):
+Ms. Mabrouki's avatar claps enthusiastically: "Wow, [Player]! Your action plan for assigning roles is brilliant and full of energy! You've captured the spirit of our cultural event perfectly. Ready to schedule our first meeting? Let's move to [Step 2: Scheduling Meetings]!"
+Remedial Feedback (Displayed for A1-B1 Performance):
+Ms. Mabrouki's avatar smiles warmly: "Great start, [Player]! You're bringing our cultural event to life, but let's add a bit more sparkle to your skills. Join us for some fun action items to prepare for the next step in our action plan!"
+Remedial Action Items (for A1-B1 Students):
+Avoid referring to these activities as 'remedial'; their purpose is to support participants through a smooth and structured transition toward targeted practice opportunities whenever they experience difficulties or setbacks, ultimately helping them enhance their performance.
+Students scoring less than 20 points (B2 across all five action items) engage in remedial action items (A, B, C, D). Progression to the next remedial action item or Step 2 depends on performance, with feedback delivered by character avatars to maintain the cultural event theme. Use CEFR levels (A1, A2, B1) internally to assign tasks but never show them to students.
+* A1 Level:
+1. Remedial Action Item A: Cultural Role Matching Game
+Instructions: SKANDER's avatar says, "Let's warm up for our action plan! Match 6 event roles to their descriptions to get ready for planning." Drag each role to the correct description on the screen.
+Task: Match: decorations, music, food, promotion, art, organized to:
+* "Make the room colorful and cultural" → __________
+* "Play Tunisian songs for the event" → __________
+* "Prepare traditional dishes" → __________
+* "Share event news with students" → __________
+* "Skill for drawing or design" → __________
+* "Skill for planning and order" → __________
+Purpose: Build vocabulary for roles, linking to Phase 1's role brainstorming.
+Implementer Notes:
+* Integration: Use a drag-and-drop interface with cultural visuals (e.g., Tunisian patterns). Provide feedback via SKANDER's avatar, e.g., "Correct! 'Decorations' makes the room cultural."
+* Answers: Correct matches: decorations → "Make the room colorful," music → "Play Tunisian songs," food → "Prepare traditional dishes," promotion → "Share event news," art → "Skill for drawing," organized → "Skill for planning."
+* Feedback: Highlight correct/incorrect matches and suggest reviewing terms. Avoid CEFR terms or scores.
+* Scoring: 6 correct = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item B).
+Feedback After Action Item A:
+* B2: SKANDER's avatar cheers, "Amazing, [Player]! Your role knowledge is ready for our cultural event! Let's move to [Step 2: Scheduling Meetings]!"
+* A1-B1: SKANDER's avatar encourages, "Nice try, [Player]! Let's practice more to make our action plan shine. Join me for the next task!"
+2. Remedial Action Item B: Role Story Builder
+Instructions: Emna's avatar says, "Let's tell a story about our team's roles! Fill in 6 gaps to describe who does what for our cultural event." Use a word bank (e.g., Emna, Ryan, decorations, music, likes, good). Type your answers.
+Task:
+* __________ can do __________ because she __________ art.
+* __________ can do __________ because he is __________.
+* I suggest __________ for __________ role.
+* __________ is good for __________ because she __________.
+* __________ will do __________ for the event.
+* __________ is __________ at planning tasks.
+Purpose: Practice simple sentences, linking to Phase 1's role selection.
+Implementer Notes:
+* Integration: Use dropdown menus for the word bank. Show feedback via Emna's avatar, e.g., "Great! Try 'Emna likes art' for our action plan."
+* Answers: Sample: "Emna can do decorations because she likes art. Ryan can do promotion because he is organized..."
+* Feedback: Correct grammar (e.g., "do" → "does") and suggest connectors. Avoid CEFR terms or scores.
+* Scoring: 6 correct = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item C).
+Feedback After Action Item B:
+* B2: Emna's avatar smiles, "Wow, [Player]! Your role stories are perfect! Ready for [Step 2: Scheduling Meetings]?"
+* A1-B1: Emna's avatar encourages, "Good effort, [Player]! Let's keep building our event story!"
+3. Remedial Action Item C: Cultural Role Dialogue
+Instructions: Ryan's avatar says, "Let's practice talking about our roles! Fill in 6 gaps in this dialogue." Use a word bank (e.g., Emna, Ryan, decorations, music, because, will). Type or select answers.
+Task:
+* Ryan: "Who's good for decorations?"
+* You: "__________ should do __________ __________ she likes art."
+* Ryan: "What about music?"
+* You: "I suggest __________ for music __________ she loves songs."
+* Ryan: "Confirm one role."
+* You: "__________ __________ do __________."
+Purpose: Practice dialogues for role assignment, linking to Phase 1's teamwork.
+Implementer Notes:
+* Integration: Use a dialogue interface with clickable options. Show feedback via Ryan's avatar, e.g., "Nice! Try 'Emna loves songs' to add detail."
+* Answers: Sample: "Emna should do decorations because she likes art..."
+* Feedback: Suggest cultural details (e.g., "Tunisian songs") and correct grammar. Avoid CEFR terms or scores.
+* Scoring: 6 clear responses = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item D).
+Feedback After Action Item C:
+* B2: Ryan's avatar nods, "Great job, [Player]! Your suggestions are spot-on! Let's move to [Step 2: Scheduling Meetings]!"
+* A1-B1: Ryan's avatar encourages, "Nice work, [Player]! Let's try one more task!"
+4. Remedial Action Item D: Role Reflection Writing
+Instructions: Lilia's avatar says, "Let's reflect on our roles! Write 6 short sentences about who does what and why." Type your answers.
+Task:
+* __________ does __________ because __________.
+* __________ handles __________ because __________.
+* I suggest __________ for __________.
+* __________ is good for __________ because __________.
+* The event will have __________ by __________.
+* __________ helps the event because __________.
+Purpose: Practice writing about roles, linking to Phase 1's cultural theme.
+Implementer Notes:
+* Integration: Provide a text box with prompts. Show feedback via Lilia's avatar, e.g., "Nice! Try 'Emna does music' for clarity."
+* Answers: Sample: "Emna does music because she loves songs. Ryan handles decorations because he is organized..."
+* Feedback: Suggest cultural details (e.g., "Tunisian songs") and correct grammar. Avoid CEFR terms or scores.
+* Scoring: 6 detailed sentences = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (repeat Action Item D or consult implementer).
+Feedback After Action Item D:
+* B2: Lilia's avatar cheers, "Amazing, [Player]! Your reflections are ready for our cultural event! Let's move to [Step 2: Scheduling Meetings]!"
+* A1-B1: Lilia's avatar encourages, "You're getting there, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!"
+* A2 Level:
+1. Remedial Action Item A: Role-Play Dialogue Practice
+Instructions: SKANDER's avatar says, "Let's practice suggesting roles for our action plan! Fill in 6 gaps in this dialogue." Use a word bank (e.g., Emna, decorations, because, likes, I think, music). Type or select answers.
+Task:
+* SKANDER: "Who's good for decorations?"
+* You: "__________ should do __________ __________ she __________ art."
+* SKANDER: "What about Ryan?"
+* You: "__________ Ryan is good __________ he is organized."
+* SKANDER: "Confirm one role."
+* You: "__________ will do __________."
+Purpose: Practice suggesting roles with connectors, linking to Phase 1's teamwork.
+Implementer Notes:
+* Integration: Use a dialogue interface with clickable options. Show feedback via SKANDER's avatar, e.g., "Great! Try 'Emna likes art' for our plan."
+* Answers: Sample: "Emna should do decorations because she likes art..."
+* Feedback: Suggest details (e.g., "Try 'Emna likes art and drawing'") and correct grammar. Avoid CEFR terms or scores.
+* Scoring: 6 clear responses = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item B).
+Feedback After Action Item A:
+* B2: SKANDER's avatar smiles, "Awesome, [Player]! Your suggestions are perfect! Ready for [Step 2: Scheduling Meetings]?"
+* A1-B1: SKANDER's avatar encourages, "Good effort, [Player]! Let's try another task to strengthen our plan!"
+2. Remedial Action Item B: Sentence Expansion Challenge
+Instructions: Emna's avatar says, "Let's expand our ideas for the event! Rewrite 6 short sentences to add details using 'because' or 'and.'" Type your answers.
+Task:
+* Emna do music → Emna do music __________ she likes songs.
+* Ryan do decorations → Ryan do decorations __________ he is organized.
+* I suggest Emna → I suggest Emna __________ __________.
+* Ryan is good → Ryan is good __________ __________.
+* Emna do art → Emna do art __________ __________.
+* Ryan help event → Ryan help event __________ __________.
+Purpose: Practice expanding sentences, linking to Phase 1's role brainstorming.
+Implementer Notes:
+* Integration: Provide a text box with original sentences. Show feedback via Emna's avatar, e.g., "Nice! Try 'because she is creative' for Emna."
+* Answers: Sample: "Emna do music because she likes songs. Ryan do decorations because he is organized..."
+* Feedback: Highlight missing connectors and suggest vocabulary upgrades. Avoid CEFR terms or scores.
+* Scoring: 6 expanded sentences = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item C).
+Feedback After Action Item B:
+* B2: Emna's avatar cheers, "Great job, [Player]! Your sentences are ready for our plan! Ready for [Step 2: Scheduling Meetings]?"
+* A1-B1: Emna's avatar encourages, "Nice try, [Player]! Let's practice more to make our plans shine!"
+3. Remedial Action Item C: Cultural Story Rewrite
+Instructions: Ryan's avatar says, "Let's rewrite a story about our team's roles! Fill in 6 gaps to describe our action plan." Use a word bank (e.g., Emna, Ryan, music, decorations, because, will). Type your answers.
+Task:
+* Our team __________ Emna for __________ __________ she loves songs.
+* __________ will do __________ because he is __________.
+* The event __________ have __________ by Emna.
+* I suggest __________ for __________ role.
+* __________ is good __________ decorations.
+* The action plan __________ __________ for success.
+Purpose: Practice storytelling with role details, linking to Phase 1's theme selection.
+Implementer Notes:
+* Integration: Use a text box with prompts. Show feedback via Ryan's avatar, e.g., "Nice! Try 'Tunisian songs' for culture."
+* Answers: Sample: "Our team chose Emna for music because she loves songs..."
+* Feedback: Suggest cultural details (e.g., "Tunisian traditions") and check grammar. Avoid CEFR terms or scores.
+* Scoring: 6 detailed responses = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item D).
+Feedback After Action Item C:
+* B2: Ryan's avatar nods, "Fantastic, [Player]! Your story is perfect! Ready for [Step 2: Scheduling Meetings]?"
+* A1-B1: Ryan's avatar encourages, "Good work, [Player]! Let's try one more task to boost our event!"
+4. Remedial Action Item D: Role Confirmation Practice
+Instructions: Lilia's avatar says, "Let's confirm our roles for the action plan! Write 6 sentences about who does what and why." Type your answers.
+Task:
+* __________ will do __________ because __________.
+* __________ handles __________ because __________.
+* The team chose __________ for __________.
+* __________ is good for __________ because __________.
+* The event will have __________ by __________.
+* Our action plan includes __________ for __________.
+Purpose: Practice writing role confirmations, linking to Phase 1's teamwork.
+Implementer Notes:
+* Integration: Provide a text box with prompts. Show feedback via Lilia's avatar, e.g., "Great! Try 'handles music' for clarity."
+* Answers: Sample: "Emna will do music because she loves songs. Ryan handles decorations because he is organized..."
+* Feedback: Suggest formal phrasing (e.g., "handles" vs. "do") and cultural connections. Avoid CEFR terms or scores.
+* Scoring: 6 detailed sentences = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (repeat Action Item D or consult implementer).
+Feedback After Action Item D:
+* B2: Lilia's avatar cheers, "Amazing, [Player]! Your confirmations are ready! Let's move to [Step 2: Scheduling Meetings]!"
+* A1-B1: Lilia's avatar encourages, "You're close, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!"
+* B1 Level:
+1. Remedial Action Item A: Negotiation Role-Play
+Instructions: SKANDER's avatar says, "Let's practice negotiating roles for our action plan! Fill in 6 gaps in this dialogue to suggest and agree on roles." Use phrases like "I suggest" or "I agree." Type your answers.
+Task:
+* SKANDER: "Who's great for decorations?"
+* You: "I suggest __________ because she's __________."
+* SKANDER: "Ryan's organized for decorations."
+* You: "__________ Ryan's skills are good __________."
+* SKANDER: "Why Emna for music?"
+* You: "__________ Emna __________ music experience."
+Purpose: Practice polite negotiation, linking to Phase 1's teamwork.
+Implementer Notes:
+* Integration: Use a conversational interface with sequential prompts. Show feedback via SKANDER's avatar, e.g., "Nice! Try 'I see your point' for teamwork."
+* Answers: Sample: "I suggest Emna because she's creative..."
+* Feedback: Suggest polite phrases and check reasoning clarity. Avoid CEFR terms or scores.
+* Scoring: 6 polite responses = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item B).
+Feedback After Action Item A:
+* B2: SKANDER's avatar smiles, "Excellent, [Player]! Your negotiation skills are ready! Let's move to [Step 2: Scheduling Meetings]!"
+* A1-B1: SKANDER's avatar encourages, "Good job, [Player]! Let's practice more to perfect our plan!"
+2. Remedial Action Item B: Role Confirmation Writing
+Instructions: Emna's avatar says, "Let's confirm our roles for the event! Write 6 sentences to confirm roles with reasons." Type your answers.
+Task:
+* __________ will handle __________ because __________.
+* __________ is assigned to __________ because __________.
+* I suggest __________ for __________ because __________.
+* __________ will manage __________ and __________.
+* The team chose __________ for __________ because __________.
+* __________ is good for __________ because __________.
+Purpose: Practice writing role confirmations, linking to Phase 1's role selection.
+Implementer Notes:
+* Integration: Provide a text box with prompts. Show feedback via Emna's avatar, e.g., "Great! Try 'will handle music' for clarity."
+* Answers: Sample: "Emna will handle music because she has experience..."
+* Feedback: Correct grammar (e.g., "will handle" vs. "do") and suggest cultural details. Avoid CEFR terms or scores.
+* Scoring: 6 detailed sentences = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item C).
+Feedback After Action Item B:
+* B2: Emna's avatar cheers, "Great work, [Player]! Your confirmations are perfect! Ready for [Step 2: Scheduling Meetings]?"
+* A1-B1: Emna's avatar encourages, "Nice effort, [Player]! Let's try another task to polish our plans!"
+3. Remedial Action Item C: Cultural Reflection Practice
+Instructions: Ryan's avatar says, "Let's reflect on how our roles make the event special! Fill in 6 gaps to explain why roles matter." Type your answers.
+Task:
+* Emna's __________ helps because __________.
+* Ryan's __________ makes the event __________ because __________.
+* The __________ role is important for __________.
+* __________ will make the event __________ because __________.
+* Our action plan includes __________ for __________.
+* The cultural event needs __________ to __________.
+Purpose: Practice reflecting on roles with cultural connections, linking to Phase 1's theme.
+Implementer Notes:
+* Integration: Use a text box with prompts. Show feedback via Ryan's avatar, e.g., "Nice! Try 'Tunisian traditions' for culture."
+* Answers: Sample: "Emna's music helps because it brings Tunisian traditions..."
+* Feedback: Suggest cultural details and check coherence. Avoid CEFR terms or scores.
+* Scoring: 6 detailed responses = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (proceed to Action Item D).
+Feedback After Action Item C:
+* B2: Ryan's avatar nods, "Fantastic, [Player]! Your reflections make our event shine! Let's move to [Step 2: Scheduling Meetings]!"
+* A1-B1: Ryan's avatar encourages, "Good work, [Player]! Let's try one more task to boost our event's vibe!"
+4. Remedial Action Item D: Storytelling Revision
+Instructions: Lilia's avatar says, "Let's rewrite a story about our event roles! Write 6 sentences to describe our action plan and its cultural impact." Type your answers.
+Task:
+* Our team chose __________ for __________ because __________.
+* __________ will create __________ to show __________.
+* The event will feature __________ by __________.
+* I suggest __________ for __________ because __________.
+* Our action plan makes the event __________ because __________.
+* The cultural event will __________ because __________.
+Purpose: Practice storytelling with cultural details, linking to Phase 1's theme selection.
+Implementer Notes:
+* Integration: Provide a text box with prompts. Show feedback via Lilia's avatar, e.g., "Great! Try 'feature Tunisian culture' for impact."
+* Answers: Sample: "Our team chose Emna for music because she loves songs..."
+* Feedback: Suggest formal phrasing and cultural connections. Avoid CEFR terms or scores.
+* Scoring: 6 detailed sentences = B2 (proceed to Step 2); 5 = B1; 3-4 = A2; 1-2 = A1 (repeat Action Item D or consult implementer).
+Feedback After Action Item D:
+* B2: Lilia's avatar cheers, "Amazing, [Player]! Your story brings our event to life! Let's move to [Step 2: Scheduling Meetings]!"
+* A1-B1: Lilia's avatar encourages, "You're close, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!"
+Implementer Notes for Step 1:
+* Integration: Create an immersive committee room interface with avatars (Ms. Mabrouki, SKANDER, Emna, Ryan, Lilia) and cultural visuals (e.g., Tunisian patterns). Use text/voice inputs and conversational hint buttons to mimic team collaboration.
+* Progression: Students scoring ≥20 points (B2 across all action items) see success feedback and unlock Step 2. A1-B1 students see remedial feedback and access remedial action items based on their level. Hide CEFR levels and scores from students.
+* Feedback: Deliver feedback via character avatars in a thematic, encouraging tone (e.g., "Great idea! Let's add cultural details!"). Never use CEFR terms or technical language in student-facing feedback.
+* Storage: Save progress in memory (per user's Data Controls settings).
+* Level Determination Table (For Implementers, Not Students):
+Total Score
+CEFR Level
+Action
+5-9 points (1-2 per action item)
+A1
+Proceed to Remedial Action Item A (A1)
+10-14 points (2-3 per action item)
+A2
+Proceed to Remedial Action Item A (A2)
+15-19 points (3-4 per action item)
+B1
+Proceed to Remedial Action Item A (B1)
+20+ points (4 per action item)
+B2
