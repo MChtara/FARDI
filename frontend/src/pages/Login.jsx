@@ -20,8 +20,10 @@ export default function Login() {
     setLoading(true)
     setError('')
     try {
-      await client.login({ username_or_email, password, remember_me: remember })
-      navigate('/dashboard')
+      const result = await client.login({ username_or_email, password, remember_me: remember })
+      // Use the redirect URL from the API response, or fallback to dashboard
+      const redirectUrl = result.redirect_url || '/dashboard'
+      navigate(redirectUrl)
     } catch (err) {
       setError(err.message)
     } finally {

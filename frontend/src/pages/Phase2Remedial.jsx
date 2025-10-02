@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useRef, useLayoutEffect } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { Box, Paper, Typography, Stack, Button, Chip, LinearProgress, Grid, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material'
+import { CharacterMessage } from '../components/Avatar.jsx'
 
 export default function Phase2Remedial() {
   const { stepId, level } = useParams()
@@ -228,7 +229,18 @@ export default function Phase2Remedial() {
       <Paper variant="outlined" sx={{ p: 3 }}>
         <Stack spacing={2}>
           <Typography variant="h6">{a.title}</Typography>
-          <Typography color="text.secondary">{a.instruction}</Typography>
+          
+          {a.speaker && (
+            <CharacterMessage 
+              speaker={a.speaker} 
+              message={a.instruction}
+              showRole={true}
+            />
+          )}
+          
+          {!a.speaker && (
+            <Typography color="text.secondary">{a.instruction}</Typography>
+          )}
           {a.audio_text && (
             <Stack direction="row" spacing={1}>
               <Button onClick={()=>speak(a.audio_text)}>Play Audio</Button>
@@ -294,7 +306,10 @@ export default function Phase2Remedial() {
               {a.dialogue.map((line, li) => (
                 <Paper key={li} sx={{ p: 2 }} variant="outlined">
                   {line.type === 'character' ? (
-                    <Typography><strong>{line.speaker}:</strong> {line.text}</Typography>
+                    <CharacterMessage 
+                      speaker={line.speaker} 
+                      message={line.text}
+                    />
                   ) : (
                     <>
                       <Typography variant="body2" sx={{ mb: 2 }}><strong>Your response:</strong></Typography>
@@ -408,6 +423,19 @@ function ArrowMatching({ items, descriptions, answers, onChange, reverse=false }
   const rightRefs = useRef({})
   const [selected, setSelected] = useState(null)
   const [dragPreview, setDragPreview] = useState(null)
+  
+  // Shuffle function
+  const shuffleArray = (array) => {
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }
+  
+  // Create shuffled items on component mount
+  const [shuffledItems] = useState(() => shuffleArray(items))
 
 
   // Remove any mapping to the same item to keep one-to-one
@@ -533,7 +561,7 @@ function ArrowMatching({ items, descriptions, answers, onChange, reverse=false }
             <Grid item xs={12} md={5}>
               <Typography variant="subtitle2" sx={{ mb: 1 }}>Items</Typography>
               <Stack spacing={1} sx={{ p: 1, border: '1px dashed', borderColor: 'divider', borderRadius: 1 }}>
-                {items.map(k => (
+                {shuffledItems.map(k => (
                   <div 
                     key={k} 
                     ref={(el)=>{ if (el) leftRefs.current[k]=el }}
@@ -563,7 +591,7 @@ function ArrowMatching({ items, descriptions, answers, onChange, reverse=false }
             <Grid item xs={12} md={5}>
               <Typography variant="subtitle2" sx={{ mb: 1 }}>Items</Typography>
               <Stack spacing={1} sx={{ p: 1, border: '1px dashed', borderColor: 'divider', borderRadius: 1 }}>
-                {items.map(k => (
+                {shuffledItems.map(k => (
                   <div 
                     key={k} 
                     ref={(el)=>{ if (el) leftRefs.current[k]=el }}

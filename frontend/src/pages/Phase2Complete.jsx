@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Paper, Typography, Stack, Chip, LinearProgress, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { CharacterMessage } from '../components/Avatar.jsx'
 
 export default function Phase2Complete() {
   const [data, setData] = useState(null)
@@ -26,7 +27,19 @@ export default function Phase2Complete() {
     <Box>
       <Paper elevation={0} sx={{ p: 3, mb: 2 }}>
         <Typography variant="h5" gutterBottom>Phase 2 Complete</Typography>
-        <Typography color="text.secondary">Great work collaborating with your team. Here is your summary.</Typography>
+        
+        <CharacterMessage 
+          speaker="Ms. Mabrouki" 
+          message="Congratulations, team! You've successfully completed Phase 2 of our cultural event planning. Your collaboration, creativity, and dedication have made this an incredible journey. The action plan you've created will bring our Tunisian cultural celebration to life!"
+          showRole={true}
+        />
+        
+        <CharacterMessage 
+          speaker="SKANDER" 
+          message="Amazing work, everyone! Your teamwork and cultural insights have impressed me. You've shown great leadership in planning this event. I'm excited to see how our celebration will showcase Tunisian traditions!"
+          showRole={false}
+        />
+        
         <Stack direction={{ xs:'column', sm:'row' }} spacing={1} sx={{ mt: 2 }}>
           <Chip label={`Level: ${overall_level}`} />
           <Chip label={`Total Score: ${total_score}`} />

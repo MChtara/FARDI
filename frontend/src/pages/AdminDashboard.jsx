@@ -212,6 +212,85 @@ export default function AdminDashboard() {
         </Stack>
       </Stack>
 
+      {/* Quick Actions Section */}
+      <Paper sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Admin Tools
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card sx={{ height: '100%', cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
+              <CardContent>
+                <Stack spacing={2} alignItems="center" textAlign="center">
+                  <SmartToyIcon sx={{ fontSize: 48, color: 'primary.main' }} />
+                  <Typography variant="h6" fontWeight="bold">
+                    Exercise Builder
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Create and manage dynamic learning workflows and exercises
+                  </Typography>
+                  <Button 
+                    variant="contained" 
+                    component={RouterLink} 
+                    to="/admin/exercises"
+                    fullWidth
+                  >
+                    Open Builder
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} sm={6} md={4}>
+            <Card sx={{ height: '100%', cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
+              <CardContent>
+                <Stack spacing={2} alignItems="center" textAlign="center">
+                  <SupervisorAccountIcon sx={{ fontSize: 48, color: 'secondary.main' }} />
+                  <Typography variant="h6" fontWeight="bold">
+                    User Management
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    View and manage user accounts and permissions
+                  </Typography>
+                  <Button 
+                    variant="outlined" 
+                    onClick={() => setActiveTab(3)}
+                    fullWidth
+                  >
+                    Manage Users
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} sm={6} md={4}>
+            <Card sx={{ height: '100%', cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
+              <CardContent>
+                <Stack spacing={2} alignItems="center" textAlign="center">
+                  <BarChartIcon sx={{ fontSize: 48, color: 'success.main' }} />
+                  <Typography variant="h6" fontWeight="bold">
+                    Analytics
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    View detailed analytics and performance metrics
+                  </Typography>
+                  <Button 
+                    variant="outlined" 
+                    component={RouterLink} 
+                    to="/admin/analytics"
+                    fullWidth
+                  >
+                    View Analytics
+                  </Button>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Paper>
+
       {/* Key Performance Indicators */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={2.4}>

@@ -18,6 +18,9 @@ import DeleteAccount from './pages/DeleteAccount.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import AdminUserViewer from './pages/AdminUserViewer.jsx'
 import AdminAnalytics from './pages/AdminAnalytics.jsx'
+import AdminExerciseBuilder from './pages/AdminExerciseBuilder.jsx'
+import AdminExerciseEditor from './pages/AdminExerciseEditor.jsx'
+import AdminWorkflowEditor from './pages/AdminWorkflowEditor.jsx'
 import NotFound from './pages/NotFound.jsx'
 import { ApiProvider, useAuth } from './lib/api.jsx'
 import Layout from './components/Layout.jsx'
@@ -56,6 +59,11 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
           <Route path="/admin/users/:userId" element={<AdminUserViewer />} />
+          <Route path="/admin/exercises" element={<AdminExerciseBuilder />} />
+          <Route path="/admin/exercises/create" element={<AdminExerciseEditor />} />
+          <Route path="/admin/exercises/edit/:exerciseId" element={<AdminExerciseEditor />} />
+          <Route path="/admin/exercises/workflow/:workflowId/edit" element={<AdminWorkflowEditor />} />
+          <Route path="/admin/exercises/workflow/:workflowId/preview" element={<AdminWorkflowEditor />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

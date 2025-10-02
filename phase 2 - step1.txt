@@ -76,41 +76,36 @@ o Feedback: Analyze vocabulary (e.g., "fun" vs. "vibrant"), grammar, and cultura
 o Scoring: A1 = 1, A2 = 2, B1 = 3, B2 = 4. B2 contributes to progression. Hide levels/scores.
 Response Table (For Implementers, Not Students):
 Action Item
-Question
-A1 Response
-A2 Response
-B1 Response
-B2 Response
-Storytelling Introduction
+Question - 
 "What did you learn about our team or the event theme that excites you for planning?"
-"I like orientation. Theme is culture."
-"In Phase 1, I learn about team. Theme is fun."
-"In Phase 1, we chose a cultural theme, and I liked Emna's idea for music."
-"During Phase 1's orientation, we selected a vibrant Tunisian cultural theme, and SKANDER's leadership inspired me to plan this event."
+A1 Response - "I like orientation. Theme is culture."
+A2 Response - "In Phase 1, I learn about team. Theme is fun."
+B1 Response - "In Phase 1, we chose a cultural theme, and I liked Emna's idea for music."
+B2 Response - "During Phase 1's orientation, we selected a vibrant Tunisian cultural theme, and SKANDER's leadership inspired me to plan this event."
 Role Suggestion
 "Who would be great for creating the decorations, and what makes them perfect for it?"
-"Emna do decorations. She like art."
-"I think Emna for decorations because she likes art."
-"I suggest Emna for decorations since she's creative and good at art."
-"I propose Emna for the decoration role in our action plan, as her creativity and artistic skills will create a vibrant atmosphere."
+A1 Response - "Emna do decorations. She like art."
+A2 Response - "I think Emna for decorations because she likes art."
+B1 Response - "I suggest Emna for decorations since she's creative and good at art."
+B2 Response - "I propose Emna for the decoration role in our action plan, as her creativity and artistic skills will create a vibrant atmosphere."
 Peer Negotiation
 (SKANDER: "I think Ryan would be perfect for decorations because he's so organized. What's your take?")
-"Okay, Ryan do it."
-"Maybe Ryan is good because he is organized."
-"I agree, Ryan's organization skills could work well for decorations."
-"I see your point; Ryan's organizational skills make him a strong candidate for decorations in our action plan."
+A1 Response - "Okay, Ryan do it."
+A2 Response - "Maybe Ryan is good because he is organized."
+B1 Response - "I agree, Ryan's organization skills could work well for decorations."
+B2 Response - "I see your point; Ryan's organizational skills make him a strong candidate for decorations in our action plan."
 Role Confirmation
 "Confirm the final roles for two team members."
-"Emna do music. Ryan do decorations."
-"Emna is for music, and Ryan is for decorations."
-"Emna will handle music, and Ryan will manage decorations."
-"Emna is assigned to music, while Ryan will oversee decorations with his organizational skills for our action plan."
+A1 Response - "Emna do music. Ryan do decorations."
+A2 Response - "Emna is for music, and Ryan is for decorations."
+B1 Response - "Emna will handle music, and Ryan will manage decorations."
+B2 Response - "Emna is assigned to music, while Ryan will oversee decorations with his organizational skills for our action plan."
 Team Reflection
 "How do these roles help our cultural event come to life?"
-"Music is good for event."
-"Emna's music make event fun."
-"Emna's music will make the event lively, and Ryan's decorations will show our culture."
-"Emna's music will bring Tunisian traditions to life, while Ryan's decorations will create a vibrant cultural atmosphere for our event."
+A1 Response - "Music is good for event."
+A2 Response - "Emna's music make event fun."
+B1 Response - "Emna's music will make the event lively, and Ryan's decorations will show our culture."
+B2 Response - "Emna's music will bring Tunisian traditions to life, while Ryan's decorations will create a vibrant cultural atmosphere for our event."
 Assessment Focus (For Implementers):
 * Vocabulary Range: Check for basic terms (e.g., "culture," "art") vs. precise, relevant terminology (e.g., "vibrant atmosphere," "creativity"). Encourage event-specific language.
 * Grammar and Syntax: Evaluate sentence structure (e.g., simple present "do" vs. complex "is ideal"). Suggest clarity improvements.

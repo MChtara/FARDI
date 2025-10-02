@@ -983,10 +983,14 @@ def get_remedial_state():
         if not remedial_activities:
             return jsonify({"error": "No remedial activities found"}), 400
         
-        # Determine current activity index
+        # Determine current activity index - allow access to any specific activity
         try:
             current_activity_index = int(activity_param)
         except (ValueError, TypeError):
+            current_activity_index = 0
+        
+        # Validate activity index
+        if current_activity_index >= len(remedial_activities) or current_activity_index < 0:
             current_activity_index = 0
         
         # Check completed activities from session/database
@@ -1001,8 +1005,8 @@ def get_remedial_state():
                 if response_data.get('score', 0) >= success_threshold:
                     completed_activities.append(i)
         
-        # If current activity is already completed, find next uncompleted one
-        if current_activity_index in completed_activities:
+        # Only auto-advance if no specific activity was requested (activity param was '0' and is default)
+        if activity_param == '0' and current_activity_index in completed_activities:
             for i in range(current_activity_index + 1, len(remedial_activities)):
                 if i not in completed_activities:
                     current_activity_index = i
@@ -1491,10 +1495,16 @@ def get_phase2_remedial():
         
         logger.info(f"Remedial progress for {step_id}/{level}: completed_indices={completed_indices}, try_index={try_index}")
         
-        current_index = try_index if try_index is not None else 0
-        # Skip completed indices
-        while current_index in completed_indices and current_index < len(activities):
-            current_index += 1
+        # Use specific index if provided, otherwise find next uncompleted activity
+        if try_index is not None:
+            current_index = try_index
+        else:
+            # Find the first uncompleted activity
+            current_index = 0
+            for i in range(len(activities)):
+                if i not in completed_indices:
+                    current_index = i
+                    break
         if current_index >= len(activities):
             current_index = 0
             

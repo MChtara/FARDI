@@ -533,15 +533,22 @@ def api_login():
         session['role'] = user.get('role', 'user')
         session.permanent = remember_me
 
-        return jsonify({'success': True, 'user': {
-            'id': user['id'],
-            'username': user['username'],
-            'email': user['email'],
-            'first_name': user['first_name'],
-            'last_name': user['last_name'],
-            'is_admin': user.get('is_admin', False),
-            'role': user.get('role', 'user')
-        }})
+        # Determine redirect URL based on user role
+        redirect_url = '/app/admin' if user.get('is_admin') else '/app/dashboard'
+        
+        return jsonify({
+            'success': True, 
+            'redirect_url': redirect_url,
+            'user': {
+                'id': user['id'],
+                'username': user['username'],
+                'email': user['email'],
+                'first_name': user['first_name'],
+                'last_name': user['last_name'],
+                'is_admin': user.get('is_admin', False),
+                'role': user.get('role', 'user')
+            }
+        })
     except Exception as e:
         logger.error(f"Error in api_login: {str(e)}")
         return jsonify({'success': False, 'error': 'Server error'}), 500

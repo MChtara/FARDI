@@ -201,6 +201,171 @@ class DatabaseManager:
                 )
             ''')
             
+            # Exercise Builder System Tables
+            
+            # Workflows table - stores workflow definitions
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS workflows (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    description TEXT,
+                    workflow_data TEXT,  -- JSON data of the workflow
+                    creator_id INTEGER,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    version TEXT DEFAULT '1.0',
+                    is_active BOOLEAN DEFAULT 1,
+                    difficulty_level TEXT DEFAULT 'intermediate',
+                    estimated_time INTEGER DEFAULT 30,
+                    cultural_themes TEXT,  -- JSON array of theme IDs
+                    tags TEXT,  -- JSON array of tags
+                    FOREIGN KEY (creator_id) REFERENCES users (id)
+                )
+            ''')
+            
+            # Exercise instances table - stores specific exercise configurations
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS exercise_instances (
+                    id TEXT PRIMARY KEY,
+                    workflow_id TEXT,
+                    exercise_type TEXT NOT NULL,
+                    configuration TEXT,  -- JSON configuration
+                    metadata TEXT,  -- JSON metadata
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (workflow_id) REFERENCES workflows (id)
+                )
+            ''')
+            
+            # User workflow progress - tracks user progress through workflows
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS user_workflow_progress (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    workflow_id TEXT NOT NULL,
+                    current_node_id TEXT,
+                    progress_data TEXT,  -- JSON data tracking progress
+                    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    completed_at TIMESTAMP,
+                    status TEXT DEFAULT 'in_progress',  -- 'in_progress', 'completed', 'abandoned'
+                    total_score INTEGER DEFAULT 0,
+                    FOREIGN KEY (user_id) REFERENCES users (id),
+                    FOREIGN KEY (workflow_id) REFERENCES workflows (id),
+                    UNIQUE(user_id, workflow_id)
+                )
+            ''')
+            
+            # Exercise responses - stores user responses to exercises
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS exercise_responses (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    workflow_id TEXT NOT NULL,
+                    exercise_id TEXT NOT NULL,
+                    node_id TEXT,
+                    response_data TEXT,  -- JSON response data
+                    assessment_data TEXT,  -- JSON assessment results
+                    score INTEGER DEFAULT 0,
+                    level_achieved TEXT,
+                    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    time_spent INTEGER DEFAULT 0,  -- Time in seconds
+                    FOREIGN KEY (user_id) REFERENCES users (id),
+                    FOREIGN KEY (workflow_id) REFERENCES workflows (id)
+                )
+            ''')
+            
+            # Custom characters - allows admins to create custom characters
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS custom_characters (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    role TEXT,
+                    personality TEXT,
+                    avatar_url TEXT,
+                    voice_id TEXT,
+                    cultural_background TEXT,
+                    specialties TEXT,  -- JSON array of specialties
+                    creator_id INTEGER,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_active BOOLEAN DEFAULT 1,
+                    FOREIGN KEY (creator_id) REFERENCES users (id)
+                )
+            ''')
+            
+            # Media assets - manages uploaded media files
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS media_assets (
+                    id TEXT PRIMARY KEY,
+                    filename TEXT NOT NULL,
+                    original_name TEXT,
+                    file_type TEXT,  -- 'audio', 'image', 'video', 'document'
+                    file_url TEXT,
+                    file_size INTEGER,
+                    uploader_id INTEGER,
+                    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    metadata TEXT,  -- JSON metadata (dimensions, duration, etc.)
+                    tags TEXT,  -- JSON array of tags
+                    is_public BOOLEAN DEFAULT 0,
+                    FOREIGN KEY (uploader_id) REFERENCES users (id)
+                )
+            ''')
+            
+            # Workflow templates - pre-built workflow templates
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS workflow_templates (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    description TEXT,
+                    template_data TEXT,  -- JSON template structure
+                    category TEXT,  -- 'language_learning', 'cultural_education', etc.
+                    difficulty_level TEXT,
+                    preview_image TEXT,
+                    creator_id INTEGER,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_public BOOLEAN DEFAULT 0,
+                    usage_count INTEGER DEFAULT 0,
+                    FOREIGN KEY (creator_id) REFERENCES users (id)
+                )
+            ''')
+            
+            # Assessment rubrics - custom scoring rubrics
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS assessment_rubrics (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    description TEXT,
+                    criteria TEXT,  -- JSON array of criteria
+                    scoring_scale TEXT,  -- JSON scoring scale definition
+                    exercise_types TEXT,  -- JSON array of applicable exercise types
+                    creator_id INTEGER,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_default BOOLEAN DEFAULT 0,
+                    FOREIGN KEY (creator_id) REFERENCES users (id)
+                )
+            ''')
+
+            # Exercises table - stores individual exercises created by admins
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS exercises (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    description TEXT,
+                    exercise_type TEXT NOT NULL,
+                    difficulty_levels TEXT,  -- JSON object with A1, A2, B1, B2 content
+                    correct_answers TEXT,    -- JSON object with correct answers
+                    wrong_answers TEXT,      -- JSON object with wrong answer options
+                    ai_instructions TEXT,    -- Instructions for AI assistance
+                    parameters TEXT,         -- JSON object with exercise-specific parameters
+                    cultural_themes TEXT,    -- JSON array of theme IDs
+                    tags TEXT,              -- JSON array of tags
+                    creator_id INTEGER,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_active BOOLEAN DEFAULT 1,
+                    usage_count INTEGER DEFAULT 0,
+                    FOREIGN KEY (creator_id) REFERENCES users (id)
+                )
+            ''')
+
             # Database migrations - Add missing columns to existing tables
             try:
                 # Check if role and is_admin columns exist, add them if not
@@ -1209,7 +1374,12 @@ def admin_required(f):
     """Decorator to require admin privileges"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        from flask import request, jsonify
+        
         if 'user_id' not in session:
+            # Check if this is an API request
+            if request.path.startswith('/api/') or request.headers.get('Content-Type') == 'application/json':
+                return jsonify({'error': 'Authentication required'}), 401
             flash('Please log in to access this page.', 'warning')
             return redirect(url_for('auth.login'))
         
@@ -1224,6 +1394,9 @@ def admin_required(f):
             user_data = user_manager_instance.get_user_by_id(user_id)
             
             if not user_data or not user_data.get('is_admin'):
+                # Check if this is an API request
+                if request.path.startswith('/api/') or request.headers.get('Content-Type') == 'application/json':
+                    return jsonify({'error': 'Admin privileges required'}), 403
                 flash('Access denied. Admin privileges required.', 'error')
                 return redirect(url_for('dashboard'))
             

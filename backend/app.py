@@ -16,6 +16,7 @@ from utils.helpers import (
     calculate_xp
 )
 from routes.auth_routes import auth_bp, db_manager, user_manager, assessment_history, login_required, guest_only
+from routes.exercise_builder_routes import exercise_builder_bp
 from models.auth import admin_required
 
 load_dotenv()
@@ -24,11 +25,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder='static')
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "dev-secret-key")
+app.config['SECRET_KEY'] = str(os.getenv("SECRET_KEY", "dev-secret-key"))
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = os.path.join(os.path.dirname(__file__), 'sessions')
 app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_USE_SIGNER'] = False  # Disable signer to avoid bytes/string issues
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)  # 30 days for "remember me"
 
 os.makedirs('sessions', exist_ok=True)
@@ -41,6 +42,13 @@ assessment_service = AssessmentService()
 
 # Register authentication blueprint
 app.register_blueprint(auth_bp, url_prefix='/auth')
+
+# Register exercise builder blueprint
+app.register_blueprint(exercise_builder_bp)
+
+# Register workflow importer blueprint
+from routes.workflow_importer import workflow_importer_bp
+app.register_blueprint(workflow_importer_bp)
 
 @app.route('/')
 def root():
@@ -529,25 +537,28 @@ def phase2_remedial(step_id, level):
         flash('No remedial activities found for this level!', 'error')
         return redirect(url_for('phase2_step', step_id=step_id))
     
-    # Get current activity from URL parameter or determine from database
+    # Get current activity from URL parameter - allow access to any activity
     current_activity = int(request.args.get('activity', 0))
     
-    # Get remedial progress from database
-    phase2_progress = assessment_history.get_phase2_progress(user_id)
-    completed_activities = []
-    for rem_activity in phase2_progress['remedial_activities']:
-        if (rem_activity['step_id'] == step_id and 
-            rem_activity['level'] == level and 
-            rem_activity['completed']):
-            completed_activities.append(rem_activity['activity_index'])
-    
-    # If current activity is already completed, move to next uncompleted one
-    while current_activity in completed_activities and current_activity < len(remedial_activities):
-        current_activity += 1
-    
-    # Fallback to session if needed
-    if current_activity >= len(remedial_activities):
-        current_activity = session.get(f'phase2_remedial_{step_id}_{level}_current', 0)
+    # If no specific activity requested, find the next uncompleted one
+    if not request.args.get('activity'):
+        # Get remedial progress from database
+        phase2_progress = assessment_history.get_phase2_progress(user_id)
+        completed_activities = []
+        for rem_activity in phase2_progress['remedial_activities']:
+            if (rem_activity['step_id'] == step_id and 
+                rem_activity['level'] == level and 
+                rem_activity['completed']):
+                completed_activities.append(rem_activity['activity_index'])
+        
+        # Find next uncompleted activity only if no specific activity requested
+        for i in range(len(remedial_activities)):
+            if i not in completed_activities:
+                current_activity = i
+                break
+        else:
+            # All activities completed - use fallback from session
+            current_activity = session.get(f'phase2_remedial_{step_id}_{level}_current', 0)
     
     if current_activity >= len(remedial_activities):
         # All activities completed

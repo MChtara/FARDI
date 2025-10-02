@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Paper, Typography, Stack, Chip, Button, LinearProgress } from '@mui/material'
+import { CharacterMessage } from '../components/Avatar.jsx'
 
 export default function Phase2StepResults() {
   const { stepId } = useParams()
@@ -37,10 +38,11 @@ export default function Phase2StepResults() {
 
       {success ? (
         <Paper variant="outlined" sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>Great job!</Typography>
-          {data.success_feedback && (
-            <Typography color="text.secondary" sx={{ mb: 2 }}>{data.success_feedback}</Typography>
-          )}
+          <CharacterMessage 
+            speaker="Ms. Mabrouki" 
+            message={data.success_feedback || "Great job! You've successfully completed this step of our cultural event planning!"} 
+            showRole={true}
+          />
           <Stack direction={{ xs:'column', sm:'row' }} spacing={2}>
             {data.next_step ? (
               <Button onClick={() => navigate(`/phase2/step/${data.next_step}`)}>Go to {data.next_step_title}</Button>
@@ -52,10 +54,11 @@ export default function Phase2StepResults() {
         </Paper>
       ) : (
         <Paper variant="outlined" sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>Practice Recommended</Typography>
-          {data.remedial_feedback && (
-            <Typography color="text.secondary" sx={{ mb: 2 }}>{data.remedial_feedback}</Typography>
-          )}
+          <CharacterMessage 
+            speaker="SKANDER" 
+            message={data.remedial_feedback || "Great start! Let's do some fun practice activities to polish your skills before moving forward with our cultural event planning!"} 
+            showRole={true}
+          />
           <Stack direction={{ xs:'column', sm:'row' }} spacing={2}>
             <Button onClick={() => navigate(`/phase2/remedial/${data.step_id}/${data.user_level}`)}>Start Practice</Button>
             <Button variant="outlined" onClick={() => navigate(`/phase2/step/${data.step_id}`)}>Back to Step</Button>

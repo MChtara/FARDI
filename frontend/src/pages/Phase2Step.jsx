@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Paper, Typography, Stack, Button, TextField, Chip, LinearProgress, Snackbar, Alert } from '@mui/material'
+import { CharacterMessage } from '../components/Avatar.jsx'
 
 export default function Phase2Step() {
   const { stepId } = useParams()
@@ -151,11 +152,17 @@ export default function Phase2Step() {
         </Typography>
         {currentItem ? (
           <>
-            <Typography variant="h6" gutterBottom>{currentItem.speaker}</Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>{currentItem.question}</Typography>
-            {currentItem.instruction && (
-              <Typography variant="body2" color="text.secondary">{currentItem.instruction}</Typography>
-            )}
+            <CharacterMessage 
+              speaker={currentItem.speaker} 
+              message={currentItem.question}
+              showRole={true}
+            >
+              {currentItem.instruction && (
+                <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 1 }}>
+                  💡 {currentItem.instruction}
+                </Typography>
+              )}
+            </CharacterMessage>
             <Box component="form" onSubmit={submit} noValidate>
               <TextField
                 label="Your response"
