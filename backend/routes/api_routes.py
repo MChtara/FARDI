@@ -47,6 +47,10 @@ def get_results():
         xp = session.get('xp', 0)
         user_id = session.get('game_user_id') or session.get('user_id')
 
+        # Check if user has completed any assessments
+        if not assessments or len(assessments) == 0:
+            return jsonify({"error": "No assessment data found. Please complete Phase 1 assessment first."}), 404
+
         # AI usage statistics
         total_responses = len(responses)
         ai_detected_count = sum(1 for r in responses if r.get('ai_generated', False))
@@ -852,113 +856,211 @@ def submit_remedial_activity():
         
         # Store remedial response in session for backward compatibility
         session_key = f"remedial_{step_id}_{level}_{activity_id}"
-        
+
         if 'phase2_remedial_responses' not in session:
             session['phase2_remedial_responses'] = {}
-        
+
         session['phase2_remedial_responses'][session_key] = {
             'responses': responses,
             'score': score,
             'timestamp': datetime.now().isoformat()
         }
+
+        # Track progression per level: store highest completed activity index for each level
+        if 'phase2_level_progress' not in session:
+            session['phase2_level_progress'] = {}
+
+        # Key format: "step_id_level" → stores highest completed activity index
+        progress_key = f"{step_id}_{level}"
+
+        # Update highest completed activity index for this level
+        current_highest = session['phase2_level_progress'].get(progress_key, -1)
+        if activity_index > current_highest:
+            session['phase2_level_progress'][progress_key] = activity_index
+            logger.info(f"Updated progress for {level}: highest completed activity = {activity_index}")
         
-        # Assess if activity passed
-        success_threshold = current_activity.get('success_threshold', 6)
-        activity_passed = score >= success_threshold
-        
+        # ===== ADAPTIVE LEARNING SCORING SYSTEM =====
+        # Dynamic threshold calculation based on activity max score
+        max_score = current_activity.get('success_threshold', 6)
+
+        # Calculate dynamic thresholds as percentages of max_score
+        perfect_score = max_score  # B2 level - 100%
+        good_score = int(max_score * 0.83)  # B1 level - 83%
+        okay_score = int(max_score * 0.50)  # A2 level - 50%
+        low_score = max(1, int(max_score * 0.33))  # A1 level - 33% (minimum 1)
+
+        # Determine performance level based on score
+        if score >= perfect_score:
+            performance_level = 'B2'
+            activity_passed = True
+        elif score >= good_score:
+            performance_level = 'B1'
+            activity_passed = True if level == 'B1' else False  # Pass B1 activities, upgrade A2
+        elif score >= okay_score:
+            performance_level = 'A2'
+            activity_passed = True if level in ['A1', 'A2'] else False  # Pass A1/A2 activities, need upgrade for B1
+        elif score >= low_score:
+            performance_level = 'A1'
+            activity_passed = True if level == 'A1' else False  # Only pass if already in A1
+        else:
+            performance_level = 'Below A1'
+            activity_passed = False  # Need to retry or go back
+
+        logger.info(f"Score: {score}/{max_score}, Level: {level}, Performance: {performance_level}, Passed: {activity_passed}")
+
         # Update activity data with completion status and save to database
         activity_data['completed'] = activity_passed
+        activity_data['performance_level'] = performance_level
         assessment_history.save_phase2_remedial(user_id, session_id, step_id, level, activity_data)
-        
+
         # Check if there are more activities
         next_activity_index = activity_index + 1
         has_next_activity = next_activity_index < len(remedial_activities)
-        
-        if activity_passed and not has_next_activity:
-            # All remedial activities completed successfully
-            # Clear remedial session data and mark step as ready for next progression
+        is_last_activity = activity_index == len(remedial_activities) - 1
+
+        # ===== DYNAMIC LEVEL PROGRESSION LOGIC =====
+        # Score determines performance_level, which determines next action:
+        # - B2 (100%): Proceed to next step (success!)
+        # - B1 (83%): Move to B1 level remedial, Activity 0
+        # - A2 (50%): Move to A2 level remedial, Activity 0
+        # - A1 (33%): Move to A1 level remedial, Activity 0
+        # - Score 0: Retry same activity
+        # Exception: Activity 3 (last) + score < B2 → Trap loop
+
+        logger.info(f"=== DYNAMIC PROGRESSION LOGIC ===")
+        logger.info(f"Current: {level} Activity {activity_index}, Score: {score}/{max_score}, Performance: {performance_level}")
+
+        # Case 1: Score = 0 → Retry same activity
+        if score == 0:
+            return jsonify({
+                "success": False,
+                "activity_passed": False,
+                "score": 0,
+                "threshold": max_score,
+                "performance_level": performance_level,
+                "message": "💪 Let's review the concepts and try again. Take your time to understand the material.",
+                "next_action": "retry",
+                "next_url": f"/app/phase2/remedial/{step_id}/{level}?activity={activity_index}",
+                "score_feedback": f"You need at least 1 correct answer to progress.",
+                "encouragement": "Don't worry - learning takes practice. Review the instructions and try again!"
+            })
+
+        # Case 2: B2 Performance → Proceed to next step (ONLY B2!)
+        if performance_level == 'B2':
             session['remedial_completed'] = True
             session[f'remedial_completed_{step_id}'] = True
             session.modified = True
-            
-            # Check if we should move to next step after completing remedials
+
             next_step = get_next_phase2_step(step_id)
-            
+
             if next_step:
                 next_url = f"/app/phase2/step/{next_step}"
-                message = "🎉 Excellent work! You've mastered the skills needed. Ready for the next step in planning our cultural event!"
+                message = f"🎉 Perfect! You've achieved B2 level. Moving to the next step!"
                 next_action = "next_step"
             else:
                 next_url = "/app/phase2/complete"
-                message = "🎉 Outstanding! You've completed all Phase 2 activities and are ready for Phase 3!"
+                message = f"🎉 Outstanding! You've achieved B2 level and completed Phase 2!"
                 next_action = "phase2_complete"
-            
+
             return jsonify({
                 "success": True,
                 "activity_passed": True,
                 "remedial_complete": True,
+                "score": score,
+                "threshold": max_score,
+                "performance_level": performance_level,
                 "message": message,
                 "next_action": next_action,
                 "next_url": next_url,
                 "celebration": True,
                 "step_completed": True
             })
-        elif activity_passed and has_next_activity:
-            # Move to next remedial activity
-            next_activity = remedial_activities[next_activity_index]
-            return jsonify({
-                "success": True,
-                "activity_passed": True,
-                "remedial_complete": False,
-                "message": f"✅ Great job! You're building strong skills. Let's continue with the next practice activity ({next_activity_index + 1} of {len(remedial_activities)}).",
-                "next_action": "next_remedial",
-                "next_url": f"/app/phase2/remedial/{step_id}/{level}?activity={next_activity_index}",
-                "progress_update": f"Activity {activity_index + 1} of {len(remedial_activities)} completed"
-            })
-        else:
-            # Activity not passed - check if this is the last activity and allow progression anyway
-            if not has_next_activity:
-                # Last activity failed, but allow progression with encouragement
-                session['remedial_completed'] = True
-                session[f'remedial_completed_{step_id}'] = True
-                session.modified = True
-                
-                next_step = get_next_phase2_step(step_id)
-                
-                if next_step:
-                    next_url = f"/app/phase2/step/{next_step}"
-                    message = f"💪 Good effort! You scored {score} out of {success_threshold}. While there's room for improvement, you've practiced all the key concepts. Let's continue building your skills in the next step!"
-                    next_action = "next_step"
-                else:
-                    next_url = "/app/phase2/complete"
-                    message = "💪 You've completed all practice activities! Keep working on these skills as you continue your language journey."
-                    next_action = "phase2_complete"
-                
-                return jsonify({
-                    "success": True,
-                    "activity_passed": False,
-                    "remedial_complete": True,
-                    "score": score,
-                    "threshold": success_threshold,
-                    "message": message,
-                    "next_action": next_action,
-                    "next_url": next_url,
-                    "step_completed": True,
-                    "progression_reason": "completed_all_attempts"
-                })
-            else:
-                # Not the last activity, provide encouraging feedback and allow retry
+
+        # Case 3: B1, A2, or A1 Performance → DYNAMIC LEVEL SWITCHING
+        if performance_level in ['B1', 'A2', 'A1']:
+            # Check if we're at the last activity of the current level
+            if is_last_activity:
+                # Last activity (activity 3) → TRAP LOOP: Repeat until score improves to B2
                 return jsonify({
                     "success": False,
                     "activity_passed": False,
                     "score": score,
-                    "threshold": success_threshold,
-                    "message": f"💪 Good effort! You scored {score} out of {success_threshold}. Let's review the concepts and try again. Practice makes perfect!",
+                    "threshold": max_score,
+                    "performance_level": performance_level,
+                    "message": f"💪 You scored {score}/{max_score}. You need to score {perfect_score} (perfect score) to progress to the next step. Let's practice this final activity again!",
                     "next_action": "retry",
-                    "score_feedback": f"You need {success_threshold - score} more correct answers to pass this activity.",
-                    "encouragement": "Every attempt helps you learn - keep going!"
+                    "next_url": f"/app/phase2/remedial/{step_id}/{level}?activity={activity_index}",
+                    "score_feedback": f"Keep practicing! You need {perfect_score - score} more correct answers to reach B2 level and move forward.",
+                    "trap_loop": True,
+                    "encouragement": "You're on the last practice activity. Keep trying - you'll get there!"
                 })
-            
+            else:
+                # Not last activity → DYNAMIC LEVEL SWITCHING
+                # Check if performance_level matches current level
+                if performance_level == level:
+                    # Same level → Move to next activity in same level
+                    next_activity = remedial_activities[next_activity_index]
+                    return jsonify({
+                        "success": True,
+                        "activity_passed": True,
+                        "remedial_complete": False,
+                        "score": score,
+                        "threshold": max_score,
+                        "performance_level": performance_level,
+                        "message": f"✅ Good! Let's continue with {level} activity {next_activity_index + 1} of {len(remedial_activities)}.",
+                        "next_action": "next_remedial",
+                        "next_url": f"/app/phase2/remedial/{step_id}/{level}?activity={next_activity_index}",
+                        "progress_update": f"Activity {activity_index + 1} of {len(remedial_activities)} completed"
+                    })
+                else:
+                    # Different level → Switch to performance_level, resume where left off
+                    # Check if the new level exists in remedial activities
+                    if performance_level in PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}):
+                        # Check if we've made progress in the target level before
+                        target_progress_key = f"{step_id}_{performance_level}"
+                        last_completed_in_target = session.get('phase2_level_progress', {}).get(target_progress_key, -1)
+
+                        # Resume at next activity after last completed, or start at 0
+                        resume_activity_index = last_completed_in_target + 1
+
+                        # Get activities for target level to check bounds
+                        target_activities = PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}).get(performance_level, [])
+
+                        # If resume index is beyond available activities, cap at last activity
+                        if resume_activity_index >= len(target_activities):
+                            resume_activity_index = len(target_activities) - 1
+
+                        logger.info(f"Level switch: {level} → {performance_level}, resuming at activity {resume_activity_index} (last completed: {last_completed_in_target})")
+
+                        return jsonify({
+                            "success": True,
+                            "activity_passed": True,
+                            "remedial_complete": False,
+                            "score": score,
+                            "threshold": max_score,
+                            "performance_level": performance_level,
+                            "level_changed": True,
+                            "message": f"📊 Your performance shows {performance_level} level! {'Resuming' if resume_activity_index > 0 else 'Starting'} {performance_level} activities.",
+                            "next_action": "level_switch",
+                            "next_url": f"/app/phase2/remedial/{step_id}/{performance_level}?activity={resume_activity_index}",
+                            "progress_update": f"Switching from {level} to {performance_level}, activity {resume_activity_index}"
+                        })
+                    else:
+                        # Fallback: stay in current level if new level doesn't exist
+                        next_activity = remedial_activities[next_activity_index]
+                        return jsonify({
+                            "success": True,
+                            "activity_passed": True,
+                            "remedial_complete": False,
+                            "score": score,
+                            "threshold": max_score,
+                            "performance_level": performance_level,
+                            "message": f"✅ Good! Let's continue with activity {next_activity_index + 1} of {len(remedial_activities)}.",
+                            "next_action": "next_remedial",
+                            "next_url": f"/app/phase2/remedial/{step_id}/{level}?activity={next_activity_index}",
+                            "progress_update": f"Activity {activity_index + 1} of {len(remedial_activities)} completed"
+                        })
+
         session.modified = True
         
     except Exception as e:

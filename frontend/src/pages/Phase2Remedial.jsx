@@ -167,20 +167,22 @@ export default function Phase2Remedial() {
 
   const handleFeedbackClose = (proceed = false) => {
     setShowFeedback(false)
-    
+
     if (proceed && feedback) {
       // Handle navigation based on the last submission result
       const lastResult = window.lastRemedialResult
       if (lastResult) {
         if (lastResult.remedial_complete) {
           navigate(`/phase2/step/${data.step_id}`)
-        } else if (lastResult.next_action === 'next_remedial' && lastResult.next_url) {
+        } else if ((lastResult.next_action === 'next_remedial' || lastResult.next_action === 'level_switch') && lastResult.next_url) {
           // Convert classic URL to SPA route
           try {
             const u = new URL(lastResult.next_url, window.location.origin)
             const segs = u.pathname.split('/').filter(Boolean)
-            const step = segs[2]
-            const lvl = segs[3]
+            // URL format: /app/phase2/remedial/step_id/level?activity=index
+            // segs: [app, phase2, remedial, step_id, level]
+            const step = segs[3]  // step_id
+            const lvl = segs[4]   // level
             const idx = u.searchParams.get('activity')
             navigate(`/phase2/remedial/${step}/${lvl}${idx ? `?activity=${idx}` : ''}`)
           } catch {
@@ -193,7 +195,7 @@ export default function Phase2Remedial() {
         }
       }
     }
-    
+
     setFeedback(null)
   }
 

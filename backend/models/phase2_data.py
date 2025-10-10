@@ -377,7 +377,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "Ryan", "decorations", "music", "likes", "good", "organized", "creative"],
                 "success_feedback": "Wow, [Player]! Your role stories are perfect! Ready for [Step 2: Scheduling Meetings]?",
                 "remedial_feedback": "Good effort, [Player]! Let's keep building our event story!",
-                "success_threshold": 6
+                "success_threshold": 15,
+                "expected_answers": ["Emna", "decorations", "likes", "Ryan", "promotion", "organized", "Emna", "music", "Emna", "music", "likes", "Ryan", "decorations", "Ryan", "good"]
             },
             {
                 "id": "cultural_role_dialogue",
@@ -397,7 +398,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "expected_answers": ["Emna", "decorations", "because", "Emna", "because", "Emna", "will", "music"],
                 "success_feedback": "Great job, [Player]! Your suggestions are spot-on! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Nice work, [Player]! Let's try one more task!",
-                "success_threshold": 6
+                "success_threshold": 8,
+                "expected_answers": ['Emna', 'decorations', 'because', 'Emna', 'because', 'Emna', 'will', 'music']
             },
             {
                 "id": "role_reflection_writing",
@@ -424,7 +426,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 ],
                 "success_feedback": "Amazing, [Player]! Your reflections are ready for our cultural event! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "You're getting there, [Player]! Let's review with Ms. Mabrouki to prepare for the next step!",
-                "success_threshold": 6
+                "success_threshold": 15,
+                "expected_answers": ['Emna', 'music', 'she loves songs', 'Ryan', 'decorations', 'he is organized', 'Emna', 'music', 'Ryan', 'planning', 'he is organized', 'music', 'Emna', 'Ryan', 'creativity']
             }
         ],
         
@@ -447,7 +450,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "expected_answers": ["Emna", "decorations", "because", "likes", "I think", "because", "Emna", "music"],
                 "success_feedback": "Awesome, [Player]! Your suggestions are perfect! Ready for [Step 2: Scheduling Meetings]?",
                 "remedial_feedback": "Good effort, [Player]! Let's try another task to strengthen our plan!",
-                "success_threshold": 6
+                "success_threshold": 8,
+                "expected_answers": ['Emna', 'decorations', 'because', 'likes', 'I think', 'because', 'Emna', 'music']
             },
             {
                 "id": "sentence_expansion_challenge",
@@ -467,7 +471,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "expected_answers": ["because", "because", "for music", "at planning", "with creativity", "by organizing"],
                 "success_feedback": "Great job, [Player]! Your sentences are ready for our plan! Ready for [Step 2: Scheduling Meetings]?",
                 "remedial_feedback": "Nice try, [Player]! Let's practice more to make our plans shine!",
-                "success_threshold": 6
+                "success_threshold": 10,
+                "expected_answers": ['because', 'because', 'for', 'music', 'at', 'planning', 'with', 'creativity', 'by', 'organizing']
             },
             {
                 "id": "cultural_role_research",
@@ -484,7 +489,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Focus on cultural significance of roles.",
                 "success_feedback": "Excellent research, [Player]! Your cultural understanding is ready! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Good work! Let's try one more cultural activity!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['music', "it's important for culture", 'Tunisian', 'it shows tradition', 'cultural', 'meaningful']
             },
             {
                 "id": "team_role_planning",
@@ -501,7 +507,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Assign roles with clear reasons.",
                 "success_feedback": "Amazing planning, [Player]! Your team roles are perfect! Ready for [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['music', "she's creative", 'decorations', "he's organized", 'promotion', 'advertise']
             }
         ],
         
@@ -524,7 +531,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "expected_answers": ["Emna", "creative", "I agree", "too", "because", "has"],
                 "success_feedback": "Excellent, [Player]! Your negotiation skills are ready! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Good job, [Player]! Let's practice more to perfect our plan!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Emna', 'creative', 'I agree', 'too', 'because', 'has']
             },
             {
                 "id": "role_assignment_report",
@@ -541,7 +549,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Include reasoning for each role assignment.",
                 "success_feedback": "Great work, [Player]! Your assignment report is professional! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Nice effort! Let's try another role activity!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['music', "she's creative", 'decorations', 'showcase', 'vibrant', 'cultural']
             },
             {
                 "id": "cultural_role_reflection",
@@ -558,7 +567,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Connect roles to Tunisian cultural elements.",
                 "success_feedback": "Fantastic, [Player]! Your cultural reflection shines! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Good work! Let's try one more cultural task!",
-                "success_threshold": 6
+                "success_threshold": 5,
+                "expected_answers": ['they showcase Tunisian traditions', 'culture', 'celebration', 'food', 'cultural experience']
             },
             {
                 "id": "event_role_proposal",
@@ -575,7 +585,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Include multiple roles with cultural justification.",
                 "success_feedback": "Amazing, [Player]! Your role proposal completes Step 1 beautifully! Ready for [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['music', 'vibrant', 'decorations', 'showcase', 'food', 'promotion']
             }
         ]
     },
@@ -615,7 +626,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Friday", "3 PM", "because", "Meeting", "music", "discuss"],
                 "success_feedback": "Perfect, [Player]! Ready for [Step 3]!",
                 "remedial_feedback": "Good effort! Let's try another task!",
-                "success_threshold": 6
+                "success_threshold": 7,
+                "expected_answers": ['Friday', '3 PM', 'because', 'Meeting', 'music', 'Friday', 'discuss']
             },
             {
                 "id": "schedule_dialogue_practice",
@@ -634,7 +646,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Friday", "3 PM", "team is free", "music", "decorations", "event"],
                 "success_feedback": "Great dialogue, [Player]! Your scheduling skills are ready! Let's move to [Step 3]!",
                 "remedial_feedback": "Good work! Let's try one more scheduling task!",
-                "success_threshold": 6
+                "success_threshold": 7,
+                "expected_answers": ['Friday', '3 PM', 'team is free', 'music', 'decorations', 'Friday', 'event']
             },
             {
                 "id": "meeting_purpose_writing",
@@ -653,7 +666,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["plan", "event", "team", "work", "Friday", "music", "decorations", "food", "organized", "successful", "time", "cultural"],
                 "success_feedback": "Excellent writing, [Player]! Your meeting purposes are clear! Ready for [Step 3]!",
                 "remedial_feedback": "You're getting there! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 12,
+                "expected_answers": ['plan', 'event', 'team', 'work', 'Friday', 'music', 'decorations', 'food', 'organized', 'successful', 'time', 'cultural']
             }
         ],
         
@@ -675,7 +689,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["however", "because", "music", "decoration", "Friday", "3 PM"],
                 "success_feedback": "Great negotiation, [Player]! Your diplomatic skills shine! Ready for [Step 3]!",
                 "remedial_feedback": "Good effort! Let's try another scheduling activity!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['however', 'because', 'music', 'decoration', 'Friday', '3 PM']
             },
             {
                 "id": "agenda_expansion_exercise",
@@ -692,7 +707,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["to", "because", "so", "however"],
                 "success_feedback": "Perfect expansion, [Player]! Your agenda details are thorough! Ready for [Step 3]!",
                 "remedial_feedback": "Nice try! Let's keep practicing agenda planning!",
-                "success_threshold": 4
+                "success_threshold": 4,
+                "expected_answers": ['to', 'because', 'to', 'so']
             },
             {
                 "id": "meeting_cultural_research",
@@ -708,7 +724,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["they preserve traditions", "Tunisian", "careful", "cultural"],
                 "success_feedback": "Excellent research, [Player]! Your cultural understanding is deep! Ready for [Step 3]!",
                 "remedial_feedback": "Good work! Let's try one more cultural task!",
-                "success_threshold": 3
+                "success_threshold": 4,
+                "expected_answers": ['they preserve traditions', 'Tunisian', 'careful', 'cultural']
             },
             {
                 "id": "schedule_team_coordination",
@@ -724,7 +741,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Friday", "no classes", "afternoon", "detailed", "Friday 3PM", "music", "decorations"],
                 "success_feedback": "Amazing coordination, [Player]! Your team scheduling is perfect! Ready for [Step 3]!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 7,
+                "expected_answers": ['Friday', 'no classes', 'afternoon', 'detailed', 'Friday 3PM', 'music', 'decorations']
             }
         ],
         
@@ -744,7 +762,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["however", "serve", "adequate", "optimal"],
                 "success_feedback": "Excellent negotiation, [Player]! Your professional communication is outstanding! Ready for [Step 3]!",
                 "remedial_feedback": "Good job! Let's practice more professional dialogue!",
-                "success_threshold": 4
+                "success_threshold": 4,
+                "expected_answers": ['however', 'serve', 'adequate', 'optimal']
             },
             {
                 "id": "agenda_detailed_planning",
@@ -760,7 +779,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Plan", "organize", "Discuss", "20", "Review", "reflect"],
                 "success_feedback": "Great planning, [Player]! Your agenda is comprehensive! Ready for [Step 3]!",
                 "remedial_feedback": "Nice effort! Let's try another planning task!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Plan', 'organize', 'Discuss', '20', 'Review', 'reflect']
             },
             {
                 "id": "cultural_meeting_reflection",
@@ -776,7 +796,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["respect", "collaboration", "valuing", "thoughtful", "respectful"],
                 "success_feedback": "Fantastic reflection, [Player]! Your cultural awareness is profound! Ready for [Step 3]!",
                 "remedial_feedback": "Good work! Let's try one more cultural task!",
-                "success_threshold": 6
+                "success_threshold": 5,
+                "expected_answers": ['respect', 'collaboration', 'valuing', 'thoughtful', 'respectful']
             },
             {
                 "id": "meeting_outcome_proposal",
@@ -792,7 +813,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["success", "objectives", "sufficient", "music", "detailed", "cultural"],
                 "success_feedback": "Amazing proposal, [Player]! Your meeting planning is masterful! Ready for [Step 3]!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['success', 'objectives', 'sufficient', 'music', 'detailed', 'cultural']
             }
         ]
     },
@@ -839,7 +861,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "music", "Ryan", "Lilia", "posters", "decorations"],
                 "success_feedback": "Perfect, [Player]! Your task dialogue is ready! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Good effort! Let's try another listening task!",
-                "success_threshold": 6
+                "success_threshold": 8,
+                "expected_answers": ['Emna', 'music', 'Ryan', 'Lilia', 'posters', 'music', 'decorations', 'posters']
             },
             {
                 "id": "task_story_building",
@@ -855,7 +878,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["decorations", "Tunisian", "Emna", "Malouf", "posters", "event"],
                 "success_feedback": "Great story, [Player]! Your task story is perfect! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Nice work! Let's try one more task activity!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['decorations', 'Tunisian', 'Emna', 'Malouf', 'posters', 'event']
             },
             {
                 "id": "task_list_writing",
@@ -874,7 +898,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Emna", "Malouf", "Ryan", "decorations", "Lilia", "posters", "cultural", "Tunisian", "vibrant"],
                 "success_feedback": "Amazing list, [Player]! Your task planning is complete! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "You're getting there! Let's review with Ms. Mabrouki!",
-                "success_threshold": 9
+                "success_threshold": 10,
+                "expected_answers": ['Emna', 'Malouf', 'Ryan', 'decorations', 'Lilia', 'posters', 'cultural', 'Tunisian', 'vibrant', 'cultural']
             }
         ],
         
@@ -895,7 +920,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["to", "because"],
                 "success_feedback": "Great expansion, [Player]! Your task details are thorough! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Good effort! Let's try another task activity!",
-                "success_threshold": 4
+                "success_threshold": 4,
+                "expected_answers": ['to', 'because', 'to', 'because']
             },
             {
                 "id": "cultural_task_research",
@@ -911,7 +937,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["it represents Tunisian heritage", "they create authentic atmosphere", "community participation"],
                 "success_feedback": "Excellent research, [Player]! Your cultural understanding is deep! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Good work! Let's try one more cultural task!",
-                "success_threshold": 3
+                "success_threshold": 3,
+                "expected_answers": ['it represents Tunisian heritage', 'they create authentic atmosphere', 'community participation']
             },
             {
                 "id": "task_assignment_planning",
@@ -927,7 +954,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["music", "she's musical", "decorations", "he's artistic", "posters", "advertise"],
                 "success_feedback": "Amazing planning, [Player]! Your task assignments are perfect! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['music', "she's musical", 'decorations', "he's artistic", 'posters', 'advertise']
             },
             {
                 "id": "task_priority_setting",
@@ -943,7 +971,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["music", "heart", "decorations", "visual", "posters", "effective"],
                 "success_feedback": "Fantastic prioritization, [Player]! Your task planning is complete! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Good work! Let's finalize with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['music', 'heart', 'decorations', 'visual', 'posters', 'effective']
             }
         ],
         
@@ -963,7 +992,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["however", "primary", "cultural", "influences"],
                 "success_feedback": "Excellent negotiation, [Player]! Your professional reasoning is outstanding! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Good job! Let's practice more professional dialogue!",
-                "success_threshold": 4
+                "success_threshold": 4,
+                "expected_answers": ['however', 'primary', 'cultural', 'influences']
             },
             {
                 "id": "comprehensive_task_analysis",
@@ -979,7 +1009,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Selecting", "preserve", "Creating", "represent", "Ensuring", "engagement"],
                 "success_feedback": "Outstanding analysis, [Player]! Your task understanding is comprehensive! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Nice effort! Let's try another analytical task!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Selecting', 'preserve', 'Creating', 'represent', 'Ensuring', 'engagement']
             },
             {
                 "id": "cultural_impact_reflection",
@@ -995,7 +1026,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["heritage", "incorporating", "careful", "historical", "cultural", "community"],
                 "success_feedback": "Profound reflection, [Player]! Your cultural awareness is exceptional! Let's move to the [Final Writing Activity]!",
                 "remedial_feedback": "Good work! Let's try one more cultural task!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['heritage', 'incorporating', 'careful', 'historical', 'cultural', 'community']
             },
             {
                 "id": "strategic_task_proposal",
@@ -1011,7 +1043,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "word_bank": ["Research", "finalize", "Develop", "source", "Launch", "coordinate"],
                 "success_feedback": "Exceptional strategy, [Player]! Your task proposal is masterful! Ready for the [Final Writing Activity]!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Research', 'finalize', 'Develop', 'source', 'Launch', 'coordinate']
             }
         ]
     },
@@ -1060,7 +1093,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Respond to Emna's plan and suggest tasks.",
                 "success_feedback": "Perfect, [Player]! Your listening and dialogue are ready! You've completed Phase 2!",
                 "remedial_feedback": "Good effort! Let's try another listening task!",
-                "success_threshold": 8
+                "success_threshold": 11,
+                "expected_answers": ['Emna', 'handle', 'music', "it's traditional", 'Ryan', 'decorations', 'show culture', "they're beautiful", 'Emna', 'will', 'music']
             },
             {
                 "id": "plan_listening_story_writing",
@@ -1078,7 +1112,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Use Ryan's plan and add two tasks.",
                 "success_feedback": "Great job, [Player]! Your listening and story are perfect! You've completed Phase 2!",
                 "remedial_feedback": "Nice work! Let's try one more listening task!",
-                "success_threshold": 6
+                "success_threshold": 10,
+                "expected_answers": ['Malouf music', 'Emna', 'make vibrant', "it's traditional", 'Ryan', 'Tunisian tiles', 'show culture', "they're beautiful", 'Friday at 3 PM', 'decorations']
             },
             {
                 "id": "plan_listening_proposal_writing",
@@ -1096,7 +1131,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Include Lilia's poster task and add two tasks with assignments.",
                 "success_feedback": "Amazing, [Player]! Your listening and proposal are complete! You've finished Phase 2!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 10,
+                "expected_answers": ['posters', 'Tunisian colors', 'promote event', 'they attract guests', 'Malouf music', 'reflect tradition', "it's cultural", 'Emna', 'music', "she's creative"]
             }
         ],
         
@@ -1120,7 +1156,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Use connectors like 'because' for reasoning.",
                 "success_feedback": "Great, [Player]! Your listening and dialogue are ready! You've completed Phase 2!",
                 "remedial_feedback": "Good effort! Let's try another listening task!",
-                "success_threshold": 6
+                "success_threshold": 7,
+                "expected_answers": ['pick', "it's vibrant", 'design', 'Tunisian tiles', 'they show culture', 'Lilia', 'posters']
             },
             {
                 "id": "plan_listening_sentence_expansion",
@@ -1138,7 +1175,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Add connectors and cultural details.",
                 "success_feedback": "Perfect, [Player]! Your listening and sentences shine! You've completed Phase 2!",
                 "remedial_feedback": "Nice try! Let's keep practicing listening!",
-                "success_threshold": 6
+                "success_threshold": 5,
+                "expected_answers": ['because', 'with', 'to', 'posters', 'to']
             },
             {
                 "id": "plan_listening_cultural_research",
@@ -1156,7 +1194,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Focus on cultural significance.",
                 "success_feedback": "Great job, [Player]! Your listening and research are ready! You've completed Phase 2!",
                 "remedial_feedback": "Good work! Let's try one more listening task!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Malouf music', "it's vibrant", 'Tunisian', 'they show tradition', 'cultural', 'exciting']
             },
             {
                 "id": "plan_listening_team_plan",
@@ -1174,10 +1213,10 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Assign tasks with cultural reasons.",
                 "success_feedback": "Amazing, [Player]! Your listening and plan are complete! You've finished Phase 2!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Malouf music', "it's vibrant", 'Tunisian tiles', 'they show culture', 'posters', 'promote']
             }
         ],
-        
         "B1": [
             {
                 "id": "plan_listening_negotiation_roleplay",
@@ -1196,7 +1235,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Use polite phrases and cultural reasoning.",
                 "success_feedback": "Excellent, [Player]! Your listening and negotiation are perfect! You've completed Phase 2!",
                 "remedial_feedback": "Good job! Let's practice more listening!",
-                "success_threshold": 6
+                "success_threshold": 3,
+                "expected_answers": ["it's vibrant", 'Tunisian', 'enhance']
             },
             {
                 "id": "plan_listening_assignment_report",
@@ -1214,7 +1254,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Include cultural reasoning.",
                 "success_feedback": "Great work, [Player]! Your listening and assignments are ready! You've completed Phase 2!",
                 "remedial_feedback": "Nice effort! Let's try another listening task!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Malouf music', "it's traditional", 'Tunisian tiles', 'showcase', 'vibrant', 'cultural']
             },
             {
                 "id": "plan_listening_cultural_reflection",
@@ -1232,7 +1273,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Add one new task with cultural ties.",
                 "success_feedback": "Fantastic, [Player]! Your listening and reflections shine! You've completed Phase 2!",
                 "remedial_feedback": "Good work! Let's try one more listening task!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['vibrant', "it's traditional", 'culture', 'decorations', 'posters', 'promotion']
             },
             {
                 "id": "plan_listening_event_proposal",
@@ -1250,7 +1292,8 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "hint": "Include two new tasks and assignments.",
                 "success_feedback": "Amazing, [Player]! Your listening and proposal complete Phase 2!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
-                "success_threshold": 6
+                "success_threshold": 6,
+                "expected_answers": ['Malouf music', 'vibrant', 'Tunisian tiles', 'showcase', 'food', 'lighting']
             }
         ]
     }
