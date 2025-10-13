@@ -26,7 +26,7 @@ export default function Game() {
   const [feedback, setFeedback] = useState(null)
   const [audioRef, setAudioRef] = useState(null)
   const [pasteWarn, setPasteWarn] = useState(false)
-  const [showIntro, setShowIntro] = useState(true)
+  const [showIntro, setShowIntro] = useState(false) // Disable Phase 2 intro in Phase 1 game
   const [showInstructions, setShowInstructions] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -120,7 +120,8 @@ export default function Game() {
   }
 
   const handleIntroStart = () => {
-    navigate('/phase2/step/step_1')
+    // Start Phase 1 game - just close the intro dialog
+    setShowIntro(false)
   }
 
   const handleIntroClose = () => {

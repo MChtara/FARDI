@@ -536,11 +536,11 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
             },
             {
                 "id": "role_assignment_report",
-                "task_type": "assignment_report",
+                "task_type": "fill_gaps",
                 "speaker": "Emna",
-                "instruction": "Let's write a role assignment report! Document who does what and why.",
+                "instruction": "Let's write a role assignment report! Document who does what and why. Choose the correct words from the word bank.",
                 "title": "Role Assignment Report",
-                "report_template": [
+                "sentences": [
                     {"text": "Emna is assigned __________ because __________.", "blanks": ["music", "she's creative"]},
                     {"text": "Ryan handles __________ to __________ our culture.", "blanks": ["decorations", "showcase"]},
                     {"text": "These assignments will make our event __________ and __________.", "blanks": ["vibrant", "cultural"]}
@@ -554,11 +554,11 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
             },
             {
                 "id": "cultural_role_reflection",
-                "task_type": "cultural_reflection",
+                "task_type": "fill_gaps",
                 "speaker": "Ryan",
-                "instruction": "Let's reflect on cultural roles! Explain how roles support Tunisian culture in our event.",
+                "instruction": "Let's reflect on cultural roles! Explain how roles support Tunisian culture in our event. Choose the correct words from the word bank.",
                 "title": "Cultural Role Reflection",
-                "reflection_prompts": [
+                "sentences": [
                     {"text": "Music roles help our event because __________.", "blanks": ["they showcase Tunisian traditions"]},
                     {"text": "Decoration roles add __________ to our __________.", "blanks": ["culture", "celebration"]},
                     {"text": "I suggest adding __________ role to enhance __________.", "blanks": ["food", "cultural experience"]}
@@ -572,11 +572,11 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
             },
             {
                 "id": "event_role_proposal",
-                "task_type": "event_proposal",
+                "task_type": "fill_gaps",
                 "speaker": "Lilia",
-                "instruction": "Let's create a role proposal! Propose roles and assignments for our cultural event.",
+                "instruction": "Let's create a role proposal! Propose roles and assignments for our cultural event. Choose the correct words from the word bank.",
                 "title": "Event Role Proposal",
-                "proposal_framework": [
+                "sentences": [
                     {"text": "The event includes __________ role to make it __________.", "blanks": ["music", "vibrant"]},
                     {"text": "We'll assign __________ to __________ our heritage.", "blanks": ["decorations", "showcase"]},
                     {"text": "I propose adding __________ and __________ roles to complete our team.", "blanks": ["food", "promotion"]}

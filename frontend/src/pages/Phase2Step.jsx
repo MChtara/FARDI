@@ -123,15 +123,16 @@ export default function Phase2Step() {
     }
   }
 
+  // TEMPORARILY DISABLED - Allow pasting for testing
   const onPaste = (e) => {
-    e.preventDefault()
-    setPasteWarn(true)
+    // e.preventDefault()
+    // setPasteWarn(true)
   }
   const onKeyDown = (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
-      e.preventDefault()
-      setPasteWarn(true)
-    }
+    // if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
+    //   e.preventDefault()
+    //   setPasteWarn(true)
+    // }
   }
 
   if (loading) return <Box sx={{ p: 3 }}><LinearProgress /></Box>

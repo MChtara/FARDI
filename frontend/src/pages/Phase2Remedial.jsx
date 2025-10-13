@@ -148,10 +148,10 @@ export default function Phase2Remedial() {
     }
   }
 
-  // Block paste globally within remedial page (for any potential freeform fields)
-  const onPaste = (e) => { e.preventDefault(); setPasteWarn(true) }
+  // TEMPORARILY DISABLED - Allow pasting for testing
+  const onPaste = (e) => { /* e.preventDefault(); setPasteWarn(true) */ }
   const onKeyDown = (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') { e.preventDefault(); setPasteWarn(true) }
+    // if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') { e.preventDefault(); setPasteWarn(true) }
   }
 
   const speak = (text) => {

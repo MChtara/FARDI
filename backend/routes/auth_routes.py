@@ -533,8 +533,8 @@ def api_login():
         session['role'] = user.get('role', 'user')
         session.permanent = remember_me
 
-        # Determine redirect URL based on user role
-        redirect_url = '/app/admin' if user.get('is_admin') else '/app/dashboard'
+        # Determine redirect URL based on user role (without /app prefix since React Router handles that)
+        redirect_url = '/admin' if user.get('is_admin') else '/dashboard'
         
         return jsonify({
             'success': True, 
