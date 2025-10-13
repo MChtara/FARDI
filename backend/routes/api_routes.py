@@ -1625,10 +1625,35 @@ def get_phase2_remedial():
                 'dialogue': activity.get('dialogue'),
                 'word_bank': activity.get('word_bank', []),
                 'audio_text': activity.get('audio_text'),
+                'audio_content': activity.get('audio_content'),
                 'success_threshold': activity.get('success_threshold', 6),
                 'expected_answers': activity.get('expected_answers', []),
                 'success_feedback': replace_player_placeholders(activity.get('success_feedback')),
-                'remedial_feedback': replace_player_placeholders(activity.get('remedial_feedback'))
+                'remedial_feedback': replace_player_placeholders(activity.get('remedial_feedback')),
+                # All custom task type properties
+                'expansion_exercises': activity.get('expansion_exercises'),
+                'research_prompts': activity.get('research_prompts'),
+                'planning_template': activity.get('planning_template'),
+                'negotiation_dialogue': activity.get('negotiation_dialogue'),
+                'report_template': activity.get('report_template'),
+                'reflection_prompts': activity.get('reflection_prompts'),
+                'proposal_framework': activity.get('proposal_framework'),
+                'story_template': activity.get('story_template'),
+                'story_framework': activity.get('story_framework'),
+                'proposal_template': activity.get('proposal_template'),
+                'writing_prompts': activity.get('writing_prompts'),
+                'expansion_items': activity.get('expansion_items'),
+                'listening_items': activity.get('listening_items'),
+                'priority_template': activity.get('priority_template'),
+                'planning_items': activity.get('planning_items'),
+                'strategic_template': activity.get('strategic_template'),
+                'analysis_template': activity.get('analysis_template'),
+                'negotiation_items': activity.get('negotiation_items'),
+                'roleplay_items': activity.get('roleplay_items'),
+                'priority_items': activity.get('priority_items'),
+                'strategic_items': activity.get('strategic_items'),
+                'proposal_items': activity.get('proposal_items'),
+                'analysis_items': activity.get('analysis_items')
             }
 
         # Build simple meta list for navigation

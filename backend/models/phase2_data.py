@@ -538,14 +538,13 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "id": "role_assignment_report",
                 "task_type": "fill_gaps",
                 "speaker": "Emna",
-                "instruction": "Let's write a role assignment report! Document who does what and why. Choose the correct words from the word bank.",
+                "instruction": "Let's write a role assignment report! Document who does what and why. Choose the correct words for each blank.",
                 "title": "Role Assignment Report",
                 "sentences": [
-                    {"text": "Emna is assigned __________ because __________.", "blanks": ["music", "she's creative"]},
-                    {"text": "Ryan handles __________ to __________ our culture.", "blanks": ["decorations", "showcase"]},
-                    {"text": "These assignments will make our event __________ and __________.", "blanks": ["vibrant", "cultural"]}
+                    {"text": "Emna is assigned __________ because __________.", "blanks": ["music", "she's creative"], "choices": [["music", "decorations", "food"], ["she's creative", "he's organized", "they're experienced"]]},
+                    {"text": "Ryan handles __________ to __________ our culture.", "blanks": ["decorations", "showcase"], "choices": [["decorations", "music", "promotion"], ["showcase", "celebrate", "display"]]},
+                    {"text": "These assignments will make our event __________ and __________.", "blanks": ["vibrant", "cultural"], "choices": [["vibrant", "organized", "creative"], ["cultural", "musical", "traditional"]]}
                 ],
-                "word_bank": ["music", "decorations", "showcase", "vibrant", "cultural", "she's creative"],
                 "hint": "Include reasoning for each role assignment.",
                 "success_feedback": "Great work, [Player]! Your assignment report is professional! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Nice effort! Let's try another role activity!",
@@ -556,14 +555,13 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "id": "cultural_role_reflection",
                 "task_type": "fill_gaps",
                 "speaker": "Ryan",
-                "instruction": "Let's reflect on cultural roles! Explain how roles support Tunisian culture in our event. Choose the correct words from the word bank.",
+                "instruction": "Let's reflect on cultural roles! Explain how roles support Tunisian culture in our event. Choose the correct words for each blank.",
                 "title": "Cultural Role Reflection",
                 "sentences": [
-                    {"text": "Music roles help our event because __________.", "blanks": ["they showcase Tunisian traditions"]},
-                    {"text": "Decoration roles add __________ to our __________.", "blanks": ["culture", "celebration"]},
-                    {"text": "I suggest adding __________ role to enhance __________.", "blanks": ["food", "cultural experience"]}
+                    {"text": "Music roles help our event because __________.", "blanks": ["they showcase Tunisian traditions"], "choices": [["they showcase Tunisian traditions", "they are fun", "people like music"]]},
+                    {"text": "Decoration roles add __________ to our __________.", "blanks": ["culture", "celebration"], "choices": [["culture", "color", "beauty"], ["celebration", "event", "party"]]},
+                    {"text": "I suggest adding __________ role to enhance __________.", "blanks": ["food", "cultural experience"], "choices": [["food", "music", "art"], ["cultural experience", "the party", "team spirit"]]}
                 ],
-                "word_bank": ["they showcase Tunisian traditions", "culture", "celebration", "food", "cultural experience"],
                 "hint": "Connect roles to Tunisian cultural elements.",
                 "success_feedback": "Fantastic, [Player]! Your cultural reflection shines! Let's move to [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "Good work! Let's try one more cultural task!",
@@ -574,14 +572,13 @@ PHASE_2_REMEDIAL_ACTIVITIES = {
                 "id": "event_role_proposal",
                 "task_type": "fill_gaps",
                 "speaker": "Lilia",
-                "instruction": "Let's create a role proposal! Propose roles and assignments for our cultural event. Choose the correct words from the word bank.",
+                "instruction": "Let's create a role proposal! Propose roles and assignments for our cultural event. Choose the correct words for each blank.",
                 "title": "Event Role Proposal",
                 "sentences": [
-                    {"text": "The event includes __________ role to make it __________.", "blanks": ["music", "vibrant"]},
-                    {"text": "We'll assign __________ to __________ our heritage.", "blanks": ["decorations", "showcase"]},
-                    {"text": "I propose adding __________ and __________ roles to complete our team.", "blanks": ["food", "promotion"]}
+                    {"text": "The event includes __________ role to make it __________.", "blanks": ["music", "vibrant"], "choices": [["music", "food", "art"], ["vibrant", "successful", "cultural"]]},
+                    {"text": "We'll assign __________ to __________ our heritage.", "blanks": ["decorations", "showcase"], "choices": [["decorations", "promotion", "catering"], ["showcase", "celebrate", "honor"]]},
+                    {"text": "I propose adding __________ and __________ roles to complete our team.", "blanks": ["food", "promotion"], "choices": [["food", "music", "security"], ["promotion", "photography", "logistics"]]}
                 ],
-                "word_bank": ["music", "decorations", "vibrant", "showcase", "food", "promotion"],
                 "hint": "Include multiple roles with cultural justification.",
                 "success_feedback": "Amazing, [Player]! Your role proposal completes Step 1 beautifully! Ready for [Step 2: Scheduling Meetings]!",
                 "remedial_feedback": "You're close! Let's review with Ms. Mabrouki!",
