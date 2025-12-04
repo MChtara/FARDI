@@ -10,7 +10,7 @@ from datetime import datetime
 from routes.auth_routes import db_manager
 from models.auth import admin_required
 from models.game_data import DIALOGUE_QUESTIONS, NPCS
-from models.phase2_data import PHASE_2_STEPS, PHASE_2_REMEDIAL_ACTIVITIES
+from models.phase2_loader import PHASE_2_STEPS, PHASE_2_REMEDIAL_ACTIVITIES
 
 workflow_importer_bp = Blueprint('workflow_importer', __name__, url_prefix='/api/admin/workflow-importer')
 

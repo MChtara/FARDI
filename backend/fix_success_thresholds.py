@@ -6,40 +6,51 @@ import json
 import re
 
 def count_blanks_in_activity(activity):
-    """Count total number of blanks in an activity"""
-    total_blanks = 0
+    """
+    Count the success threshold for an activity.
+    The threshold is the number of items/questions the student must complete,
+    NOT the total number of individual blanks.
 
-    # Count blanks in sentences (fill_gaps activities)
-    if 'sentences' in activity:
-        for sentence in activity['sentences']:
-            if isinstance(sentence, dict) and 'blanks' in sentence:
-                total_blanks += len(sentence['blanks'])
+    Priority:
+    1. correct_answers (if present) - the definitive list of expected responses
+    2. pairs (for matching activities)
+    3. templates (for gap-fill activities)
+    """
+    activity_type = activity.get('type', '')
 
-    # Count blanks in dialogue
-    if 'dialogue' in activity:
-        for dialogue_item in activity['dialogue']:
-            if isinstance(dialogue_item, dict) and 'blanks' in dialogue_item:
-                total_blanks += len(dialogue_item['blanks'])
+    # PRIORITY 1: Use correct_answers if available (most reliable)
+    if 'correct_answers' in activity:
+        return len(activity['correct_answers'])
 
-    # Count blanks in matching_items
-    if 'matching_items' in activity:
-        total_blanks = len(activity['matching_items'])
+    # PRIORITY 2: For drag_and_drop: count pairs
+    elif 'pairs' in activity:
+        return len(activity['pairs'])
 
-    # Count blanks in other template types
-    for key in ['report_template', 'planning_template', 'expansion_exercises',
-                'research_prompts', 'reflection_prompts', 'proposal_framework',
-                'proposal_template', 'negotiation_dialogue', 'analysis_template',
-                'story_template', 'priority_framework']:
+    # PRIORITY 3: For gap_fill: count templates (each template is one sentence to complete)
+    elif 'templates' in activity:
+        return len(activity['templates'])
+
+    # PRIORITY 4: For dialogue_completion: count dialogue lines with templates
+    elif 'dialogue_lines' in activity:
+        return sum(1 for line in activity['dialogue_lines'] if 'template' in line)
+
+    # Additional fallback for other template types
+    for key in ['sentences', 'dialogue', 'matching_items', 'report_template',
+                'planning_template', 'expansion_exercises', 'research_prompts',
+                'reflection_prompts', 'proposal_framework', 'proposal_template',
+                'negotiation_dialogue', 'analysis_template', 'story_template',
+                'priority_framework']:
         if key in activity:
-            for item in activity[key]:
-                if isinstance(item, dict) and 'blanks' in item:
-                    total_blanks += len(item['blanks'])
+            if isinstance(activity[key], list):
+                return len(activity[key])
+            elif key == 'matching_items':
+                return len(activity[key])
 
-    return total_blanks
+    return 0
 
 def analyze_phase2_data():
     """Analyze all activities and show current vs correct thresholds"""
-    from models.phase2_data import PHASE_2_REMEDIAL_ACTIVITIES
+    from models.phase2_loader import PHASE_2_REMEDIAL_ACTIVITIES
 
     print("=" * 80)
     print("PHASE 2 REMEDIAL ACTIVITIES - SUCCESS THRESHOLD ANALYSIS")
@@ -70,7 +81,7 @@ def analyze_phase2_data():
 
                 print(f"    Activity {i+1}: {activity_id}")
                 print(f"      Current threshold: {current_threshold}")
-                print(f"      Correct threshold: {correct_threshold} (blanks: {blank_count})")
+                print(f"      Correct threshold: {correct_threshold} (items: {blank_count})")
                 print(f"      Status: {status}")
 
                 if not is_correct:
