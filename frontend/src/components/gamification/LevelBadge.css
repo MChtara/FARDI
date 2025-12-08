@@ -1,0 +1,220 @@
+/**
+ * LevelBadge Styles
+ */
+
+.level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--radius-xl);
+    color: white;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-all-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.level-badge-clickable {
+    cursor: pointer;
+}
+
+.level-badge-clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Sizes */
+.level-badge-small {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+}
+
+.level-badge-medium {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-base);
+}
+
+.level-badge-large {
+    padding: var(--space-4) var(--space-6);
+    font-size: var(--text-lg);
+}
+
+/* Icon */
+.level-badge-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    font-size: 1.5rem;
+}
+
+.level-badge-small .level-badge-icon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.25rem;
+}
+
+.level-badge-large .level-badge-icon {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.75rem;
+}
+
+.level-badge-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Info */
+.level-badge-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.level-badge-number {
+    font-weight: var(--font-bold);
+    font-size: 1.125rem;
+    line-height: 1;
+}
+
+.level-badge-title {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    line-height: 1;
+}
+
+/* Compact mode */
+.level-badge-compact {
+    padding: var(--space-2);
+    gap: var(--space-2);
+}
+
+.level-badge-compact .level-badge-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1rem;
+}
+
+.level-badge-number-compact {
+    font-weight: var(--font-bold);
+    font-size: 1rem;
+}
+
+/* Glow effect */
+.level-badge-glow {
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+    }
+}
+
+/* Level up animation */
+.level-up-animation {
+    animation: levelUpBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes levelUpBounce {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Level up indicator */
+.level-up-indicator {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--gradient-success);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: slideDown 0.5s ease-out, fadeOut 0.5s ease-out 1.5s forwards;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.level-up-text {
+    font-weight: var(--font-bold);
+    font-size: var(--text-sm);
+}
+
+.level-up-sparkle {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateX(-50%) translateY(-10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .level-badge {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .level-badge-icon {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1.25rem;
+    }
+
+    .level-badge-number {
+        font-size: 1rem;
+    }
+
+    .level-badge-title {
+        font-size: 0.75rem;
+    }
+}

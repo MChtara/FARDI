@@ -1,0 +1,46 @@
+/**
+ * CollectionGallery Styles
+ */
+
+.collection-gallery {
+    padding: var(--space-4);
+}
+
+.collectible-card {
+    height: 100%;
+    transition: var(--transition-all-base);
+    cursor: pointer;
+}
+
+.collectible-card.owned:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: var(--shadow-lg);
+}
+
+.collectible-card.locked {
+    opacity: 0.5;
+}
+
+.collectible-icon.grayscale {
+    filter: grayscale(100%);
+}
+
+.collectible-icon {
+    transition: var(--transition-all-base);
+}
+
+.collectible-card.owned .collectible-icon {
+    animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
