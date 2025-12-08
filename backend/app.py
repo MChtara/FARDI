@@ -62,6 +62,10 @@ app.register_blueprint(phase5_bp)
 from routes.evaluation_routes import evaluation_bp
 app.register_blueprint(evaluation_bp, url_prefix='/api')
 
+# Register admin routes
+from routes.admin_routes import admin_bp
+app.register_blueprint(admin_bp)
+
 
 @app.route('/')
 def root():

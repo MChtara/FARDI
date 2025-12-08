@@ -16,6 +16,7 @@ import EditProfile from './pages/EditProfile.jsx'
 import ChangePassword from './pages/ChangePassword.jsx'
 import DeleteAccount from './pages/DeleteAccount.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
+import AdminStudentProgress from './pages/AdminStudentProgress.jsx'
 import AdminUserViewer from './pages/AdminUserViewer.jsx'
 import AdminAnalytics from './pages/AdminAnalytics.jsx'
 import AdminExerciseBuilder from './pages/AdminExerciseBuilder.jsx'
@@ -60,6 +61,7 @@ function App() {
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/student/:userId" element={<AdminStudentProgress />} />
           <Route path="/admin/users/:userId" element={<AdminUserViewer />} />
           <Route path="/admin/exercises" element={<AdminExerciseBuilder />} />
           <Route path="/admin/exercises/create" element={<AdminExerciseEditor />} />
