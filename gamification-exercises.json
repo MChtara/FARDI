@@ -1,0 +1,288 @@
+{
+  "implementation_plan": [
+    {
+      "task_type": "drag_and_drop",
+      "component": "PuzzleGame",
+      "ux_context": "Visual Matching",
+      "data_binding": {
+        "puzzle_pieces": "pairs (term)",
+        "drop_zones": "pairs (definition)",
+        "distractors": "N/A"
+      },
+      "features": [
+        "Jigsaw-style snapping",
+        "Vibration on mismatch"
+      ]
+    },
+    {
+      "task_type": "listening_drag_drop",
+      "component": "Rhythm Matcher",
+      "ux_context": "Audio-Visual Matching",
+      "data_binding": {
+        "audio_source": "audio_script (or derived clip)",
+        "cards": "pairs (term/definition)",
+        "match_logic": "pairs"
+      },
+      "features": [
+        "Card flip animation",
+        "Audio playback on hover",
+        "Combo counter"
+      ]
+    },
+    {
+      "task_type": "gap_fill",
+      "component": "Word Sniper",
+      "ux_context": "Gamified Grammar Drill",
+      "data_binding": {
+        "targets": "word_bank",
+        "sentences": "templates",
+        "correct_answers": "correct_answers"
+      },
+      "features": [
+        "Crosshair cursor",
+        "Time pressure",
+        "Accuracy score"
+      ]
+    },
+    {
+      "task_type": "gap_fill_story",
+      "component": "GapFillStory",
+      "ux_context": "Contextual Narrative",
+      "data_binding": {
+        "story_text": "templates (joined)",
+        "word_bank": "word_bank",
+        "hints": "correct_answers"
+      },
+      "features": [
+        "Flow preservation",
+        "Click-to-fill interaction"
+      ]
+    },
+    {
+      "task_type": "negotiation_gap_fill",
+      "component": "DebateArena",
+      "ux_context": "Social Battle",
+      "data_binding": {
+        "opponent_lines": "dialogue_lines (Speaker != You)",
+        "player_templates": "dialogue_lines (Speaker == You)",
+        "winning_logic": "correct_answers"
+      },
+      "features": [
+        "Persuasion Tug-of-War Meter",
+        "Avatar emotion states (Happy/Angry)"
+      ]
+    },
+    {
+      "task_type": "listening_negotiation",
+      "component": "DebateArena",
+      "ux_context": "Audio-Based Social Battle",
+      "data_binding": {
+        "audio_cue": "audio_script",
+        "opponent_lines": "dialogue_lines (audio synced)",
+        "player_input": "dialogue_lines (template)"
+      },
+      "features": [
+        "Audio-lock (input disabled until audio finishes)",
+        "Persuasion Meter"
+      ]
+    },
+    {
+      "task_type": "dialogue_completion",
+      "component": "ConversationTetris",
+      "ux_context": "Flow/Reflexes",
+      "data_binding": {
+        "falling_blocks": "word_bank",
+        "dialogue_stream": "dialogue_lines",
+        "gap_targets": "templates"
+      },
+      "features": [
+        "Falling physics",
+        "Vibration on catch",
+        "Speed ramp-up"
+      ]
+    },
+    {
+      "task_type": "listening_dialogue_gap_fill",
+      "component": "Signal Decoder",
+      "ux_context": "Tech/Repair",
+      "data_binding": {
+        "corrupted_text": "dialogue_lines (template)",
+        "clean_signal": "audio_script",
+        "repair_tools": "word_bank"
+      },
+      "features": [
+        "Glitch text effects",
+        "Waveform visualizer"
+      ]
+    },
+    {
+      "task_type": "listening_role_play",
+      "component": "Signal Decoder",
+      "ux_context": "Script Completion",
+      "data_binding": {
+        "audio_source": "audio_script",
+        "script_gaps": "correct_answers (derived gaps)",
+        "roles": "Speaker names"
+      },
+      "features": [
+        "Role icons",
+        "Audio playback controls"
+      ]
+    },
+    {
+      "task_type": "writing",
+      "component": "BillboardDesigner",
+      "ux_context": "Creative Construction",
+      "data_binding": {
+        "sections": "guided_questions",
+        "scaffolding": "templates",
+        "validation": "ai_evaluation (prompt)"
+      },
+      "features": [
+        "Visual poster canvas",
+        "Drag-and-drop stickers as rewards"
+      ]
+    },
+    {
+      "task_type": "listening_proposal_writing",
+      "component": "BillboardDesigner",
+      "ux_context": "Creative Synthesis",
+      "data_binding": {
+        "audio_brief": "audio_script",
+        "proposal_structure": "templates",
+        "requirements": "guided_questions"
+      },
+      "features": [
+        "Audio replay button on canvas",
+        "Live AI feedback tooltip"
+      ]
+    },
+    {
+      "task_type": "listening_proposal",
+      "component": "BillboardDesigner",
+      "ux_context": "Creative Synthesis",
+      "data_binding": {
+        "audio_brief": "audio_script",
+        "structure": "templates",
+        "content_check": "correct_answers"
+      },
+      "features": [
+        "Audio instruction overlay",
+        "Visual export (Save as Image)"
+      ]
+    },
+    {
+      "task_type": "sentence_expansion",
+      "component": "PhraseExpander",
+      "ux_context": "Drafting/Editing",
+      "data_binding": {
+        "base_sentence": "templates (left side)",
+        "target_structure": "templates (right side)",
+        "hints": "guided_questions"
+      },
+      "features": [
+        "Before/After comparison slider",
+        "Connector word highlighting"
+      ]
+    },
+    {
+      "task_type": "reflection_gap_fill",
+      "component": "PhraseExpander",
+      "ux_context": "Deep Thinking",
+      "data_binding": {
+        "reflection_prompt": "templates",
+        "key_concepts": "correct_answers (keywords)",
+        "user_input": "Input Field"
+      },
+      "features": [
+        "Keyword detection (glow effect)",
+        "Progress tracking"
+      ]
+    },
+    {
+      "task_type": "listening_expansion",
+      "component": "PhraseExpander",
+      "ux_context": "Audio Detail Extraction",
+      "data_binding": {
+        "audio_source": "audio_script",
+        "base_text": "guided_questions",
+        "expansion_goals": "example_of_answers"
+      },
+      "features": [
+        "Audio reference button",
+        "Detail check logic"
+      ]
+    },
+    {
+      "task_type": "listening_story_writing",
+      "component": "Chat Messenger Sim",
+      "ux_context": "Digital Communication",
+      "data_binding": {
+        "sender_avatar": "Team Avatar",
+        "incoming_voice_note": "audio_script",
+        "reply_prompts": "templates"
+      },
+      "features": [
+        "Chat bubble interface",
+        "Typing indicators",
+        "Emoji reactions"
+      ]
+    },
+    {
+      "task_type": "listening_research",
+      "component": "Chat Messenger Sim",
+      "ux_context": "Reporting Findings",
+      "data_binding": {
+        "manager_voice_note": "audio_script",
+        "research_questions": "guided_questions",
+        "report_template": "templates"
+      },
+      "features": [
+        "Voice note waveform",
+        "Structured reply options"
+      ]
+    },
+    {
+      "task_type": "listening_reflection",
+      "component": "Chat Messenger Sim",
+      "ux_context": "Team Debrief",
+      "data_binding": {
+        "team_voice_note": "audio_script",
+        "debrief_questions": "guided_questions",
+        "reflection_input": "Input Field"
+      },
+      "features": [
+        "Avatar interactions",
+        "Message sent sound effect"
+      ]
+    },
+    {
+      "task_type": "listening_team_plan",
+      "component": "EventPlannerBoard",
+      "ux_context": "Strategic Planning",
+      "data_binding": {
+        "audio_instructions": "audio_script",
+        "avatars": "Characters (Emna, Ryan, etc.)",
+        "tasks": "guided_questions (derived tasks)"
+      },
+      "features": [
+        "Drag-and-drop avatars to columns",
+        "Audio-locked board state"
+      ]
+    },
+    {
+      "task_type": "listening_assignment",
+      "component": "EventPlannerBoard",
+      "ux_context": "Role Assignment",
+      "data_binding": {
+        "audio_instructions": "audio_script",
+        "role_cards": "Characters",
+        "task_slots": "guided_questions (outcomes)"
+      },
+      "features": [
+        "Visual confirmation on correct drop",
+        "Team overview dashboard"
+      ]
+    }
+  ]
+}
