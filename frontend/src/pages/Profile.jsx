@@ -15,7 +15,7 @@ export default function Profile() {
   const { stats } = useUserStats()
 
   const userName = user?.first_name || user?.username || 'User'
-  const userLevel = stats?.overall_level || 'B1'
+  const userLevel = stats?.best_level || stats?.overall_level || null
   const joinDate = user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Recently'
 
   return (
@@ -44,12 +44,14 @@ export default function Profile() {
               @{user?.username}
             </Typography>
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-              <Chip
-                icon={<SchoolIcon />}
-                label={`Level ${userLevel}`}
-                color="primary"
-                variant="outlined"
-              />
+              {userLevel && (
+                <Chip
+                  icon={<SchoolIcon />}
+                  label={`Level ${userLevel}`}
+                  color="primary"
+                  variant="outlined"
+                />
+              )}
               <Chip
                 icon={<CalendarTodayIcon />}
                 label={`Joined ${joinDate}`}
@@ -89,7 +91,7 @@ export default function Profile() {
                 Account Information
               </Typography>
               <Divider sx={{ mb: 2 }} />
-              
+
               <Stack spacing={2}>
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -99,7 +101,7 @@ export default function Profile() {
                     {user?.email || 'Not provided'}
                   </Typography>
                 </Box>
-                
+
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
                     Username
@@ -108,7 +110,7 @@ export default function Profile() {
                     {user?.username}
                   </Typography>
                 </Box>
-                
+
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
                     Role
@@ -132,7 +134,7 @@ export default function Profile() {
                 Learning Progress
               </Typography>
               <Divider sx={{ mb: 2 }} />
-              
+
               <Stack spacing={2}>
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
@@ -140,11 +142,11 @@ export default function Profile() {
                   </Typography>
                   <Chip
                     icon={<TrendingUpIcon />}
-                    label={`CEFR Level ${userLevel}`}
-                    color="primary"
+                    label={userLevel ? `CEFR Level ${userLevel}` : 'Not assessed yet'}
+                    color={userLevel ? 'primary' : 'default'}
                   />
                 </Box>
-                
+
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
                     Total Assessments
@@ -153,7 +155,7 @@ export default function Profile() {
                     {stats?.total_assessments || 0}
                   </Typography>
                 </Box>
-                
+
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
                     Average Score
@@ -175,7 +177,7 @@ export default function Profile() {
                 Danger Zone
               </Typography>
               <Divider sx={{ mb: 2 }} />
-              
+
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }} justifyContent="space-between">
                 <Box>
                   <Typography variant="subtitle1" gutterBottom>

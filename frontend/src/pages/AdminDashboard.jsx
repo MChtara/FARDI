@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { 
-  Box, Paper, Typography, Stack, Button, Grid, Card, CardContent, Table, TableBody, 
+import {
+  Box, Paper, Typography, Stack, Button, Grid, Card, CardContent, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, LinearProgress,
   List, ListItem, ListItemText, ListItemAvatar, Avatar, Divider, Alert, Tabs, Tab
 } from '@mui/material'
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
   const loadData = async () => {
     setLoading(true)
     setError('')
-    
+
     try {
       const [usersRes, analyticsRes] = await Promise.all([
         fetch('/api/admin/users', { credentials: 'include' }),
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
   }
 
   const activityChartData = {
-    labels: analytics.engagement.daily_activity.slice().reverse().map(d => 
+    labels: analytics.engagement.daily_activity.slice().reverse().map(d =>
       new Date(d.date).toLocaleDateString()
     ),
     datasets: [{
@@ -229,9 +229,9 @@ export default function AdminDashboard() {
                   <Typography variant="body2" color="text.secondary">
                     Create and manage dynamic learning workflows and exercises
                   </Typography>
-                  <Button 
-                    variant="contained" 
-                    component={RouterLink} 
+                  <Button
+                    variant="contained"
+                    component={RouterLink}
                     to="/admin/exercises"
                     fullWidth
                   >
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ height: '100%', cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
               <CardContent>
@@ -253,8 +253,8 @@ export default function AdminDashboard() {
                   <Typography variant="body2" color="text.secondary">
                     View and manage user accounts and permissions
                   </Typography>
-                  <Button 
-                    variant="outlined" 
+                  <Button
+                    variant="outlined"
                     onClick={() => setActiveTab(3)}
                     fullWidth
                   >
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} sm={6} md={4}>
             <Card sx={{ height: '100%', cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
               <CardContent>
@@ -276,9 +276,9 @@ export default function AdminDashboard() {
                   <Typography variant="body2" color="text.secondary">
                     View detailed analytics and performance metrics
                   </Typography>
-                  <Button 
-                    variant="outlined" 
-                    component={RouterLink} 
+                  <Button
+                    variant="outlined"
+                    component={RouterLink}
                     to="/admin/analytics"
                     fullWidth
                   >
@@ -294,9 +294,9 @@ export default function AdminDashboard() {
       {/* Key Performance Indicators */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ 
-            background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)', 
-            color: 'white', 
+          <Card sx={{
+            background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+            color: 'white',
             height: '100%',
             boxShadow: '0 4px 20px rgba(25, 118, 210, 0.3)'
           }}>
@@ -309,11 +309,11 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ 
-            background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)', 
-            color: 'white', 
+          <Card sx={{
+            background: 'linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)',
+            color: 'white',
             height: '100%',
             boxShadow: '0 4px 20px rgba(46, 125, 50, 0.3)'
           }}>
@@ -326,11 +326,11 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ 
-            background: 'linear-gradient(135deg, #ed6c02 0%, #e65100 100%)', 
-            color: 'white', 
+          <Card sx={{
+            background: 'linear-gradient(135deg, #ed6c02 0%, #e65100 100%)',
+            color: 'white',
             height: '100%',
             boxShadow: '0 4px 20px rgba(237, 108, 2, 0.3)'
           }}>
@@ -345,11 +345,11 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ 
-            background: 'linear-gradient(135deg, #d32f2f 0%, #c62828 100%)', 
-            color: 'white', 
+          <Card sx={{
+            background: 'linear-gradient(135deg, #d32f2f 0%, #c62828 100%)',
+            color: 'white',
             height: '100%',
             boxShadow: '0 4px 20px rgba(211, 47, 47, 0.3)'
           }}>
@@ -364,9 +364,9 @@ export default function AdminDashboard() {
         </Grid>
 
         <Grid item xs={12} sm={6} md={2.4}>
-          <Card sx={{ 
-            background: 'linear-gradient(135deg, #0288d1 0%, #0277bd 100%)', 
-            color: 'white', 
+          <Card sx={{
+            background: 'linear-gradient(135deg, #0288d1 0%, #0277bd 100%)',
+            color: 'white',
             height: '100%',
             boxShadow: '0 4px 20px rgba(2, 136, 209, 0.3)'
           }}>
@@ -384,27 +384,27 @@ export default function AdminDashboard() {
       {/* Tabs for Different Analytics Views */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}>
-          <Tab 
-            icon={<TrendingUpIcon />} 
-            label="Learning Progress" 
+          <Tab
+            icon={<TrendingUpIcon />}
+            label="Learning Progress"
             iconPosition="start"
             sx={{ minHeight: 48 }}
           />
-          <Tab 
-            icon={<GroupIcon />} 
-            label="Student Engagement" 
+          <Tab
+            icon={<GroupIcon />}
+            label="Student Engagement"
             iconPosition="start"
             sx={{ minHeight: 48 }}
           />
-          <Tab 
-            icon={<WarningIcon />} 
-            label="Risk Management" 
+          <Tab
+            icon={<WarningIcon />}
+            label="Risk Management"
             iconPosition="start"
             sx={{ minHeight: 48 }}
           />
-          <Tab 
-            icon={<SupervisorAccountIcon />} 
-            label="User Management" 
+          <Tab
+            icon={<SupervisorAccountIcon />}
+            label="User Management"
             iconPosition="start"
             sx={{ minHeight: 48 }}
           />
@@ -430,7 +430,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
@@ -447,10 +447,10 @@ export default function AdminDashboard() {
                       Phase 1 Completed: {learning_progress.phase_completion.phase1_completed}
                       ({Math.round(learning_progress.phase_completion.phase1_completed / learning_progress.phase_completion.total_users * 100)}%)
                     </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={learning_progress.phase_completion.phase1_completed / learning_progress.phase_completion.total_users * 100} 
-                      sx={{ mt: 1, height: 8 }} 
+                    <LinearProgress
+                      variant="determinate"
+                      value={learning_progress.phase_completion.phase1_completed / learning_progress.phase_completion.total_users * 100}
+                      sx={{ mt: 1, height: 8 }}
                     />
                   </Box>
                   <Box>
@@ -458,10 +458,10 @@ export default function AdminDashboard() {
                       Phase 2 Started: {learning_progress.phase_completion.phase2_started}
                       ({Math.round(learning_progress.phase_completion.phase2_started / learning_progress.phase_completion.total_users * 100)}%)
                     </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={learning_progress.phase_completion.phase2_started / learning_progress.phase_completion.total_users * 100} 
-                      sx={{ mt: 1, height: 8 }} 
+                    <LinearProgress
+                      variant="determinate"
+                      value={learning_progress.phase_completion.phase2_started / learning_progress.phase_completion.total_users * 100}
+                      sx={{ mt: 1, height: 8 }}
                     />
                   </Box>
                   <Box>
@@ -469,10 +469,10 @@ export default function AdminDashboard() {
                       Phase 2 Completed: {learning_progress.phase_completion.phase2_completed}
                       ({learning_progress.phase_completion.total_users > 0 ? Math.round(learning_progress.phase_completion.phase2_completed / learning_progress.phase_completion.total_users * 100) : 0}%)
                     </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={learning_progress.phase_completion.total_users > 0 ? learning_progress.phase_completion.phase2_completed / learning_progress.phase_completion.total_users * 100 : 0} 
-                      sx={{ mt: 1, height: 8 }} 
+                    <LinearProgress
+                      variant="determinate"
+                      value={learning_progress.phase_completion.total_users > 0 ? learning_progress.phase_completion.phase2_completed / learning_progress.phase_completion.total_users * 100 : 0}
+                      sx={{ mt: 1, height: 8 }}
                     />
                   </Box>
                 </Stack>
@@ -501,13 +501,13 @@ export default function AdminDashboard() {
                         <TableRow key={index}>
                           <TableCell>
                             <Typography variant="subtitle2">
-                              {step.step_id.replace('_', ' ').toUpperCase()}
+                              {(step.step_id?.replace('_', ' ') || 'UNKNOWN').toUpperCase()}
                             </Typography>
                           </TableCell>
                           <TableCell align="right">{step.attempts}</TableCell>
                           <TableCell align="right">{step.success_rate}%</TableCell>
                           <TableCell>
-                            <Chip 
+                            <Chip
                               label={step.success_rate > 70 ? 'Good' : step.success_rate > 50 ? 'Needs Attention' : 'Critical'}
                               color={step.success_rate > 70 ? 'success' : step.success_rate > 50 ? 'warning' : 'error'}
                               size="small"
@@ -543,7 +543,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Card>
               <CardContent>
@@ -644,7 +644,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
@@ -661,7 +661,7 @@ export default function AdminDashboard() {
                       </ListItemAvatar>
                       <ListItemText
                         primary={`${student.first_name} ${student.last_name}`}
-                        secondary={`Stuck on ${student.step_id.replace('_', ' ').toUpperCase()} for ${student.days_stuck} days`}
+                        secondary={`Stuck on ${(student.step_id?.replace('_', ' ') || 'unknown').toUpperCase()} for ${student.days_stuck} days`}
                       />
                       <Button
                         size="small"
@@ -696,7 +696,7 @@ export default function AdminDashboard() {
               <Typography variant="h6">Recent Users</Typography>
             </Stack>
           </Box>
-          
+
           <TableContainer>
             <Table>
               <TableHead>

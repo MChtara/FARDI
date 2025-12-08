@@ -74,11 +74,11 @@ export default function AdminAnalytics() {
       try {
         setLoading(true)
         const response = await fetch('/api/admin/analytics', { credentials: 'include' })
-        
+
         if (!response.ok) {
           throw new Error('Failed to load analytics')
         }
-        
+
         const result = await response.json()
         if (result.success) {
           setData(result.data)
@@ -204,7 +204,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ bgcolor: 'success.main', color: 'white' }}>
             <CardContent>
@@ -218,7 +218,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ bgcolor: 'warning.main', color: 'white' }}>
             <CardContent>
@@ -234,7 +234,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ bgcolor: 'error.main', color: 'white' }}>
             <CardContent>
@@ -266,7 +266,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
@@ -281,10 +281,10 @@ export default function AdminAnalytics() {
                     Phase 1 Completed: {learning_progress.phase_completion.phase1_completed}
                     ({Math.round(learning_progress.phase_completion.phase1_completed / learning_progress.phase_completion.total_users * 100)}%)
                   </Typography>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={learning_progress.phase_completion.phase1_completed / learning_progress.phase_completion.total_users * 100} 
-                    sx={{ mt: 1 }} 
+                  <LinearProgress
+                    variant="determinate"
+                    value={learning_progress.phase_completion.phase1_completed / learning_progress.phase_completion.total_users * 100}
+                    sx={{ mt: 1 }}
                   />
                 </Box>
                 <Box>
@@ -292,10 +292,10 @@ export default function AdminAnalytics() {
                     Phase 2 Started: {learning_progress.phase_completion.phase2_started}
                     ({Math.round(learning_progress.phase_completion.phase2_started / learning_progress.phase_completion.total_users * 100)}%)
                   </Typography>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={learning_progress.phase_completion.phase2_started / learning_progress.phase_completion.total_users * 100} 
-                    sx={{ mt: 1 }} 
+                  <LinearProgress
+                    variant="determinate"
+                    value={learning_progress.phase_completion.phase2_started / learning_progress.phase_completion.total_users * 100}
+                    sx={{ mt: 1 }}
                   />
                 </Box>
                 <Box>
@@ -303,10 +303,10 @@ export default function AdminAnalytics() {
                     Phase 2 Completed: {learning_progress.phase_completion.phase2_completed}
                     ({learning_progress.phase_completion.total_users > 0 ? Math.round(learning_progress.phase_completion.phase2_completed / learning_progress.phase_completion.total_users * 100) : 0}%)
                   </Typography>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={learning_progress.phase_completion.total_users > 0 ? learning_progress.phase_completion.phase2_completed / learning_progress.phase_completion.total_users * 100 : 0} 
-                    sx={{ mt: 1 }} 
+                  <LinearProgress
+                    variant="determinate"
+                    value={learning_progress.phase_completion.total_users > 0 ? learning_progress.phase_completion.phase2_completed / learning_progress.phase_completion.total_users * 100 : 0}
+                    sx={{ mt: 1 }}
                   />
                 </Box>
               </Stack>
@@ -331,7 +331,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
@@ -364,7 +364,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
@@ -381,10 +381,10 @@ export default function AdminAnalytics() {
                   <TableBody>
                     {data.quality.challenging_steps.map((step, index) => (
                       <TableRow key={index}>
-                        <TableCell>{step.step_id.replace('_', ' ').toUpperCase()}</TableCell>
+                        <TableCell>{(step.step_id?.replace('_', ' ') || 'UNKNOWN').toUpperCase()}</TableCell>
                         <TableCell align="right">{step.attempts}</TableCell>
                         <TableCell align="right">
-                          <Chip 
+                          <Chip
                             label={`${step.success_rate}%`}
                             color={step.success_rate > 70 ? 'success' : step.success_rate > 50 ? 'warning' : 'error'}
                             size="small"
@@ -433,7 +433,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
@@ -448,7 +448,7 @@ export default function AdminAnalytics() {
                     </ListItemAvatar>
                     <ListItemText
                       primary={`${student.first_name} ${student.last_name}`}
-                      secondary={`Stuck on ${student.step_id.replace('_', ' ').toUpperCase()} for ${student.days_stuck} days`}
+                      secondary={`Stuck on ${(student.step_id?.replace('_', ' ') || 'unknown').toUpperCase()} for ${student.days_stuck} days`}
                     />
                     <Button
                       size="small"
