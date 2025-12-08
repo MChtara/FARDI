@@ -50,6 +50,19 @@ app.register_blueprint(exercise_builder_bp)
 from routes.workflow_importer import workflow_importer_bp
 app.register_blueprint(workflow_importer_bp)
 
+# Register gamification blueprint
+from routes.gamification_routes import gamification_bp
+app.register_blueprint(gamification_bp)
+
+# Register Phase 5 advanced features blueprint
+from routes.phase5_routes import phase5_bp
+app.register_blueprint(phase5_bp)
+
+# Register AI evaluation routes
+from routes.evaluation_routes import evaluation_bp
+app.register_blueprint(evaluation_bp, url_prefix='/api')
+
+
 @app.route('/')
 def root():
     """Root route - redirects based on authentication status"""
