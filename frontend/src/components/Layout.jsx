@@ -21,6 +21,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import PersonIcon from '@mui/icons-material/Person'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { useColorMode } from '../theme.jsx'
+import { GamificationHeader } from './gamification'
+
 
 function HideOnScroll({ children }) {
   const trigger = useScrollTrigger({
@@ -41,19 +43,19 @@ export default function Layout({ children }) {
   const location = useLocation()
   const [assessmentMenuAnchor, setAssessmentMenuAnchor] = React.useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
-  
+
   const isHomePage = location.pathname === '/'
   const isWelcomePage = location.pathname === '/welcome'
   const userName = user?.first_name || user?.username || 'User'
-  const userLevel = stats?.overall_level || 'B1'
+  const userLevel = stats?.best_level || stats?.overall_level || null
   const hasCompletedPhase1 = stats?.total_assessments > 0 || false
   const isAdmin = user?.is_admin === 1 || user?.role === 'admin'
-  
+
   // Show loading state instead of null to maintain theme context
   if (loading || statsLoading) {
     return (
-      <Box sx={{ 
-        minHeight: '100vh', 
+      <Box sx={{
+        minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -63,11 +65,11 @@ export default function Layout({ children }) {
       </Box>
     )
   }
-  
+
   const handleAssessmentMenuOpen = (event) => {
     setAssessmentMenuAnchor(event.currentTarget)
   }
-  
+
   const handleAssessmentMenuClose = () => {
     setAssessmentMenuAnchor(null)
   }
@@ -81,23 +83,23 @@ export default function Layout({ children }) {
   }
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh', 
+    <Box sx={{
+      minHeight: '100vh',
       bgcolor: 'background.default'
     }}>
       <HideOnScroll>
-        <AppBar 
-          position="sticky" 
+        <AppBar
+          position="sticky"
           elevation={0}
-          sx={{ 
-            background: mode === 'dark' 
-              ? 'rgba(15, 23, 42, 0.95)' 
+          sx={{
+            background: mode === 'dark'
+              ? 'rgba(15, 23, 42, 0.95)'
               : 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(12px)',
             borderBottom: `1px solid ${mode === 'dark' ? 'rgba(51, 65, 85, 0.3)' : 'rgba(229, 231, 235, 0.8)'}`,
             zIndex: 1100,
-            boxShadow: mode === 'dark' 
-              ? '0 1px 3px rgba(0, 0, 0, 0.3)' 
+            boxShadow: mode === 'dark'
+              ? '0 1px 3px rgba(0, 0, 0, 0.3)'
               : '0 1px 3px rgba(0, 0, 0, 0.1)',
           }}
         >
@@ -111,7 +113,7 @@ export default function Layout({ children }) {
                   aria-label="open drawer"
                   edge="start"
                   onClick={handleMobileMenuOpen}
-                  sx={{ 
+                  sx={{
                     mr: 2,
                     display: { xs: 'block', md: 'none' },
                     color: 'text.primary'
@@ -124,13 +126,13 @@ export default function Layout({ children }) {
               {/* Navigation for authenticated users */}
               {!loading && user && (
                 <Stack direction="row" spacing={1} sx={{ ml: 'auto', mr: 2, display: { xs: 'none', md: 'flex' } }}>
-                  <Button 
-                    component={RouterLink} 
-                    to="/" 
+                  <Button
+                    component={RouterLink}
+                    to="/"
                     startIcon={<HomeIcon sx={{ fontSize: 18 }} />}
                     variant={location.pathname === '/' ? 'contained' : 'text'}
                     size="small"
-                    sx={{ 
+                    sx={{
                       borderRadius: 1.5,
                       px: 2,
                       py: 0.75,
@@ -141,22 +143,22 @@ export default function Layout({ children }) {
                       height: 36,
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        backgroundColor: location.pathname === '/' 
-                          ? 'primary.dark' 
+                        backgroundColor: location.pathname === '/'
+                          ? 'primary.dark'
                           : (mode === 'dark' ? 'rgba(96, 165, 250, 0.08)' : 'rgba(30, 58, 138, 0.04)')
                       }
                     }}
                   >
                     Home
                   </Button>
-                  
-                  <Button 
-                    component={RouterLink} 
-                    to="/dashboard" 
+
+                  <Button
+                    component={RouterLink}
+                    to="/dashboard"
                     startIcon={<DashboardIcon sx={{ fontSize: 18 }} />}
                     variant={location.pathname === '/dashboard' ? 'contained' : 'text'}
                     size="small"
-                    sx={{ 
+                    sx={{
                       borderRadius: 1.5,
                       px: 2,
                       py: 0.75,
@@ -167,22 +169,22 @@ export default function Layout({ children }) {
                       height: 36,
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        backgroundColor: location.pathname === '/dashboard' 
-                          ? 'primary.dark' 
+                        backgroundColor: location.pathname === '/dashboard'
+                          ? 'primary.dark'
                           : (mode === 'dark' ? 'rgba(96, 165, 250, 0.08)' : 'rgba(30, 58, 138, 0.04)')
                       }
                     }}
                   >
                     Dashboard
                   </Button>
-                  
-                  <Button 
-                    component={RouterLink} 
-                    to="/profile" 
+
+                  <Button
+                    component={RouterLink}
+                    to="/profile"
                     startIcon={<PersonIcon sx={{ fontSize: 18 }} />}
                     variant={location.pathname.startsWith('/profile') ? 'contained' : 'text'}
                     size="small"
-                    sx={{ 
+                    sx={{
                       borderRadius: 1.5,
                       px: 2,
                       py: 0.75,
@@ -193,8 +195,8 @@ export default function Layout({ children }) {
                       height: 36,
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        backgroundColor: location.pathname.startsWith('/profile') 
-                          ? 'primary.dark' 
+                        backgroundColor: location.pathname.startsWith('/profile')
+                          ? 'primary.dark'
                           : (mode === 'dark' ? 'rgba(96, 165, 250, 0.08)' : 'rgba(30, 58, 138, 0.04)')
                       }
                     }}
@@ -204,13 +206,13 @@ export default function Layout({ children }) {
 
                   {/* Admin Dashboard Button - Only show for admin users */}
                   {isAdmin && (
-                    <Button 
-                      component={RouterLink} 
-                      to="/admin" 
+                    <Button
+                      component={RouterLink}
+                      to="/admin"
                       startIcon={<AdminPanelSettingsIcon sx={{ fontSize: 18 }} />}
                       variant={location.pathname.startsWith('/admin') ? 'contained' : 'text'}
                       size="small"
-                      sx={{ 
+                      sx={{
                         borderRadius: 1.5,
                         px: 2,
                         py: 0.75,
@@ -221,8 +223,8 @@ export default function Layout({ children }) {
                         height: 36,
                         transition: 'all 0.2s ease',
                         '&:hover': {
-                          backgroundColor: location.pathname.startsWith('/admin') 
-                            ? 'primary.dark' 
+                          backgroundColor: location.pathname.startsWith('/admin')
+                            ? 'primary.dark'
                             : (mode === 'dark' ? 'rgba(96, 165, 250, 0.08)' : 'rgba(30, 58, 138, 0.04)')
                         }
                       }}
@@ -254,7 +256,7 @@ export default function Layout({ children }) {
                   >
                     Assessments
                   </Button>
-                  
+
                   <Menu
                     anchorEl={assessmentMenuAnchor}
                     open={Boolean(assessmentMenuAnchor)}
@@ -269,23 +271,23 @@ export default function Layout({ children }) {
                       }
                     }}
                   >
-                    <MenuItem 
-                      component={RouterLink} 
-                      to="/game" 
+                    <MenuItem
+                      component={RouterLink}
+                      to="/game"
                       onClick={handleAssessmentMenuClose}
                     >
                       <ListItemIcon>
                         <EmojiEventsIcon fontSize="small" />
                       </ListItemIcon>
-                      <ListItemText 
-                        primary="Phase 1: Foundation" 
+                      <ListItemText
+                        primary="Phase 1: Foundation"
                         secondary="Basic English assessment"
                       />
                     </MenuItem>
-                    
+
                     <Divider />
-                    
-                    <MenuItem 
+
+                    <MenuItem
                       component={hasCompletedPhase1 ? RouterLink : 'div'}
                       to={hasCompletedPhase1 ? "/phase2" : undefined}
                       onClick={handleAssessmentMenuClose}
@@ -298,8 +300,8 @@ export default function Layout({ children }) {
                           <LockIcon fontSize="small" color="disabled" />
                         )}
                       </ListItemIcon>
-                      <ListItemText 
-                        primary="Phase 2: Cultural Events" 
+                      <ListItemText
+                        primary="Phase 2: Cultural Events"
                         secondary={hasCompletedPhase1 ? "Interactive committee simulation" : "Complete Phase 1 first"}
                       />
                     </MenuItem>
@@ -313,12 +315,12 @@ export default function Layout({ children }) {
                 <>
                   {/* User info */}
                   <Stack direction="row" alignItems="center" spacing={2} sx={{ display: { xs: 'none', md: 'flex' } }}>
-                    <Chip 
+                    <Chip
                       avatar={
-                        <Avatar 
-                          sx={{ 
-                            width: 24, 
-                            height: 24, 
+                        <Avatar
+                          sx={{
+                            width: 24,
+                            height: 24,
                             fontSize: '0.75rem',
                             bgcolor: 'primary.main',
                             color: 'white',
@@ -328,10 +330,10 @@ export default function Layout({ children }) {
                           {userName[0].toUpperCase()}
                         </Avatar>
                       }
-                      label={`${userName} • Level ${userLevel}`}
+                      label={userName}
                       variant="outlined"
                       size="small"
-                      sx={{ 
+                      sx={{
                         fontWeight: 500,
                         fontSize: '0.875rem',
                         height: 32,
@@ -344,11 +346,11 @@ export default function Layout({ children }) {
                       }}
                     />
                   </Stack>
-                  
+
                   {/* Mobile user avatar */}
-                  <Avatar 
-                    sx={{ 
-                      width: 32, 
+                  <Avatar
+                    sx={{
+                      width: 32,
                       height: 32,
                       bgcolor: 'primary.main',
                       display: { xs: 'flex', md: 'none' },
@@ -358,13 +360,13 @@ export default function Layout({ children }) {
                   >
                     {userName[0].toUpperCase()}
                   </Avatar>
-                  
+
                   <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
-                    <IconButton 
-                      color="inherit" 
+                    <IconButton
+                      color="inherit"
                       onClick={toggle}
                       size="small"
-                      sx={{ 
+                      sx={{
                         width: 36,
                         height: 36,
                         borderRadius: 1,
@@ -377,13 +379,13 @@ export default function Layout({ children }) {
                       {mode === 'light' ? <DarkModeIcon sx={{ fontSize: 20 }} /> : <LightModeIcon sx={{ fontSize: 20 }} />}
                     </IconButton>
                   </Tooltip>
-                  
-                  <Button 
-                    href="/auth/logout" 
+
+                  <Button
+                    href="/auth/logout"
                     startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
                     variant="outlined"
                     size="small"
-                    sx={{ 
+                    sx={{
                       borderRadius: 1.5,
                       px: 2,
                       py: 0.75,
@@ -405,15 +407,15 @@ export default function Layout({ children }) {
                   </Button>
                 </>
               )}
-              
+
               {!loading && !user && (
                 <Stack direction="row" alignItems="center" spacing={2}>
                   <Tooltip title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
-                    <IconButton 
-                      color="inherit" 
+                    <IconButton
+                      color="inherit"
                       onClick={toggle}
                       size="small"
-                      sx={{ 
+                      sx={{
                         width: 36,
                         height: 36,
                         borderRadius: 1,
@@ -426,15 +428,15 @@ export default function Layout({ children }) {
                       {mode === 'light' ? <DarkModeIcon sx={{ fontSize: 20 }} /> : <LightModeIcon sx={{ fontSize: 20 }} />}
                     </IconButton>
                   </Tooltip>
-                  
+
                   <Stack direction="row" spacing={1}>
-                    <Button 
-                      component={RouterLink} 
-                      to="/login" 
+                    <Button
+                      component={RouterLink}
+                      to="/login"
                       startIcon={<LoginIcon sx={{ fontSize: 18 }} />}
                       variant="text"
                       size="small"
-                      sx={{ 
+                      sx={{
                         borderRadius: 1.5,
                         px: 2,
                         py: 0.75,
@@ -453,13 +455,13 @@ export default function Layout({ children }) {
                     >
                       Sign In
                     </Button>
-                    <Button 
-                      component={RouterLink} 
-                      to="/signup" 
+                    <Button
+                      component={RouterLink}
+                      to="/signup"
                       startIcon={<PersonAddIcon sx={{ fontSize: 18 }} />}
                       variant="contained"
                       size="small"
-                      sx={{ 
+                      sx={{
                         borderRadius: 1.5,
                         px: 3,
                         py: 0.75,
@@ -483,7 +485,7 @@ export default function Layout({ children }) {
         </AppBar>
       </HideOnScroll>
 
-      <Box sx={{ 
+      <Box sx={{
         ...(isHomePage && {
           pt: 0,
           px: 0
@@ -520,9 +522,9 @@ export default function Layout({ children }) {
         }}
       >
         {/* Mobile Menu Header */}
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'flex-start',
           p: 2,
           borderBottom: `1px solid ${mode === 'dark' ? 'rgba(51, 65, 85, 0.3)' : 'rgba(229, 231, 235, 0.8)'}`
@@ -543,9 +545,6 @@ export default function Layout({ children }) {
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
                   {userName}
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  Level {userLevel}
-                </Typography>
               </Box>
             </Stack>
           </Box>
@@ -555,9 +554,9 @@ export default function Layout({ children }) {
         {!loading && user && (
           <List sx={{ py: 1 }}>
             <ListItem disablePadding>
-              <ListItemButton 
-                component={RouterLink} 
-                to="/" 
+              <ListItemButton
+                component={RouterLink}
+                to="/"
                 onClick={handleMobileMenuClose}
                 selected={location.pathname === '/'}
                 sx={{
@@ -578,9 +577,9 @@ export default function Layout({ children }) {
             </ListItem>
 
             <ListItem disablePadding>
-              <ListItemButton 
-                component={RouterLink} 
-                to="/dashboard" 
+              <ListItemButton
+                component={RouterLink}
+                to="/dashboard"
                 onClick={handleMobileMenuClose}
                 selected={location.pathname === '/dashboard'}
                 sx={{
@@ -601,9 +600,9 @@ export default function Layout({ children }) {
             </ListItem>
 
             <ListItem disablePadding>
-              <ListItemButton 
-                component={RouterLink} 
-                to="/profile" 
+              <ListItemButton
+                component={RouterLink}
+                to="/profile"
                 onClick={handleMobileMenuClose}
                 selected={location.pathname.startsWith('/profile')}
                 sx={{
@@ -626,9 +625,9 @@ export default function Layout({ children }) {
             {/* Admin Dashboard - Only show for admin users */}
             {isAdmin && (
               <ListItem disablePadding>
-                <ListItemButton 
-                  component={RouterLink} 
-                  to="/admin" 
+                <ListItemButton
+                  component={RouterLink}
+                  to="/admin"
                   onClick={handleMobileMenuClose}
                   selected={location.pathname.startsWith('/admin')}
                   sx={{
@@ -653,17 +652,17 @@ export default function Layout({ children }) {
 
             {/* Phase 1 */}
             <ListItem disablePadding>
-              <ListItemButton 
-                component={RouterLink} 
-                to="/game" 
+              <ListItemButton
+                component={RouterLink}
+                to="/game"
                 onClick={handleMobileMenuClose}
                 sx={{ py: 1.5 }}
               >
                 <ListItemIcon sx={{ color: 'text.secondary' }}>
                   <EmojiEventsIcon />
                 </ListItemIcon>
-                <ListItemText 
-                  primary="Phase 1: Foundation" 
+                <ListItemText
+                  primary="Phase 1: Foundation"
                   secondary="Basic English assessment"
                 />
               </ListItemButton>
@@ -671,7 +670,7 @@ export default function Layout({ children }) {
 
             {/* Phase 2 */}
             <ListItem disablePadding>
-              <ListItemButton 
+              <ListItemButton
                 component={hasCompletedPhase1 ? RouterLink : 'div'}
                 to={hasCompletedPhase1 ? "/phase2" : undefined}
                 onClick={handleMobileMenuClose}
@@ -681,8 +680,8 @@ export default function Layout({ children }) {
                 <ListItemIcon sx={{ color: hasCompletedPhase1 ? 'text.secondary' : 'text.disabled' }}>
                   {hasCompletedPhase1 ? <EventIcon /> : <LockIcon />}
                 </ListItemIcon>
-                <ListItemText 
-                  primary="Phase 2: Cultural Events" 
+                <ListItemText
+                  primary="Phase 2: Cultural Events"
                   secondary={hasCompletedPhase1 ? "Interactive committee simulation" : "Complete Phase 1 first"}
                 />
               </ListItemButton>
@@ -702,9 +701,9 @@ export default function Layout({ children }) {
 
             {/* Logout */}
             <ListItem disablePadding>
-              <ListItemButton 
-                href="/auth/logout" 
-                sx={{ 
+              <ListItemButton
+                href="/auth/logout"
+                sx={{
                   py: 1.5,
                   color: 'error.main',
                   '&:hover': {

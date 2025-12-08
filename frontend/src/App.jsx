@@ -26,11 +26,13 @@ import { ApiProvider, useAuth } from './lib/api.jsx'
 import Layout from './components/Layout.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
+import { ConfettiCannon } from './components/gamification'
 
 
 function App() {
   return (
     <ApiProvider>
+      <ConfettiCannon />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -41,20 +43,20 @@ function App() {
           <Route path="/game" element={<Game />} />
           <Route path="/results" element={<Results />} />
           <Route path="/certificate" element={<Certificate />} />
-          
+
           {/* Phase 2 Routes */}
           <Route path="/phase2" element={<Phase2Intro />} />
           <Route path="/phase2/step/:stepId" element={<Phase2Step />} />
           <Route path="/phase2/step/:stepId/results" element={<Phase2StepResults />} />
           <Route path="/phase2/remedial/:stepId/:level" element={<Phase2Remedial />} />
           <Route path="/phase2/complete" element={<Phase2Complete />} />
-          
+
           {/* Profile Routes */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/profile/change-password" element={<ChangePassword />} />
           <Route path="/profile/delete-account" element={<DeleteAccount />} />
-          
+
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
@@ -64,7 +66,7 @@ function App() {
           <Route path="/admin/exercises/edit/:exerciseId" element={<AdminExerciseEditor />} />
           <Route path="/admin/exercises/workflow/:workflowId/edit" element={<AdminWorkflowEditor />} />
           <Route path="/admin/exercises/workflow/:workflowId/preview" element={<AdminWorkflowEditor />} />
-          
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
