@@ -34,7 +34,11 @@
             "question": "Let’s start by sharing how our orientation in Phase 1 inspired us for this event. What did you learn about our team or the event theme that excites you for planning?",
             "instruction": "Type or say a short story (2–3 sentences) about your experience from Phase 1 (e.g., orientation meeting, email invitation, choosing the event theme, role brainstorming). Make it lively to inspire the team!",
             "hint": "Mention the cultural theme or a teammate’s idea from Phase 1.",
-            "assessment_focus": ["Vocabulary Range (culture vs vibrant)", "Grammar and Syntax (simple past vs complex)", "Connection to Phase 1"],
+            "assessment_focus": [
+              "Vocabulary Range (culture vs vibrant)",
+              "Grammar and Syntax (simple past vs complex)",
+              "Connection to Phase 1"
+            ],
             "cefr_responses": {
               "A1": "I like orientation. Theme is culture.",
               "A2": "In Phase 1, I learn about team. Theme is fun.",
@@ -49,7 +53,11 @@
             "question": "Let’s shape our action plan! Who would be great for creating the decorations, and what makes them perfect for it?",
             "instruction": "Type or say your suggestion, explaining why the person fits the role based on their skills or interests.",
             "hint": "Mention a skill like creativity or teamwork.",
-            "assessment_focus": ["Vocabulary Range (art vs creativity)", "Grammar and Syntax (simple present vs complex)", "Reasoning (skill-based)"],
+            "assessment_focus": [
+              "Vocabulary Range (art vs creativity)",
+              "Grammar and Syntax (simple present vs complex)",
+              "Reasoning (skill-based)"
+            ],
             "cefr_responses": {
               "A1": "Emna do decorations. She like art.",
               "A2": "I think Emna for decorations because she likes art.",
@@ -64,7 +72,11 @@
             "question": "I think Ryan would be perfect for decorations because he’s so organized. What’s your take?",
             "instruction": "Type or say your response, agreeing with SKANDER or defending your choice. Be polite and explain your thoughts to build the action plan together.",
             "hint": "Try agreeing or explaining your choice politely.",
-            "assessment_focus": ["Politeness (I agree)", "Vocabulary Range (good vs organizational)", "Reasoning Clarity"],
+            "assessment_focus": [
+              "Politeness (I agree)",
+              "Vocabulary Range (good vs organizational)",
+              "Reasoning Clarity"
+            ],
             "cefr_responses": {
               "A1": "Okay, Ryan do it.",
               "A2": "Maybe Ryan is good because he is organized.",
@@ -79,7 +91,11 @@
             "question": "Confirm the final roles for two team members.",
             "instruction": "Write one or two sentences to confirm the final roles for two team members (e.g., Emna and Ryan) in the action plan. Make sure your sentences are clear and fit the team’s vision.",
             "hint": "Mention who does what clearly.",
-            "assessment_focus": ["Grammar (do vs will handle)", "Vocabulary (do vs oversee)", "Coherence"],
+            "assessment_focus": [
+              "Grammar (do vs will handle)",
+              "Vocabulary (do vs oversee)",
+              "Coherence"
+            ],
             "cefr_responses": {
               "A1": "Emna do music. Ryan do decorations.",
               "A2": "Emna is for music, and Ryan is for decorations.",
@@ -94,7 +110,11 @@
             "question": "How do these roles help our cultural event come to life?",
             "instruction": "Type or say a short response (1–2 sentences) explaining how the assigned roles will make the event special. Connect it to the cultural theme from Phase 1.",
             "hint": "Link roles to the cultural theme.",
-            "assessment_focus": ["Vocabulary (fun vs vibrant)", "Grammar", "Cultural Connections to Phase 1"],
+            "assessment_focus": [
+              "Vocabulary (fun vs vibrant)",
+              "Grammar",
+              "Cultural Connections to Phase 1"
+            ],
             "cefr_responses": {
               "A1": "Music is good for event.",
               "A2": "Emna’s music make event fun.",
@@ -111,19 +131,44 @@
             "type": "drag_and_drop",
             "instruction": "Match 6 event roles to their descriptions.",
             "pairs": [
-              { "term": "decorations", "definition": "Make the room colorful and cultural" },
-              { "term": "music", "definition": "Play Tunisian songs for the event" },
-              { "term": "food", "definition": "Prepare traditional dishes" },
-              { "term": "promotion", "definition": "Share event news with students" },
-              { "term": "art", "definition": "Skill for drawing or design" },
-              { "term": "organized", "definition": "Skill for planning and order" }
+              {
+                "term": "decorations",
+                "definition": "Make the room colorful and cultural"
+              },
+              {
+                "term": "music",
+                "definition": "Play Tunisian songs for the event"
+              },
+              {
+                "term": "food",
+                "definition": "Prepare traditional dishes"
+              },
+              {
+                "term": "promotion",
+                "definition": "Share event news with students"
+              },
+              {
+                "term": "art",
+                "definition": "Skill for drawing or design"
+              },
+              {
+                "term": "organized",
+                "definition": "Skill for planning and order"
+              }
             ]
           },
           {
             "task_id": "B",
             "type": "gap_fill",
             "instruction": "Fill in 6 gaps to describe who does what.",
-            "word_bank": ["Emna", "Ryan", "decorations", "music", "likes", "good"],
+            "word_bank": [
+              "Emna",
+              "Ryan",
+              "decorations",
+              "music",
+              "likes",
+              "good"
+            ],
             "templates": [
               "1. __________ can do __________ because she __________ art.",
               "2. __________ can do __________ because he is __________.",
@@ -145,14 +190,39 @@
             "task_id": "C",
             "type": "dialogue_completion",
             "instruction": "Fill in 6 gaps in this dialogue.",
-            "word_bank": ["Emna", "Ryan", "decorations", "music", "because", "will"],
+            "word_bank": [
+              "Emna",
+              "Ryan",
+              "decorations",
+              "music",
+              "because",
+              "will"
+            ],
             "dialogue_lines": [
-              { "speaker": "Ryan", "text": "Who’s good for decorations?" },
-              { "speaker": "You", "template": "__________ should do __________ __________ she likes art." },
-              { "speaker": "Ryan", "text": "What about music?" },
-              { "speaker": "You", "template": "I suggest __________ for music __________ she loves songs." },
-              { "speaker": "Ryan", "text": "Confirm one role." },
-              { "speaker": "You", "template": "__________ __________ do __________." }
+              {
+                "speaker": "Ryan",
+                "text": "Who’s good for decorations?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ should do __________ __________ she likes art."
+              },
+              {
+                "speaker": "Ryan",
+                "text": "What about music?"
+              },
+              {
+                "speaker": "You",
+                "template": "I suggest __________ for music __________ she loves songs."
+              },
+              {
+                "speaker": "Ryan",
+                "text": "Confirm one role."
+              },
+              {
+                "speaker": "You",
+                "template": "__________ __________ do __________."
+              }
             ],
             "correct_answers": [
               "1. Emna should do decorations because she likes art.",
@@ -172,14 +242,26 @@
               "5. The event will have __________ by __________.",
               "6. __________ helps the event because __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "What does Emna do and why?",
+              "What does Ryan handle and why?",
+              "Who do you suggest for promotion?",
+              "Who is good for food and why?",
+              "What will the event have by Emna?",
+              "How do decorations help the event?"
+            ],
+            "example_of_answers": [
               "1. Emna does music because she loves songs.",
               "2. Ryan handles decorations because he is organized.",
               "3. I suggest Lilia for promotion.",
               "4. SKANDER is good for food because he likes cooking.",
               "5. The event will have music by Emna.",
               "6. Decorations help the event because they are beautiful."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A1",
+              "prompt": "You are an AI writing evaluator for CEFR A1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "A2": [
@@ -187,14 +269,39 @@
             "task_id": "A",
             "type": "dialogue_completion",
             "instruction": "Practice suggesting roles. Fill in 6 gaps.",
-            "word_bank": ["Emna", "decorations", "because", "likes", "I think", "music"],
+            "word_bank": [
+              "Emna",
+              "decorations",
+              "because",
+              "likes",
+              "I think",
+              "music"
+            ],
             "dialogue_lines": [
-              { "speaker": "SKANDER", "text": "Who’s good for decorations?" },
-              { "speaker": "You", "template": "__________ should do __________ __________ she __________ art." },
-              { "speaker": "SKANDER", "text": "What about Ryan?" },
-              { "speaker": "You", "template": "__________ Ryan is good __________ he is organized." },
-              { "speaker": "SKANDER", "text": "Confirm one role." },
-              { "speaker": "You", "template": "__________ will do __________." }
+              {
+                "speaker": "SKANDER",
+                "text": "Who’s good for decorations?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ should do __________ __________ she __________ art."
+              },
+              {
+                "speaker": "SKANDER",
+                "text": "What about Ryan?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ Ryan is good __________ he is organized."
+              },
+              {
+                "speaker": "SKANDER",
+                "text": "Confirm one role."
+              },
+              {
+                "speaker": "You",
+                "template": "__________ will do __________."
+              }
             ],
             "correct_answers": [
               "1. Emna should do decorations because she likes art.",
@@ -209,32 +316,55 @@
             "templates": [
               "1. Emna do music -> Emna do music __________ she likes songs.",
               "2. Ryan do decorations -> Ryan do decorations __________ he is organized.",
-              "3. I suggest Emna -> I suggest Emna __________ __________.",
-              "4. Ryan is good -> Ryan is good __________ __________.",
-              "5. Emna do art -> Emna do art __________ __________.",
-              "6. Ryan help event -> Ryan help event __________ __________."
+              "3. I suggest Emna -> I suggest Emna __________ music.",
+              "4. Ryan is good -> Ryan is good __________ planning.",
+              "5. Emna do art -> Emna do art __________ music.",
+              "6. Ryan help event -> Ryan help event __________ he is fast."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "Expand: Emna do music",
+              "Expand: Ryan do decorations",
+              "Expand: I suggest Emna",
+              "Expand: Ryan is good",
+              "Expand: Emna do art",
+              "Expand: Ryan help event"
+            ],
+            "example_of_answers": [
               "1. Emna do music because she likes songs.",
               "2. Ryan do decorations because he is organized.",
               "3. I suggest Emna for music.",
               "4. Ryan is good at planning.",
               "5. Emna do art and music.",
               "6. Ryan help event because he is fast."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
             "type": "gap_fill_story",
             "instruction": "Fill in 6 gaps to describe our action plan.",
-            "word_bank": ["Emna", "Ryan", "music", "decorations", "because", "will"],
+            "word_bank": [
+              "is good",
+              "Lilia",
+              "for",
+              "chose",
+              "Emna",
+              "Ryan",
+              "music",
+              "decorations",
+              "because",
+              "will"
+            ],
             "templates": [
               "1. Our team __________ Emna for __________ __________ she loves songs.",
               "2. __________ will do __________ because he is __________.",
               "3. The event __________ have __________ by Emna.",
               "4. I suggest __________ for __________ role.",
               "5. __________ is good __________ decorations.",
-              "6. The action plan __________ __________ for success."
+              "6. The action plan __________  for success."
             ],
             "correct_answers": [
               "1. Our team chose Emna for music because she loves songs.",
@@ -257,14 +387,26 @@
               "5. The event will have __________ by __________.",
               "6. Our action plan includes __________ for __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "What will Emna do and why?",
+              "What does Ryan handle and why?",
+              "Who did the team choose for promotion?",
+              "Who is good for food and why?",
+              "What will the event have by SKANDER?",
+              "What does the action plan include?"
+            ],
+            "example_of_answers": [
               "1. Emna will do music because she loves songs.",
               "2. Ryan handles decorations because he is organized.",
               "3. The team chose Lilia for promotion.",
               "4. SKANDER is good for food because he likes cooking.",
               "5. The event will have food by SKANDER.",
               "6. Our action plan includes music for culture."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "B1": [
@@ -273,12 +415,30 @@
             "type": "negotiation_gap_fill",
             "instruction": "Negotiate roles. Fill in 6 gaps.",
             "dialogue_lines": [
-              { "speaker": "SKANDER", "text": "Who’s great for decorations?" },
-              { "speaker": "You", "template": "I suggest __________ because she’s __________." },
-              { "speaker": "SKANDER", "text": "Ryan’s organized for decorations." },
-              { "speaker": "You", "template": "__________ Ryan’s skills are good __________." },
-              { "speaker": "SKANDER", "text": "Why Emna for music?" },
-              { "speaker": "You", "template": "__________ Emna __________ music experience." }
+              {
+                "speaker": "SKANDER",
+                "text": "Who’s great for decorations?"
+              },
+              {
+                "speaker": "You",
+                "template": "I suggest __________ because she’s __________"
+              },
+              {
+                "speaker": "SKANDER",
+                "text": "Ryan’s organized for decorations."
+              },
+              {
+                "speaker": "You",
+                "template": "__________ Ryan’s skills are good __________"
+              },
+              {
+                "speaker": "SKANDER",
+                "text": "Why Emna for music?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ Emna __________ music experience."
+              }
             ],
             "correct_answers": [
               "1. I suggest Emna because she’s creative.",
@@ -298,14 +458,26 @@
               "5. The team chose __________ for __________ because __________.",
               "6. __________ is good for __________ because __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "Who will handle music and why?",
+              "Who is assigned to decorations and why?",
+              "Who do you suggest for promotion and why?",
+              "What will SKANDER manage?",
+              "Why did the team choose Emna for music?",
+              "Why is Lilia good for promotion?"
+            ],
+            "example_of_answers": [
               "1. Emna will handle music because she has experience.",
               "2. Ryan is assigned to decorations because he is organized.",
               "3. I suggest Lilia for promotion because she is outgoing.",
               "4. SKANDER will manage food and budget.",
               "5. The team chose Emna for music because she is talented.",
               "6. Lilia is good for promotion because she communicates well."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
@@ -340,14 +512,26 @@
               "5. Our action plan makes the event __________ because __________.",
               "6. The cultural event will __________ because __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "Why did the team choose Emna for music?",
+              "What will Ryan create and why?",
+              "What will the event feature?",
+              "Why do you suggest Lilia for promotion?",
+              "Why does the action plan make the event vibrant?",
+              "Why will the cultural event succeed?"
+            ],
+            "example_of_answers": [
               "1. Our team chose Emna for music because she is creative.",
               "2. Ryan will create decorations to show Tunisian culture.",
               "3. The event will feature Malouf music by Emna.",
               "4. I suggest Lilia for promotion because she is energetic.",
               "5. Our action plan makes the event vibrant because of teamwork.",
               "6. The cultural event will succeed because of good roles."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ]
       }
@@ -372,7 +556,11 @@
             "question": "Let’s schedule our first planning meeting! When should we meet, and why is that time perfect for our team?",
             "instruction": "Type or say a short proposal (2–3 sentences) suggesting a day, time, and reason tied to the team’s needs or event goals.",
             "hint": "Suggest a day and time, like ‘Friday at 3 PM,’ and a reason.",
-            "assessment_focus": ["Vocabulary Range (good vs suits)", "Grammar and Syntax", "Relevance to Team Needs"],
+            "assessment_focus": [
+              "Vocabulary Range (good vs suits)",
+              "Grammar and Syntax",
+              "Relevance to Team Needs"
+            ],
             "cefr_responses": {
               "A1": "Meet Friday. It good for team.",
               "A2": "I suggest Friday at 3 PM because team is free.",
@@ -387,7 +575,11 @@
             "question": "Why is this meeting important for our cultural event?",
             "instruction": "Type or say a short response (1–2 sentences) explaining how the meeting will help the team and connect to the cultural theme.",
             "hint": "Mention a task like decorations or music.",
-            "assessment_focus": ["Vocabulary (help vs organize)", "Grammar", "Cultural Connections"],
+            "assessment_focus": [
+              "Vocabulary (help vs organize)",
+              "Grammar",
+              "Cultural Connections"
+            ],
             "cefr_responses": {
               "A1": "Meeting help plan event.",
               "A2": "Meeting is for plan music and decorations.",
@@ -402,7 +594,11 @@
             "question": "I think Wednesday at 5 PM works better because it’s quieter on campus. What’s your take?",
             "instruction": "Type or say your response, agreeing with SKANDER or proposing another time with a reason.",
             "hint": "Agree politely or suggest another time with a reason.",
-            "assessment_focus": ["Politeness (I agree)", "Vocabulary (good vs focus)", "Reasoning Clarity"],
+            "assessment_focus": [
+              "Politeness (I agree)",
+              "Vocabulary (good vs focus)",
+              "Reasoning Clarity"
+            ],
             "cefr_responses": {
               "A1": "Okay, Wednesday good.",
               "A2": "Maybe Wednesday at 5 PM is good because quiet.",
@@ -417,7 +613,11 @@
             "question": "What should we discuss in this meeting to keep our action plan on track?",
             "instruction": "Type or say a short response (1–2 sentences) suggesting two topics (e.g., decorations budget, music selection) for the meeting agenda.",
             "hint": "Suggest topics like music or decorations.",
-            "assessment_focus": ["Vocabulary (talk vs discuss)", "Grammar", "Relevance"],
+            "assessment_focus": [
+              "Vocabulary (talk vs discuss)",
+              "Grammar",
+              "Relevance"
+            ],
             "cefr_responses": {
               "A1": "Talk music and decorations.",
               "A2": "We discuss music selection and decorations budget.",
@@ -432,7 +632,11 @@
             "question": "Let’s confirm our meeting details for the action plan!",
             "instruction": "Type or say one or two sentences to confirm the meeting day, time, and one key topic, ensuring it fits the cultural event’s goals.",
             "hint": "Confirm the day, time, and a topic like music.",
-            "assessment_focus": ["Grammar (meet vs is set)", "Vocabulary", "Cultural Relevance"],
+            "assessment_focus": [
+              "Grammar (meet vs is set)",
+              "Vocabulary",
+              "Cultural Relevance"
+            ],
             "cefr_responses": {
               "A1": "Meet Friday. Talk music.",
               "A2": "Meeting is Friday at 3 PM to talk music.",
@@ -447,164 +651,409 @@
           {
             "task_id": "A",
             "type": "drag_and_drop",
-            "instruction": "Match 6 meeting details to their purposes.",
+            "instruction": "Match 6 meeting items to their definitions.",
             "pairs": [
-              { "term": "Friday 3 PM", "definition": "Best time for team to meet" },
-              { "term": "music", "definition": "Plan Tunisian songs" },
-              { "term": "decorations", "definition": "Plan cultural visuals" },
-              { "term": "quiet time", "definition": "Good for focus" },
-              { "term": "budget", "definition": "Discuss event costs" },
-              { "term": "teamwork", "definition": "Work together" }
+              {
+                "term": "Notebook",
+                "definition": "Use for writing notes"
+              },
+              {
+                "term": "Room 101",
+                "definition": "Place for meeting"
+              },
+              {
+                "term": "Calendar",
+                "definition": "Check the date"
+              },
+              {
+                "term": "Clock",
+                "definition": "Check the time"
+              },
+              {
+                "term": "Pen",
+                "definition": "Write on paper"
+              },
+              {
+                "term": "Chair",
+                "definition": "Sit on this"
+              }
             ]
           },
           {
             "task_id": "B",
             "type": "gap_fill",
-            "instruction": "Fill in 6 gaps.",
-            "word_bank": ["Friday", "3 PM", "music", "because", "discuss", "team"],
+            "instruction": "Fill in 6 gaps to choose a room.",
+            "word_bank": [
+              "Room",
+              "big",
+              "meeting",
+              "chairs",
+              "good",
+              "is"
+            ],
             "templates": [
-              "1. Meet __________ __________ __________ team is free.",
-              "2. __________ helps plan __________.",
-              "3. I suggest __________ to __________ music."
+              "1. We meet in __________ 101.",
+              "2. The room is __________.",
+              "3. It has __________ for team.",
+              "4. __________ 101 is quiet.",
+              "5. It is __________ for planning.",
+              "6. This __________ is important."
             ],
             "correct_answers": [
-              "1. Meet Friday at 3 PM because team is free.",
-              "2. Meeting helps plan music.",
-              "3. I suggest Friday to discuss music."
+              "1. We meet in Room 101.",
+              "2. The room is big.",
+              "3. It has chairs for team.",
+              "4. Room 101 is quiet.",
+              "5. It is good for planning.",
+              "6. This meeting is important."
             ]
           },
           {
             "task_id": "C",
             "type": "dialogue_completion",
-            "instruction": "Fill in 6 gaps.",
-            "word_bank": ["Friday", "3 PM", "because", "discuss", "music", "good"],
+            "instruction": "Complete the dialogue about duration.",
+            "word_bank": [
+              "hour",
+              "long",
+              "time",
+              "start",
+              "finish",
+              "okay"
+            ],
             "dialogue_lines": [
-              { "speaker": "Ryan", "text": "When’s the meeting?" },
-              { "speaker": "You", "template": "__________ __________ __________ team is free." }
+              {
+                "speaker": "Ryan",
+                "text": "How long is the meeting?"
+              },
+              {
+                "speaker": "You",
+                "template": "It is one __________."
+              },
+              {
+                "speaker": "Ryan",
+                "text": "What time is it?"
+              },
+              {
+                "speaker": "You",
+                "template": "We __________ at 3 PM."
+              },
+              {
+                "speaker": "Ryan",
+                "text": "When do we finish?"
+              },
+              {
+                "speaker": "You",
+                "template": "At 4 PM, __________?"
+              }
             ],
             "correct_answers": [
-              "1. Friday at 3 PM because team is free.",
-              "2. We discuss music."
+              "1. It is one hour.",
+              "2. We start at 3 PM.",
+              "3. At 4 PM, okay?"
             ]
           },
           {
             "task_id": "D",
             "type": "writing",
-            "instruction": "Write 6 sentences.",
+            "instruction": "Write 6 short sentences about what to bring to the meeting.",
             "templates": [
-              "1. Meeting is __________ __________ because __________.",
-              "2. We __________ __________ music."
+              "1. I bring __________ because __________.",
+              "2. Ryan brings __________.",
+              "3. We need __________ for __________.",
+              "4. I need __________ to __________.",
+              "5. Emna brings __________.",
+              "6. __________ is good for the meeting."
             ],
-            "correct_answers": [
-              "1. Meeting is Friday at 3 PM because team is free.",
-              "2. We discuss music.",
-              "3. The meeting is for planning.",
-              "4. Friday is good.",
-              "5. We talk decorations.",
-              "6. Meeting helps event."
-            ]
+            "guided_questions": [
+              "What do you bring and why?",
+              "What does Ryan bring?",
+              "What do we need for notes?",
+              "Why do you need a pen?",
+              "What does Emna bring?",
+              "What is good for the meeting?"
+            ],
+            "example_of_answers": [
+              "1. I bring a notebook because I write.",
+              "2. Ryan brings a pen.",
+              "3. We need paper for notes.",
+              "4. I need a pen to write.",
+              "5. Emna brings a calendar.",
+              "6. Water is good for the meeting."
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A1",
+              "prompt": "You are an AI writing evaluator for CEFR A1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "A2": [
           {
             "task_id": "A",
             "type": "dialogue_completion",
-            "instruction": "Practice scheduling dialogues. Fill in 6 gaps.",
+            "instruction": "Practice rescheduling. Fill in the gaps.",
+            "word_bank": [
+              "busy",
+              "class",
+              "Monday",
+              "sorry",
+              "free",
+              "better"
+            ],
+            "dialogue_lines": [
+              {
+                "speaker": "Ms. Mabrouki",
+                "text": "Can we meet on Friday?"
+              },
+              {
+                "speaker": "You",
+                "template": "I am __________ on Friday because I have __________."
+              },
+              {
+                "speaker": "SKANDER",
+                "text": "How about Monday?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ is __________ for me."
+              },
+              {
+                "speaker": "Ryan",
+                "text": "Okay, Monday it is."
+              },
+              {
+                "speaker": "You",
+                "template": "I am __________ at 4 PM."
+              }
+            ],
             "correct_answers": [
-              "1. Friday at 3 PM because team is free.",
-              "2. I think Wednesday is good because quiet.",
-              "3. Meeting will do planning."
+              "1. I am busy on Friday because I have class.",
+              "2. Monday is better for me.",
+              "3. I am free at 4 PM."
             ]
           },
           {
             "task_id": "B",
             "type": "sentence_expansion",
-            "instruction": "Rewrite 6 sentences to add details.",
-            "correct_answers": [
-              "1. Meet Friday at 3 PM because team is free and campus is quiet.",
-              "2. We discuss music and decorations.",
-              "3. I suggest Friday because it is good.",
-              "4. Meeting is important because we plan.",
-              "5. Wednesday is quiet and good.",
-              "6. We need meeting for culture."
-            ]
+            "instruction": "Rewrite 6 sentences to explain why we need a break.",
+            "templates": [
+              "1. Team is tired -> Team is tired __________.",
+              "2. Need coffee -> We need coffee __________.",
+              "3. Break is good -> A break is good __________.",
+              "4. We stop now -> We stop now __________.",
+              "5. Cafe is near -> The cafe is near __________.",
+              "6. Talk later -> We talk later __________."
+            ],
+            "guided_questions": [
+              "Expand: Team is tired",
+              "Expand: Need coffee",
+              "Expand: Break is good",
+              "Expand: We stop now",
+              "Expand: Cafe is near",
+              "Expand: Talk later"
+            ],
+            "example_of_answers": [
+              "1. Team is tired so we need a break.",
+              "2. We need coffee because we are sleepy.",
+              "3. A break is good for energy.",
+              "4. We stop now and work later.",
+              "5. The cafe is near so we can walk.",
+              "6. We talk later after the break."
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
             "type": "gap_fill_story",
-            "instruction": "Rewrite a story about our schedule! Fill in 6 gaps.",
+            "instruction": "Fill in 6 gaps to describe a meeting conflict.",
+            "word_bank": [
+              "late",
+              "traffic",
+              "sorry",
+              "started",
+              "missed",
+              "notes",
+              "email",
+              "read",
+              "next",
+              "time"
+            ],
+            "templates": [
+              "1. Ryan was __________ because of __________.",
+              "2. He said __________ to the team.",
+              "3. The meeting __________ without him.",
+              "4. He __________ the first part.",
+              "5. I sent him the __________ by __________.",
+              "6. He will be on __________ next time."
+            ],
             "correct_answers": [
-              "1. Our team chose Friday at 3 PM because team is free.",
-              "2. Meeting will do music because it is important.",
-              "3. The event will have plan by Friday.",
-              "4. I suggest Wednesday for quiet.",
-              "5. Friday is good for decorations.",
-              "6. The action plan needs meeting for success."
+              "1. Ryan was late because of traffic.",
+              "2. He said sorry to the team.",
+              "3. The meeting started without him.",
+              "4. He missed the first part.",
+              "5. I sent him the notes by email.",
+              "6. He will be on time next time."
             ]
           },
           {
             "task_id": "D",
             "type": "writing",
-            "instruction": "Confirm the schedule! Write 6 sentences.",
-            "correct_answers": [
-              "1. Meeting is set for Friday at 3 PM because team is free.",
-              "2. We will discuss music and decorations.",
-              "3. The team chose Friday for planning.",
-              "4. Wednesday is good because it is quiet.",
-              "5. The event will have meeting on Friday.",
-              "6. Our action plan includes discussion for culture."
-            ]
+            "instruction": "Write 6 sentences suggesting a meeting location outside school.",
+            "templates": [
+              "1. I suggest __________ because __________.",
+              "2. The __________ is __________.",
+              "3. We can __________ there.",
+              "4. The weather is __________.",
+              "5. We can __________ on the grass.",
+              "6. We do not need __________."
+            ],
+            "guided_questions": [
+              "Where do you suggest meeting?",
+              "Why is the park good?",
+              "Is it quiet there?",
+              "Can we talk there?",
+              "What about the weather?",
+              "Do we need a table?"
+            ],
+            "example_of_answers": [
+              "1. I suggest the park because it is sunny.",
+              "2. The park is quiet and nice.",
+              "3. We can talk freely there.",
+              "4. The weather is good today.",
+              "5. We can sit on the grass.",
+              "6. We do not need a table for this talk."
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "B1": [
           {
             "task_id": "A",
             "type": "negotiation_gap_fill",
-            "instruction": "Negotiate the schedule. Fill in 6 gaps.",
+            "instruction": "Negotiate a budget meeting. Fill in 6 gaps.",
+            "dialogue_lines": [
+              {
+                "speaker": "SKANDER",
+                "text": "The decorations are too expensive."
+              },
+              {
+                "speaker": "You",
+                "template": "I suggest a __________ meeting __________ costs are high."
+              },
+              {
+                "speaker": "SKANDER",
+                "text": "Why is that important?"
+              },
+              {
+                "speaker": "You",
+                "template": "I __________ we need to __________ spending."
+              },
+              {
+                "speaker": "SKANDER",
+                "text": "Why the urgency?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ money is __________."
+              }
+            ],
             "correct_answers": [
-              "1. I suggest Friday because it suits the team.",
-              "2. I agree Wednesday’s quiet is good for focus.",
-              "3. Because it helps planning."
+              "1. I suggest a budget meeting because costs are high.",
+              "2. I agree we need to control spending.",
+              "3. Because money is limited."
             ]
           },
           {
             "task_id": "B",
             "type": "writing",
-            "instruction": "Confirm the schedule. Write 6 sentences.",
-            "correct_answers": [
-              "1. The meeting is set for Friday at 3 PM because most are free.",
-              "2. We will discuss music selection and budget.",
-              "3. I suggest Wednesday because it is quieter.",
-              "4. The team will confirm Friday for planning.",
-              "5. The event needs a meeting to stay on track.",
-              "6. Our action plan includes a focused session."
-            ]
+            "instruction": "Write 6 sentences proposing an online meeting.",
+            "templates": [
+              "1. I propose __________ because __________.",
+              "2. We should use __________ for __________.",
+              "3. It is __________ for everyone __________.",
+              "4. We can share __________ to show __________.",
+              "5. Everyone can __________ from __________.",
+              "6. It is __________ and __________."
+            ],
+            "guided_questions": [
+              "Why meet online?",
+              "Which platform should we use?",
+              "Is it convenient?",
+              "What about screen sharing?",
+              "Can everyone join?",
+              "Does it save time?"
+            ],
+            "example_of_answers": [
+              "1. I propose an online meeting because it saves travel time.",
+              "2. We should use Zoom for the call.",
+              "3. It is convenient for everyone at home.",
+              "4. We can share screens to show the budget.",
+              "5. Everyone can join from their location.",
+              "6. It is efficient and fast."
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
             "type": "reflection_gap_fill",
-            "instruction": "Reflect on the schedule. Fill in 6 gaps.",
+            "instruction": "Reflect on meeting rules. Fill in 6 gaps.",
+            "templates": [
+              "1. Arriving on __________ shows __________ to the team.",
+              "2. Phones should be __________ to avoid __________.",
+              "3. __________ is key for good __________.",
+              "4. We must stick to the __________ to save __________.",
+              "5. Taking __________ helps us remember __________.",
+              "6. A good __________ needs clear __________."
+            ],
             "correct_answers": [
-              "1. Friday helps because team is available.",
-              "2. Quiet time makes the event better because we focus.",
-              "3. The meeting role is important for culture.",
-              "4. Music will make the event lively because it is traditional.",
-              "5. Our action plan includes Friday for success.",
-              "6. The cultural event needs planning to shine."
+              "1. Arriving on time shows respect to the team.",
+              "2. Phones should be silent to avoid distraction.",
+              "3. Listening is key for good communication.",
+              "4. We must stick to the agenda to save time.",
+              "5. Taking notes helps us remember tasks.",
+              "6. A good meeting needs clear rules."
             ]
           },
           {
             "task_id": "D",
             "type": "writing",
-            "instruction": "Write a story about our schedule. Write 6 sentences.",
-            "correct_answers": [
-              "1. Our team chose Friday at 3 PM because it suits everyone.",
-              "2. The meeting will create a plan to show culture.",
-              "3. The event will feature music and decorations.",
-              "4. I suggest Wednesday because it is quiet.",
-              "5. Our action plan makes the event smooth because of timing.",
-              "6. The cultural event will succeed because of good meetings."
-            ]
+            "instruction": "Write 6 sentences summarizing the meeting minutes.",
+            "templates": [
+              "1. The main topic was __________.",
+              "2. The team decided to __________.",
+              "3. Ryan has the task of __________.",
+              "4. The next meeting is __________.",
+              "5. The meeting was __________ and __________.",
+              "6. The action point is __________."
+            ],
+            "guided_questions": [
+              "What was the main topic?",
+              "What did the team decide?",
+              "Who has a new task?",
+              "When is the next meeting?",
+              "Was the meeting productive?",
+              "What is the action point?"
+            ],
+            "example_of_answers": [
+              "1. The main topic was the decoration budget.",
+              "2. The team decided to buy local materials.",
+              "3. Ryan has the task of visiting the market.",
+              "4. The next meeting is on Monday at 10 AM.",
+              "5. The meeting was productive and short.",
+              "6. The action point is to finalize the list by Friday."
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ]
       }
@@ -629,7 +1078,11 @@
             "question": "What tasks should we start with to make our event shine?",
             "instruction": "Type or say a short proposal (2–3 sentences) suggesting two tasks (e.g., designing decorations, choosing music) and why they’re important for the cultural event.",
             "hint": "Suggest tasks like designing decorations or selecting music.",
-            "assessment_focus": ["Vocabulary Range", "Grammar", "Cultural Relevance"],
+            "assessment_focus": [
+              "Vocabulary Range",
+              "Grammar",
+              "Cultural Relevance"
+            ],
             "cefr_responses": {
               "A1": "Do decorations. Pick music.",
               "A2": "Design decorations because it look nice. Pick music for event.",
@@ -644,7 +1097,11 @@
             "question": "Why are these tasks important for our cultural event?",
             "instruction": "Type or say a short response (1–2 sentences) explaining how one task (e.g., designing decorations) supports the cultural theme from Phase 1.",
             "hint": "Explain how a task like decorations connects to Tunisian culture.",
-            "assessment_focus": ["Vocabulary", "Grammar", "Cultural Connections"],
+            "assessment_focus": [
+              "Vocabulary",
+              "Grammar",
+              "Cultural Connections"
+            ],
             "cefr_responses": {
               "A1": "Decorations make event nice.",
               "A2": "Decorations is important for culture.",
@@ -659,7 +1116,11 @@
             "question": "I suggest focusing on food planning first to highlight Tunisian cuisine. What’s your take?",
             "instruction": "Type or say a response (1–2 sentences), agreeing or proposing another task with a reason, ensuring polite collaboration.",
             "hint": "Agree politely or suggest another task with a reason.",
-            "assessment_focus": ["Politeness", "Negotiation", "Reasoning"],
+            "assessment_focus": [
+              "Politeness",
+              "Negotiation",
+              "Reasoning"
+            ],
             "cefr_responses": {
               "A1": "Okay, food good.",
               "A2": "Maybe food is good because it show culture.",
@@ -674,7 +1135,11 @@
             "question": "Who should handle these tasks in our action plan?",
             "instruction": "Type or say a short response (1–2 sentences) assigning two tasks to team members (e.g., Emna for music, Ryan for decorations) with reasons based on Step 1 roles.",
             "hint": "Assign tasks with reasons, like ‘Emna for music because she’s creative.’",
-            "assessment_focus": ["Grammar", "Vocabulary", "Reasoning"],
+            "assessment_focus": [
+              "Grammar",
+              "Vocabulary",
+              "Reasoning"
+            ],
             "cefr_responses": {
               "A1": "Emna do music. Ryan do decorations.",
               "A2": "Emna for music because she like songs. Ryan for decorations.",
@@ -690,7 +1155,11 @@
             "question": "Listen to my task suggestion for the cultural event!",
             "instruction": "Listen carefully and then type or say a short response (1–2 sentences) summarizing Lilia’s suggestions and saying if you agree or suggest another task.",
             "hint": "Summarize Lilia’s tasks (poster, Malouf music) and agree or suggest another task.",
-            "assessment_focus": ["Listening Comprehension", "Vocabulary", "Response Clarity"],
+            "assessment_focus": [
+              "Listening Comprehension",
+              "Vocabulary",
+              "Response Clarity"
+            ],
             "cefr_responses": {
               "A1": "Poster and music. I like it.",
               "A2": "Lilia say poster and Malouf music. I agree it good.",
@@ -708,14 +1177,38 @@
             "audio_script": "We need decorations with Tunisian patterns, Malouf music to highlight culture, and a poster to promote the event. Emna is good for music, Ryan for decorations, and Lilia for posters.",
             "instruction": "Match 8 items to their descriptions.",
             "pairs": [
-              { "term": "decorations", "definition": "Creates cultural visuals" },
-              { "term": "Tunisian patterns", "definition": "Designs with traditional style" },
-              { "term": "Malouf music", "definition": "Chooses traditional music" },
-              { "term": "poster", "definition": "Promotes the event" },
-              { "term": "Emna", "definition": "Music team member" },
-              { "term": "Ryan", "definition": "Decorations team member" },
-              { "term": "Lilia", "definition": "Poster team member" },
-              { "term": "culture", "definition": "Event theme" }
+              {
+                "term": "decorations",
+                "definition": "Creates cultural visuals"
+              },
+              {
+                "term": "Tunisian patterns",
+                "definition": "Designs with traditional style"
+              },
+              {
+                "term": "Malouf music",
+                "definition": "Chooses traditional music"
+              },
+              {
+                "term": "poster",
+                "definition": "Promotes the event"
+              },
+              {
+                "term": "Emna",
+                "definition": "Music team member"
+              },
+              {
+                "term": "Ryan",
+                "definition": "Decorations team member"
+              },
+              {
+                "term": "Lilia",
+                "definition": "Poster team member"
+              },
+              {
+                "term": "culture",
+                "definition": "Event theme"
+              }
             ]
           },
           {
@@ -724,14 +1217,38 @@
             "audio_script": "I think Emna should pick Malouf music because it’s traditional. Ryan can design decorations with Tunisian patterns. What do you suggest?",
             "instruction": "Complete the dialogue.",
             "dialogue_lines": [
-              { "speaker": "Emna", "text": "I think Emna should pick Malouf music because it’s traditional." },
-              { "speaker": "You", "template": "I agree, __________ should __________ __________ because __________." },
-              { "speaker": "Emna", "text": "What about decorations?" },
-              { "speaker": "You", "template": "__________ can __________ __________ to show __________." },
-              { "speaker": "Emna", "text": "Any other tasks?" },
-              { "speaker": "You", "template": "I suggest __________ for __________ because __________." },
-              { "speaker": "Emna", "text": "Who else can help?" },
-              { "speaker": "You", "template": "__________ is good for __________ because __________." }
+              {
+                "speaker": "Emna",
+                "text": "I think Emna should pick Malouf music because it’s traditional."
+              },
+              {
+                "speaker": "You",
+                "template": "I agree, __________ should __________ __________ because __________."
+              },
+              {
+                "speaker": "Emna",
+                "text": "What about decorations?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ can __________ __________ to show __________."
+              },
+              {
+                "speaker": "Emna",
+                "text": "Any other tasks?"
+              },
+              {
+                "speaker": "You",
+                "template": "I suggest __________ for __________ because __________."
+              },
+              {
+                "speaker": "Emna",
+                "text": "Who else can help?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ is good for __________ because __________."
+              }
             ],
             "correct_answers": [
               "1. Emna should pick Malouf music because it is traditional.",
@@ -754,7 +1271,17 @@
               "7. The event will be __________ because __________.",
               "8. __________ helps make the event __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "What does the team plan and why?",
+              "What does Emna select and why?",
+              "What do we need to promote the event?",
+              "Who do you suggest for the poster and why?",
+              "Who else do you suggest and why?",
+              "How will these tasks help?",
+              "What will the event be like?",
+              "What helps make the event nice?"
+            ],
+            "example_of_answers": [
               "1. The team plans decorations with patterns to show culture.",
               "2. Emna selects Malouf music to make the event fun.",
               "3. We need poster to tell people.",
@@ -763,7 +1290,11 @@
               "6. These tasks will help because they are good.",
               "7. The event will be fun because of music.",
               "8. Decorations help make the event nice."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A1",
+              "prompt": "You are an AI writing evaluator for CEFR A1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "D",
@@ -780,7 +1311,17 @@
               "7. The event will be __________ because __________.",
               "8. Our team will __________ to make the event __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "What do you propose and why?",
+              "What do you also suggest?",
+              "What is another task?",
+              "Who should handle music?",
+              "Who is good for decorations?",
+              "How will these tasks help?",
+              "What will the event be?",
+              "What will the team do?"
+            ],
+            "example_of_answers": [
               "1. I propose poster with colors to promote because it is nice.",
               "2. I also suggest Malouf music to make fun because it is good.",
               "3. Another task is food to eat because it is tasty.",
@@ -789,7 +1330,11 @@
               "6. These tasks will help because they are important.",
               "7. The event will be good because of plan.",
               "8. Our team will work to make the event fun."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A1",
+              "prompt": "You are an AI writing evaluator for CEFR A1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "A2": [
@@ -809,7 +1354,17 @@
             "type": "listening_expansion",
             "audio_script": "Decorations with Tunisian patterns are cultural. Malouf music is vibrant.",
             "instruction": "Rewrite 8 sentences expanding them.",
-            "correct_answers": [
+            "guided_questions": [
+              "Expand: Team design decorations",
+              "Expand: Emna pick music",
+              "Expand: Need poster",
+              "Expand: Suggest food",
+              "Expand: SKANDER do food",
+              "Expand: Tasks help",
+              "Expand: Event is good",
+              "Expand: Music helps"
+            ],
+            "example_of_answers": [
               "1. Team design decorations with Tunisian patterns because it show culture.",
               "2. Emna will pick Malouf music to make event vibrant because it is traditional.",
               "3. We need poster to promote event because it tells people.",
@@ -818,14 +1373,28 @@
               "6. These tasks help because they are important.",
               "7. The event will be good because of culture.",
               "8. Music helps make the event fun."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
             "type": "listening_research",
             "audio_script": "We need Malouf music and Tunisian decorations. Research a Tunisian cultural element for the event.",
             "instruction": "Write 8 sentences about your chosen element.",
-            "correct_answers": [
+            "guided_questions": [
+              "What did you choose and why?",
+              "What is Malouf music?",
+              "How can we use it?",
+              "Is it traditional?",
+              "Do people like it?",
+              "Who can do it?",
+              "What will the event have?",
+              "Why is culture important?"
+            ],
+            "example_of_answers": [
               "1. I chose Malouf music because it fun.",
               "2. Malouf music is a genre in culture.",
               "3. We can use it to make event vibrant.",
@@ -834,14 +1403,28 @@
               "6. Emna can do Malouf music.",
               "7. The event will have Malouf music.",
               "8. Culture is important for event."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "D",
             "type": "listening_team_plan",
             "audio_script": "Emna selects Malouf music, Ryan designs Tunisian decorations, Lilia makes posters.",
             "instruction": "Write an 8-sentence plan.",
-            "correct_answers": [
+            "guided_questions": [
+              "What will Emna do?",
+              "What will Ryan design?",
+              "How do these tasks make the event nice?",
+              "What does Lilia do?",
+              "What does SKANDER do?",
+              "Why will the event be vibrant?",
+              "How do decorations help?",
+              "What will the team do?"
+            ],
+            "example_of_answers": [
               "1. Emna will pick Malouf music because it fun.",
               "2. Ryan designs decorations to show culture because he is good.",
               "3. These tasks make the event nice because they are cultural.",
@@ -850,7 +1433,11 @@
               "6. The event will be vibrant because of music.",
               "7. Decorations help because they are beautiful.",
               "8. Our team will plan to make event good."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "B1": [
@@ -870,7 +1457,17 @@
             "type": "listening_assignment",
             "audio_script": "Emna handles Malouf music for tradition, Ryan designs Tunisian decorations for culture, Lilia makes posters for promotion.",
             "instruction": "Write an 8-sentence report.",
-            "correct_answers": [
+            "guided_questions": [
+              "Why is Emna assigned Malouf music?",
+              "Why does Ryan design Tunisian decorations?",
+              "How will these tasks enhance the event?",
+              "Why is Lilia assigned the poster?",
+              "Why does SKANDER handle food?",
+              "How will the event be engaging?",
+              "Why is culture central?",
+              "What will the team deliver?"
+            ],
+            "example_of_answers": [
               "1. Emna is assigned Malouf music because it’s traditional.",
               "2. Ryan designs Tunisian decorations to show culture because he is organized.",
               "3. These tasks will enhance the event because they are authentic.",
@@ -879,14 +1476,28 @@
               "6. The event will be engaging because of variety.",
               "7. Culture is central because of tasks.",
               "8. Our team will deliver a vibrant event."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
             "type": "listening_reflection",
             "audio_script": "Malouf music and Tunisian decorations make our event cultural and vibrant. Posters attract guests.",
             "instruction": "Write an 8-sentence reflection.",
-            "correct_answers": [
+            "guided_questions": [
+              "Why does Malouf music make the event vibrant?",
+              "Why do posters attract guests?",
+              "What do you suggest regarding food?",
+              "How do decorations show identity?",
+              "Why does music engage people?",
+              "Why will the event be memorable?",
+              "How does culture connect?",
+              "Why does the team make an impact?"
+            ],
+            "example_of_answers": [
               "1. Malouf music makes the event vibrant because it’s traditional.",
               "2. Posters attract guests because they promote culture.",
               "3. I suggest food planning to highlight cuisine because it is authentic.",
@@ -895,14 +1506,28 @@
               "6. The event will be memorable because of tasks.",
               "7. Culture connects because of plan.",
               "8. Our team makes impact because of detail."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "D",
             "type": "listening_proposal",
             "audio_script": "Our event needs Malouf music, Tunisian decorations, and posters to reflect culture and attract guests.",
             "instruction": "Write an 8-sentence proposal.",
-            "correct_answers": [
+            "guided_questions": [
+              "Why does the event include Malouf music?",
+              "What do you propose regarding posters?",
+              "Why is food planning needed?",
+              "Why is Emna assigned music?",
+              "Why does Ryan handle decorations?",
+              "Why does Lilia do posters?",
+              "Why does SKANDER manage food?",
+              "What do these tasks ensure?"
+            ],
+            "example_of_answers": [
               "1. The event includes Malouf music to make it vibrant because it’s traditional.",
               "2. I propose posters to promote the event because they attract students.",
               "3. Food planning is needed to highlight cuisine because it is cultural.",
@@ -911,7 +1536,11 @@
               "6. Lilia does posters because she’s visual.",
               "7. SKANDER manages food because he’s experienced.",
               "8. These tasks ensure cultural depth."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ]
       }
@@ -936,11 +1565,15 @@
             "question": "Summarize the roles for our action plan.",
             "instruction": "Type or say 2–3 sentences describing two team members’ roles (e.g., Emna for music, Ryan for decorations) and why they were chosen, referencing Step 1.",
             "hint": "Mention roles from Step 1, like ‘Emna for music,’ with reasons.",
-            "assessment_focus": ["Vocabulary Range", "Grammar", "Role Clarity"],
+            "assessment_focus": [
+              "Vocabulary Range",
+              "Grammar",
+              "Role Clarity"
+            ],
             "cefr_responses": {
               "A1": "Emna do music. Ryan do decorations.",
               "A2": "Emna is for music because she like songs. Ryan is for decorations.",
-              "B1": "Emna handles music since she’s creative, and Ryan manages decorations.",
+              "B1": "Emna handles music, and Ryan manages decorations.",
               "B2": "Emna is assigned music due to her creativity, while Ryan oversees decorations to reflect Tunisian culture."
             }
           },
@@ -951,7 +1584,11 @@
             "question": "Include our meeting schedule in the action plan.",
             "instruction": "Type or say 1–2 sentences summarizing the meeting day, time, and purpose from Step 2.",
             "hint": "Mention day, time, purpose from Step 2.",
-            "assessment_focus": ["Grammar", "Clarity", "Schedule Accuracy"],
+            "assessment_focus": [
+              "Grammar",
+              "Clarity",
+              "Schedule Accuracy"
+            ],
             "cefr_responses": {
               "A1": "Meet Friday. Plan event.",
               "A2": "Meeting is Friday at 3 PM for plan.",
@@ -966,7 +1603,11 @@
             "question": "List the tasks in our action plan.",
             "instruction": "Type or say 2–3 sentences listing two tasks (e.g., designing decorations, selecting music) from Step 3 and their importance.",
             "hint": "List tasks from Step 3, like music selection.",
-            "assessment_focus": ["Vocabulary", "Task Clarity", "Cultural Relevance"],
+            "assessment_focus": [
+              "Vocabulary",
+              "Task Clarity",
+              "Cultural Relevance"
+            ],
             "cefr_responses": {
               "A1": "Do decorations. Pick music.",
               "A2": "Design decorations for culture. Pick music for fun.",
@@ -982,7 +1623,11 @@
             "question": "Listen to my action plan summary!",
             "instruction": "Listen carefully and then type or say 1–2 sentences summarizing Ryan’s plan points and saying if you agree or suggest a change.",
             "hint": "Summarize Ryan’s points (Emna for Malouf music, Friday meeting) and agree or suggest a change.",
-            "assessment_focus": ["Listening Comprehension", "Summary Skills", "Agreement"],
+            "assessment_focus": [
+              "Listening Comprehension",
+              "Summary Skills",
+              "Agreement"
+            ],
             "cefr_responses": {
               "A1": "Emna do music. I agree.",
               "A2": "Ryan say Emna for Malouf music and meet Friday. It good.",
@@ -997,7 +1642,12 @@
             "question": "Write a short action plan section for our event!",
             "instruction": "Type or say 4–5 sentences combining roles (Step 1), meeting schedule (Step 2), tasks (Step 3), and cultural goals from Phase 1.",
             "hint": "Include roles, schedule, tasks, and culture from Phase 1.",
-            "assessment_focus": ["Coherence", "Integration", "Cultural Connection", "Comprehensive Planning"],
+            "assessment_focus": [
+              "Coherence",
+              "Integration",
+              "Cultural Connection",
+              "Comprehensive Planning"
+            ],
             "cefr_responses": {
               "A1": "Emna do music. Ryan do decorations. Meet Friday. Event is nice.",
               "A2": "Emna is for music because she like songs. Ryan do decorations. Meet Friday at 3 PM. Event show culture.",
@@ -1015,14 +1665,38 @@
             "audio_script": "Emna handles Malouf music to make the event vibrant. Ryan designs decorations with Tunisian tiles. We meet Friday at 3 PM to plan. Lilia makes posters for promotion.",
             "instruction": "Match 8 items to their descriptions.",
             "pairs": [
-              { "term": "Emna", "definition": "Handles traditional music" },
-              { "term": "Malouf music", "definition": "Vibrant cultural music" },
-              { "term": "Ryan", "definition": "Designs cultural visuals" },
-              { "term": "Tunisian tiles", "definition": "Traditional decoration style" },
-              { "term": "Friday 3 PM", "definition": "Meeting time" },
-              { "term": "Lilia", "definition": "Makes promotional materials" },
-              { "term": "posters", "definition": "Poster team member" },
-              { "term": "culture", "definition": "Event theme" }
+              {
+                "term": "Emna",
+                "definition": "Handles traditional music"
+              },
+              {
+                "term": "Malouf music",
+                "definition": "Vibrant cultural music"
+              },
+              {
+                "term": "Ryan",
+                "definition": "Designs cultural visuals"
+              },
+              {
+                "term": "Tunisian tiles",
+                "definition": "Traditional decoration style"
+              },
+              {
+                "term": "Friday 3 PM",
+                "definition": "Meeting time"
+              },
+              {
+                "term": "Lilia",
+                "definition": "Makes promotional materials"
+              },
+              {
+                "term": "posters",
+                "definition": "Poster team member"
+              },
+              {
+                "term": "culture",
+                "definition": "Event theme"
+              }
             ]
           },
           {
@@ -1031,10 +1705,22 @@
             "audio_script": "Emna handles Malouf music because it’s traditional. Ryan designs decorations with Tunisian tiles. We meet Friday at 3 PM. What’s your idea?",
             "instruction": "Complete a 10-line dialogue.",
             "dialogue_lines": [
-              { "speaker": "Emna", "text": "Emna handles Malouf music because it’s traditional." },
-              { "speaker": "You", "template": "I agree, __________ should __________ __________ because __________." },
-              { "speaker": "Emna", "text": "What about decorations?" },
-              { "speaker": "You", "template": "__________ designs __________ to __________ because __________." }
+              {
+                "speaker": "Emna",
+                "text": "Emna handles Malouf music because it’s traditional."
+              },
+              {
+                "speaker": "You",
+                "template": "I agree, __________ should __________ __________ because __________."
+              },
+              {
+                "speaker": "Emna",
+                "text": "What about decorations?"
+              },
+              {
+                "speaker": "You",
+                "template": "__________ designs __________ to __________ because __________."
+              }
             ],
             "correct_answers": [
               "1. Emna should handle music because it is traditional.",
@@ -1052,7 +1738,17 @@
               "2. __________ uses __________ to __________ because __________.",
               "3. We meet __________ to plan __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "What does the team plan?",
+              "What does Ryan use and why?",
+              "When do we meet and why?",
+              "Who do you suggest for food?",
+              "Why does SKANDER do food?",
+              "How do these tasks help?",
+              "Why will the event be fun?",
+              "What helps make the event good?"
+            ],
+            "example_of_answers": [
               "1. The team plans music with Emna to make fun.",
               "2. Ryan uses tiles to show culture.",
               "3. We meet Friday to plan.",
@@ -1061,7 +1757,11 @@
               "6. These tasks help because they are nice.",
               "7. The event will be fun because of music.",
               "8. Plan helps make event good."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A1",
+              "prompt": "You are an AI writing evaluator for CEFR A1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "D",
@@ -1073,7 +1773,17 @@
               "2. I also suggest __________ to __________ because __________.",
               "3. __________ is assigned __________ because __________."
             ],
-            "correct_answers": [
+            "guided_questions": [
+              "What do you propose and why?",
+              "What do you also suggest and why?",
+              "What is another task?",
+              "Who should handle music?",
+              "Who is good for decorations?",
+              "How do these tasks help?",
+              "What will the event be?",
+              "What will the team do?"
+            ],
+            "example_of_answers": [
               "1. I propose music with Malouf to make fun because it is good.",
               "2. I also suggest poster to tell people because it is nice.",
               "3. Another task is food to eat because it is tasty.",
@@ -1082,7 +1792,11 @@
               "6. These tasks help because they are important.",
               "7. The event will be good because of plan.",
               "8. Our team will work to make event fun."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A1",
+              "prompt": "You are an AI writing evaluator for CEFR A1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "A2": [
@@ -1091,23 +1805,47 @@
             "type": "listening_role_play",
             "audio_script": "Let’s assign Malouf music to Emna and decorations with Tunisian tiles to Ryan. What’s your idea?",
             "instruction": "Complete a 10-line dialogue.",
-            "correct_answers": [
-              "1. I agree, Emna should pick Malouf music because it is traditional.",
-              "2. Ryan should do decorations because he is organized.",
-              "3. I suggest Lilia for poster because she likes art.",
-              "4. SKANDER can do food because he likes cooking.",
-              "5. The meeting is Friday at 3 PM.",
-              "6. We discuss music and decorations.",
-              "7. The plan is good for culture.",
-              "8. Our team will make event fun."
-            ]
+            "guided_questions": [
+            "Why should Emna pick Malouf music?",
+            "Why should Ryan do decorations?",
+            "Who do you suggest for the poster and why?",
+            "Who can do food and why?",
+            "When is the meeting?",
+            "What will we discuss?",
+            "Why is the plan good?",
+            "What will the team make?"
+          ],
+          "example_of_answers": [
+            "1. I agree, Emna should pick Malouf music because it is traditional.",
+            "2. Ryan should do decorations because he is organized.",
+            "3. I suggest Lilia for poster because she likes art.",
+            "4. SKANDER can do food because he likes cooking.",
+            "5. The meeting is Friday at 3 PM.",
+            "6. We discuss music and decorations.",
+            "7. The plan is good for culture.",
+            "8. Our team will make event fun."
+          ],
+          "ai_evaluation": {
+            "cefr_level": "A2",
+            "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+          }
           },
           {
             "task_id": "B",
             "type": "listening_expansion",
             "audio_script": "Malouf music is vibrant, decorations with Tunisian tiles are cultural.",
             "instruction": "Rewrite 8 sentences with details.",
-            "correct_answers": [
+            "guided_questions": [
+              "Expand: Emna pick Malouf music",
+              "Expand: Ryan design decorations",
+              "Expand: Need poster",
+              "Expand: Suggest food",
+              "Expand: SKANDER can do food",
+              "Expand: Tasks help",
+              "Expand: Event will be good",
+              "Expand: Music and decorations help"
+            ],
+            "example_of_answers": [
               "1. Emna picks Malouf music because it is vibrant and traditional.",
               "2. Ryan will design decorations with Tunisian tiles to show culture.",
               "3. We need poster to promote event because it tells students.",
@@ -1116,14 +1854,28 @@
               "6. These tasks help because they make event nice.",
               "7. The event will be good because of culture.",
               "8. Music and decorations help make event fun."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
             "type": "listening_research",
             "audio_script": "We need Malouf music and Tunisian tiles. Research a cultural element.",
             "instruction": "Write 8 sentences about a chosen element.",
-            "correct_answers": [
+            "guided_questions": [
+              "What did you choose and why?",
+              "What is Malouf music?",
+              "How can we use it?",
+              "What does it have?",
+              "Who likes it?",
+              "Who can play it?",
+              "What will the event have?",
+              "Why is culture important?"
+            ],
+            "example_of_answers": [
               "1. I chose Malouf music because it is fun and traditional.",
               "2. Malouf music is a genre in Tunisian culture.",
               "3. We can use it to make event vibrant and lively.",
@@ -1132,14 +1884,28 @@
               "6. Emna can play Malouf music.",
               "7. The event will have Malouf music for culture.",
               "8. Culture is important for our event."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "D",
             "type": "listening_team_plan",
             "audio_script": "Emna does Malouf music, Ryan does Tunisian tiles, Lilia does posters.",
             "instruction": "Write an 8-sentence plan.",
-            "correct_answers": [
+            "guided_questions": [
+              "What will Emna do?",
+              "What does Ryan design?",
+              "What does Lilia make?",
+              "What does SKANDER do?",
+              "When is the meeting?",
+              "What do we plan?",
+              "How do these tasks make the event nice?",
+              "What will the team do?"
+            ],
+            "example_of_answers": [
               "1. Emna will pick Malouf music because it is traditional.",
               "2. Ryan designs decorations with Tunisian tiles to show culture.",
               "3. Lilia makes posters to promote event because she is good.",
@@ -1148,7 +1914,11 @@
               "6. We plan music and decorations.",
               "7. These tasks make the event nice because of culture.",
               "8. Our team will work to make event good."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "A2",
+              "prompt": "You are an AI writing evaluator for CEFR A2.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level A2\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ],
         "B1": [
@@ -1157,6 +1927,16 @@
             "type": "listening_negotiation",
             "audio_script": "I suggest Malouf music and Tunisian tiles for decorations.",
             "instruction": "Complete a 10-line dialogue.",
+            "guided_questions": [
+              "What do you suggest regarding food and why?",
+              "Who should design decorations and why?",
+              "Who can handle music and why?",
+              "Who is good for posters and why?",
+              "When is the meeting?",
+              "What will we discuss?",
+              "How does the plan help culture?",
+              "What will the team deliver?"
+            ],
             "correct_answers": [
               "1. I see your point, but I suggest food planning because it is cultural.",
               "2. I agree, Ryan should design decorations with Tunisian tiles to show identity.",
@@ -1166,14 +1946,28 @@
               "6. We will discuss budget and tasks.",
               "7. The plan helps culture because of variety.",
               "8. Our team will deliver a vibrant event."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "B",
             "type": "listening_assignment",
             "audio_script": "Emna does Malouf music, Ryan does Tunisian tiles.",
             "instruction": "Write an 8-sentence report.",
-            "correct_answers": [
+            "guided_questions": [
+              "Why is Emna assigned Malouf music?",
+              "Why does Ryan design Tunisian decorations?",
+              "How will these tasks enhance the event?",
+              "Why is Lilia assigned posters?",
+              "Why does SKANDER handle food planning?",
+              "What is the meeting set for?",
+              "Why is culture central?",
+              "What will the team create?"
+            ],
+            "example_of_answers": [
               "1. Emna is assigned Malouf music because it reflects Tunisian traditions.",
               "2. Ryan designs decorations with Tunisian tiles to showcase cultural identity.",
               "3. These tasks will enhance the event because they are authentic.",
@@ -1182,14 +1976,28 @@
               "6. The meeting is set for Friday at 3 PM to align all tasks.",
               "7. Culture is central because of detailed planning.",
               "8. Our team will create a memorable cultural experience."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "C",
             "type": "listening_reflection",
             "audio_script": "Malouf music and Tunisian tiles make the event cultural.",
             "instruction": "Write an 8-sentence reflection.",
-            "correct_answers": [
+            "guided_questions": [
+              "Why does Malouf music make the event vibrant?",
+              "Why do Tunisian tiles attract attention?",
+              "What do you suggest regarding food tasting?",
+              "How do decorations show identity?",
+              "How does music connect generations?",
+              "Why will the event be inclusive?",
+              "How does the plan strengthen community?",
+              "Why do these elements make the event authentic?"
+            ],
+            "example_of_answers": [
               "1. Malouf music makes the event vibrant because it is deeply rooted in tradition.",
               "2. Tunisian tiles attract attention because they represent local craftsmanship.",
               "3. I suggest food tasting to highlight Tunisian cuisine because it engages all senses.",
@@ -1198,14 +2006,28 @@
               "6. The event will be inclusive because of cultural variety.",
               "7. Our plan strengthens community because of shared traditions.",
               "8. These elements make the event authentic and engaging."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           },
           {
             "task_id": "D",
             "type": "listening_proposal",
             "audio_script": "We need Malouf music, Tunisian tiles, and posters for culture.",
             "instruction": "Write an 8-sentence proposal.",
-            "correct_answers": [
+            "guided_questions": [
+              "Why does the event include Malouf music?",
+              "What do you propose regarding posters?",
+              "Why is food tasting essential?",
+              "Why is Emna assigned music?",
+              "Why does Ryan handle decorations?",
+              "Why does Lilia manage posters?",
+              "Why does SKANDER oversee food?",
+              "What do these tasks ensure?"
+            ],
+            "example_of_answers": [
               "1. The event includes Malouf music to create a vibrant atmosphere because it is traditional.",
               "2. I propose posters with Tunisian calligraphy to promote the event and attract students.",
               "3. Food tasting is essential to highlight local cuisine because it is cultural.",
@@ -1214,7 +2036,11 @@
               "6. Lilia manages posters because she excels in visual design.",
               "7. SKANDER oversees food because he has culinary knowledge.",
               "8. These tasks ensure a rich, authentic cultural celebration."
-            ]
+            ],
+            "ai_evaluation": {
+              "cefr_level": "B1",
+              "prompt": "You are an AI writing evaluator for CEFR B1.\n\nTask instruction:\n{{TASK_INSTRUCTION}}\n\nGuided questions:\n{{GUIDED_QUESTIONS}}\n\nExample answers:\n{{EXAMPLE_ANSWERS}}\n\nLearner response:\n{{LEARNER_RESPONSE}}\n\nEvaluate the response as a whole. Do not match words literally.\n\nCheck:\n- Coverage of most guided questions (directly or indirectly)\n- Grammar and vocabulary roughly at level B1\n- Coherence and clarity\n- Relevance to the given context\n\nIgnore small grammar or spelling mistakes if the meaning is clear.\n\nReturn JSON only in this format:\n{\n  \"score\": 0-100,\n  \"level_alignment\": \"below\" | \"meets\" | \"above\",\n  \"strengths\": [\"...\"],\n  \"improvements\": [\"...\"],\n  \"feedback\": \"Short, neutral, level-appropriate feedback.\"\n}\n"
+            }
           }
         ]
       }
