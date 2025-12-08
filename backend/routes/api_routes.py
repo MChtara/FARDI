@@ -813,11 +813,13 @@ def check_level_completion(session, step_id, level):
     """Check if all exercises in a level are completed"""
     completed_key = f"{step_id}_{level}_completed"
     completed_activities = session.get('phase2_level_completed', {}).get(completed_key, [])
-    
+
     # Get total activities for this level
     remedial_activities = PHASE_2_REMEDIAL_ACTIVITIES.get(step_id, {}).get(level, [])
     total_activities = len(remedial_activities)
-    
+
+    logger.info(f"Level completion check: {step_id}/{level} - {len(completed_activities)}/{total_activities} completed: {completed_activities}")
+
     # Check if all activities (0, 1, 2, 3) are completed
     return len(completed_activities) >= total_activities
 
@@ -892,6 +894,13 @@ def submit_remedial_activity():
         
         if not current_activity:
             return jsonify({"error": "Activity not found"}), 400
+        
+        # Initialize gamification XP service
+        from services.xp_service import XPService
+        from routes.auth_routes import db_manager
+        xp_service = XPService(db_manager.get_connection())
+        user_id = session.get('user_id')
+
         
         # Store remedial response in database
         from routes.auth_routes import assessment_history
@@ -983,12 +992,43 @@ def submit_remedial_activity():
         # Activity passed! Mark it as completed
         mark_activity_completed(session, step_id, current_level, activity_index)
         
+        # Award XP for completing remedial activity
+        xp_data = None
+        try:
+            # Determine if perfect score
+            is_perfect = score >= max_score
+            
+            # Award XP based on level
+            activity_type = f"remedial_{current_level}_completed"
+            xp_result = xp_service.award_activity_xp(
+                user_id=user_id,
+                activity_type=activity_type,
+                activity_id=f"{step_id}_{activity_id}",
+                is_perfect=is_perfect,
+                is_first_try=activity_index == 0,  # First activity in level
+                speed_bonus=False  # Could add timing logic later
+            )
+            
+            xp_data = {
+                "xp_awarded": xp_result.get("total_xp_awarded", 0),
+                "level_up": xp_result.get("progression", {}).get("leveled_up", False),
+                "new_level": xp_result.get("progression", {}).get("current_level", 1),
+                "total_xp": xp_result.get("progression", {}).get("total_xp", 0)
+            }
+            
+            logger.info(f"Awarded {xp_data['xp_awarded']} XP for {activity_type} (perfect: {is_perfect})")
+            
+        except Exception as xp_error:
+            logger.error(f"Failed to award XP for remedial activity: {str(xp_error)}")
+            # Continue without XP if gamification fails
+            xp_data = {"xp_awarded": 0, "level_up": False}
+        
         # Case 2: Not last activity in level → Continue to next activity in same level
         if not is_last_activity_in_level:
             next_activity = remedial_activities[next_activity_index]
             completed_count = len(session.get('phase2_level_completed', {}).get(f"{step_id}_{current_level}_completed", []))
             
-            return jsonify({
+            response_data = {
                 "success": True,
                 "activity_passed": True,
                 "remedial_complete": False,
@@ -1001,11 +1041,110 @@ def submit_remedial_activity():
                 "progress_update": f"Completed {completed_count}/{len(remedial_activities)} exercises in {current_level} level",
                 "current_level": current_level,
                 "level_progress": f"{completed_count}/{len(remedial_activities)}"
+            }
+            
+            # Add XP data if available
+            if xp_data:
+                response_data["xp_data"] = xp_data
+            
+            return jsonify(response_data)
+        
+        # Case 3: Last activity in level AND passed → Check overall performance
+        # Calculate overall score across all 4 activities
+        overall_score = 0
+        overall_max_score = 0
+
+        for i, activity in enumerate(remedial_activities):
+            activity_key = f"remedial_{step_id}_{level}_{activity['id']}"
+            saved_response = session.get('phase2_remedial_responses', {}).get(activity_key, {})
+            activity_score = saved_response.get('score', 0)
+            activity_max = activity.get('success_threshold', 6)
+
+            overall_score += activity_score
+            overall_max_score += activity_max
+
+            logger.info(f"Activity {i}: Score {activity_score}/{activity_max}")
+
+        overall_percentage = (overall_score / overall_max_score * 100) if overall_max_score > 0 else 0
+        logger.info(f"Overall performance: {overall_score}/{overall_max_score} ({overall_percentage:.1f}%)")
+
+        # Check if user has already been warned about low performance
+        revisit_warning_key = f"revisit_warning_{step_id}_{level}"
+        has_been_warned = session.get(revisit_warning_key, False)
+
+        # If overall score < 50% AND not yet warned, show warning message
+        if overall_percentage < 50 and not has_been_warned:
+            # Mark that we've shown the warning
+            session[revisit_warning_key] = True
+            session.modified = True
+
+            return jsonify({
+                "success": True,
+                "activity_passed": True,
+                "overall_performance_low": True,
+                "score": score,
+                "threshold": max_score,
+                "overall_score": overall_score,
+                "overall_max_score": overall_max_score,
+                "overall_percentage": round(overall_percentage, 1),
+                "message": f"⚠️ You've completed all activities, but your overall score is {overall_score}/{overall_max_score} ({overall_percentage:.0f}%). You need to revisit the activities where you made the most mistakes to improve.",
+                "next_action": "revisit_activities",
+                "next_url": f"/app/phase2/remedial/{step_id}/{current_level}?activity=0",
+                "recommendation": "Review activities 0-3 and try to improve your answers. Aim for at least 50% overall to progress.",
+                "xp_data": xp_data if xp_data else {"xp_awarded": 0, "level_up": False}
             })
-        
-        # Case 3: Last activity in level AND passed → Check level completion
+
+        # If overall score < 50% BUT already warned, force progression with a different message
+        if overall_percentage < 50 and has_been_warned:
+            logger.info(f"User already warned about low performance, allowing progression")
+            # Clear the warning flag for next level
+            session[revisit_warning_key] = False
+            session.modified = True
+
+        # Overall performance is good (>= 50%) OR user has already been warned, check level completion
+        # First, ensure all passed activities in this level are marked as completed
+        # Check BOTH session and database for scores
+        logger.info(f"=== CHECKING ALL ACTIVITIES FOR {step_id}/{level} ===")
+
+        # Get scores from database as well
+        user_id = session.get('user_id')
+        db_progress = assessment_history.get_phase2_progress(user_id) if user_id else {'remedial_activities': []}
+
+        logger.info(f"Session phase2_remedial_responses keys: {list(session.get('phase2_remedial_responses', {}).keys())}")
+
+        for i, activity in enumerate(remedial_activities):
+            activity_key = f"remedial_{step_id}_{level}_{activity['id']}"
+            activity_id = activity['id']
+
+            # Check session first
+            saved_response = session.get('phase2_remedial_responses', {}).get(activity_key, {})
+            activity_score = saved_response.get('score', 0)
+
+            # If not in session, check database
+            if activity_score == 0:
+                for db_activity in db_progress.get('remedial_activities', []):
+                    if (db_activity.get('step_id') == step_id and
+                        db_activity.get('level') == level and
+                        db_activity.get('activity_id') == activity_id):
+                        activity_score = db_activity.get('score', 0)
+                        logger.info(f"  Found score in database: {activity_score}")
+                        break
+
+            activity_threshold = activity.get('success_threshold', 6)
+            activity_passing = int(activity_threshold * 0.50)
+
+            logger.info(f"Activity {i} ({activity_id}): score={activity_score}, threshold={activity_threshold}, passing={activity_passing}")
+
+            # If this activity was passed (score >= 50% of threshold), mark it as completed
+            if activity_score >= activity_passing:
+                mark_activity_completed(session, step_id, current_level, i)
+                logger.info(f"  -> Activity {i} PASSED and marked as completed")
+            else:
+                logger.info(f"  -> Activity {i} NOT PASSED")
+
         level_complete = check_level_completion(session, step_id, current_level)
-        
+        logger.info(f"Final level completion for {step_id}/{current_level}: {level_complete}")
+
         if level_complete:
             # All exercises in current level completed! Try to advance to next level
             next_level = get_next_remedial_level(current_level)
@@ -1032,7 +1171,8 @@ def submit_remedial_activity():
                         "previous_level": current_level,
                         "current_level": next_level,
                         "celebration": True,
-                        "progress_update": f"Advanced from {current_level} to {next_level}"
+                        "progress_update": f"Advanced from {current_level} to {next_level}",
+                        "xp_data": xp_data if xp_data else {"xp_awarded": 0, "level_up": False}
                     })
             
             # No next level OR next level doesn't exist → All remedial levels complete!
@@ -1065,10 +1205,14 @@ def submit_remedial_activity():
                 "next_url": next_url,
                 "celebration": True,
                 "step_completed": True,
+                "final_level": current_level,
+                "xp_data": xp_data if xp_data else {"xp_awarded": 0, "level_up": False},
                 "all_levels_complete": True
             })
         
         # Fallback: Should not reach here, but just in case
+        logger.error(f"FALLBACK HIT! level_complete was False for {step_id}/{current_level}")
+        logger.error(f"This should not happen. Check level completion logic.")
         return jsonify({
             "success": True,
             "activity_passed": True,
@@ -1630,16 +1774,134 @@ def get_phase2_remedial():
 
         # Whitelist activity fields for the client
         def sanitize(activity):
+            # Convert new JSON format to old format for backward compatibility
+            task_type = activity.get('task_type') or activity.get('type', 'fill_gaps')
+            matching_items = activity.get('matching_items')
+            sentences = activity.get('sentences')
+            word_bank = activity.get('word_bank', [])
+            
+            # Convert sentence_expansion to writing task type
+            if task_type == 'sentence_expansion':
+                task_type = 'sentence_expansion'  # Keep as is, frontend will handle it
+
+            # Keep gap_fill_story as is - frontend will handle it
+            if task_type == 'gap_fill_story':
+                task_type = 'gap_fill_story'  # Keep as is, frontend will handle it
+
+            # Convert drag_and_drop pairs to matching_items format
+            if task_type == 'drag_and_drop' and activity.get('pairs'):
+                task_type = 'matching'
+                matching_items = {pair['term']: pair['definition'] for pair in activity['pairs']}
+            
+            # Convert gap_fill templates to sentences format (NOT writing)
+            if task_type == 'gap_fill' and activity.get('templates'):
+                task_type = 'fill_gaps'
+                sentences = []
+                templates = activity.get('templates', [])
+                correct_answers = activity.get('correct_answers', [])
+                
+                for i, template in enumerate(templates):
+                    # Count blanks in template
+                    blank_count = template.count('___')
+                    # Extract blanks from correct answer if available
+                    blanks = []
+                    if i < len(correct_answers):
+                        # Simple extraction - split by common words and get filled parts
+                        # This is a simplified approach
+                        answer_parts = correct_answers[i].split()
+                        template_parts = template.replace('___', '').split()
+                        blanks = [part for part in answer_parts if part not in template_parts]
+                    
+                    sentences.append({
+                        'text': template,
+                        'blanks': blanks[:blank_count] if blanks else [''] * blank_count
+                    })
+            
+            # Convert writing templates to clean prompts (remove numbering and underscores)
+            if task_type == 'writing' and activity.get('templates'):
+                templates = activity.get('templates', [])
+                # Clean up templates: remove numbering (e.g., "1. ") and convert to descriptive prompts
+                clean_templates = []
+                for template in templates:
+                    # Remove numbering like "1. ", "2. ", etc.
+                    clean = template
+                    if '. ' in template and template[0].isdigit():
+                        clean = template.split('. ', 1)[1] if len(template.split('. ', 1)) > 1 else template
+                    
+                    # Convert underscores to descriptive placeholders for display
+                    # e.g., "__________ does __________" -> "Who does what and why?"
+                    # For now, keep the template as-is since it shows the structure
+                    clean_templates.append(clean)
+                
+                # Assign back to activity
+                activity['templates'] = clean_templates
+            
+            # Convert dialogue_completion to dialogue format
+            dialogue = activity.get('dialogue')
+            if task_type == 'dialogue_completion' and activity.get('dialogue_lines'):
+                dialogue = []
+                correct_answers = activity.get('correct_answers', [])
+                answer_index = 0
+                
+                for line in activity.get('dialogue_lines', []):
+                    if 'template' in line:
+                        # User input line with blanks
+                        template = line.get('template', '')
+                        # Count groups of 3+ underscores, not individual ___ substrings
+                        import re
+                        blank_count = len(re.findall(r'_{3,}', template))
+                        blanks = []
+                        
+                        # Extract blanks from corresponding correct answer
+                        if answer_index < len(correct_answers):
+                            answer_text = correct_answers[answer_index]
+                            # Remove numbering like "1. " from the answer
+                            if answer_text and '. ' in answer_text:
+                                answer_text = answer_text.split('. ', 1)[1] if len(answer_text.split('. ', 1)) > 1 else answer_text
+                            
+                            # Extract words that fill the blanks
+                            answer_parts = answer_text.split() if answer_text else []
+                            template_parts = re.sub(r'_{3,}', '', template).split()
+                            blanks = [part for part in answer_parts if part not in template_parts]
+                            answer_index += 1
+                        
+                        # Ensure we have enough blanks
+                        while len(blanks) < blank_count:
+                            blanks.append('')
+                        
+                        dialogue.append({
+                            'type': 'user_input',
+                            'speaker': line.get('speaker', 'You'),
+                            'text': template,
+                            'blanks': blanks[:blank_count]
+                        })
+                    else:
+                        # Regular dialogue line (character speaking)
+                        dialogue.append({
+                            'type': 'character',
+                            'speaker': line.get('speaker', ''),
+                            'text': line.get('text', '')
+                        })
+                
+                # Assign converted dialogue to activity
+                activity['dialogue'] = dialogue
+            
             return {
+
                 'id': activity.get('id'),
                 'title': activity.get('title', 'Practice Activity'),
                 'speaker': activity.get('speaker', 'Mentor'),
                 'instruction': activity.get('instruction', ''),
-                'task_type': activity.get('task_type', 'fill_gaps'),
-                'matching_items': activity.get('matching_items'),
-                'sentences': activity.get('sentences'),
-                'dialogue': activity.get('dialogue'),
-                'word_bank': activity.get('word_bank', []),
+                'task_type': task_type,
+                'matching_items': matching_items,
+                'pairs': activity.get('pairs', []),  # For RhythmMatcher
+                'sentences': sentences,
+                'dialogue': dialogue,
+                'templates': activity.get('templates'),  # For writing tasks
+                'word_bank': word_bank,
+                'correct_answers': activity.get('correct_answers', []),  # For gap_fill_story validation
+                'guided_questions': activity.get('guided_questions', []),  # For hints/tips
+
                 'audio_text': activity.get('audio_text'),
                 'audio_content': activity.get('audio_content'),
                 'success_threshold': activity.get('success_threshold', 6),
@@ -1669,8 +1931,11 @@ def get_phase2_remedial():
                 'priority_items': activity.get('priority_items'),
                 'strategic_items': activity.get('strategic_items'),
                 'proposal_items': activity.get('proposal_items'),
-                'analysis_items': activity.get('analysis_items')
+                'analysis_items': activity.get('analysis_items'),
+                # For negotiation_gap_fill and similar types
+                'dialogue_lines': activity.get('dialogue_lines')
             }
+
 
         # Build simple meta list for navigation
         activities_meta = [
@@ -1681,6 +1946,24 @@ def get_phase2_remedial():
             } for i, act in enumerate(activities)
         ]
 
+        # Get saved responses for this activity from database
+        user_id = session.get('user_id')
+        current_activity_id = activities[current_index].get('id')
+        saved_responses = {}
+
+        if user_id:
+            try:
+                progress = assessment_history.get_phase2_progress(user_id)
+                for rem_activity in progress.get('remedial_activities', []):
+                    if (rem_activity.get('step_id') == step_id and
+                        rem_activity.get('level') == level and
+                        rem_activity.get('activity_id') == current_activity_id):
+                        saved_responses = rem_activity.get('responses', {})
+                        logger.info(f"Loaded saved responses for {current_activity_id}: {len(saved_responses)} answers")
+                        break
+            except Exception as e:
+                logger.error(f"Error loading saved responses: {str(e)}")
+
         return jsonify({
             'step_id': step_id,
             'level': level,
@@ -1688,7 +1971,8 @@ def get_phase2_remedial():
             'total': len(activities),
             'activity': sanitize(activities[current_index]),
             'completed_indices': completed_indices,
-            'activities_meta': activities_meta
+            'activities_meta': activities_meta,
+            'saved_responses': saved_responses  # Include saved responses from DB
         })
     except Exception as e:
         logger.error(f"Error getting remedial data: {str(e)}")
