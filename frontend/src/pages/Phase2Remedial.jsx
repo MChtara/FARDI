@@ -1,12 +1,65 @@
-import React, { useEffect, useMemo, useState, useRef, useLayoutEffect } from 'react'
+/**
+ * Phase 2 Remedial Page - Gamified Exercise Interface
+ * Supports all 20 task types from gamification-exercises.json
+ */
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
-import { Box, Paper, Typography, Stack, Button, Chip, LinearProgress, Grid, Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, TextField } from '@mui/material'
-import { CharacterMessage } from '../components/Avatar.jsx'
+import {
+  Box, Paper, Typography, Stack, Button, Chip, LinearProgress,
+  Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions,
+  CircularProgress, IconButton
+} from '@mui/material'
+
+// Import all gamified components
+import PuzzleGame from '../components/PuzzleGame.jsx'
+import WordSniper from '../components/WordSniper.jsx'
+import BillboardDesigner from '../components/BillboardDesigner.jsx'
+import PhraseExpander from '../components/PhraseExpander.jsx'
+import GapFillStory from '../components/GapFillStory.jsx'
+import EventPlannerBoard from '../components/EventPlannerBoard.jsx'
+import {
+  DebateArena,
+  ConversationTetris,
+  RhythmMatcher,
+  SignalDecoder,
+  ChatMessengerSim,
+  PhoneCallSim,
+  SocialPostMaker,
+  SentenceGarden
+} from '../components/exercises'
+
+// Task type to component mapping (from gamification-exercises.json)
+// Note: Backend API converts some types: drag_and_drop→matching, gap_fill→fill_gaps
+const TASK_COMPONENT_MAP = {
+  'drag_and_drop': 'PuzzleGame',
+  'matching': 'PuzzleGame',  // Backend converts drag_and_drop to matching
+  'listening_drag_drop': 'RhythmMatcher',
+  'gap_fill': 'WordSniper',
+  'fill_gaps': 'WordSniper',  // Backend converts gap_fill to fill_gaps
+  'gap_fill_story': 'GapFillStory',
+  'negotiation_gap_fill': 'DebateArena',
+  'listening_negotiation': 'SocialPostMaker',  // Writing task with guided_questions
+  'dialogue_completion': 'PhoneCallSim',
+  'listening_dialogue_gap_fill': 'SignalDecoder',
+  'listening_role_play': 'SocialPostMaker',  // Writing task with guided_questions
+  'writing': 'SocialPostMaker',
+  'listening_proposal_writing': 'SocialPostMaker',
+  'listening_proposal': 'SocialPostMaker',
+  'sentence_expansion': 'SentenceGarden',
+  'reflection_gap_fill': 'SentenceGarden',
+  'listening_expansion': 'SocialPostMaker',  // Writing task with guided_questions
+  'listening_story_writing': 'ChatMessengerSim',
+  'listening_research': 'SocialPostMaker',  // Writing task with guided_questions
+  'listening_reflection': 'ChatMessengerSim',
+  'listening_team_plan': 'SocialPostMaker',  // Writing task with guided_questions
+  'listening_assignment': 'SocialPostMaker'  // Writing task with guided_questions
+}
 
 export default function Phase2Remedial() {
   const { stepId, level } = useParams()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -15,29 +68,56 @@ export default function Phase2Remedial() {
   const [pasteWarn, setPasteWarn] = useState(false)
   const [feedback, setFeedback] = useState(null)
   const [showFeedback, setShowFeedback] = useState(false)
+  const [audioPlayed, setAudioPlayed] = useState(false)
+  const [audioPlaying, setAudioPlaying] = useState(false)
+  const [exerciseCompleted, setExerciseCompleted] = useState(false)
+  const [exerciseResult, setExerciseResult] = useState(null)
 
+  // Load activity data
   const load = async () => {
     setLoading(true)
     setError('')
+    setExerciseCompleted(false)
+    setExerciseResult(null)
+    setAudioPlayed(false)
+
     try {
       const idx = searchParams.get('activity')
-      const url = `/api/phase2/remedial?step_id=${encodeURIComponent(stepId)}&level=${encodeURIComponent(level)}${idx?`&activity=${idx}`:''}`
+      const url = `/api/phase2/remedial?step_id=${encodeURIComponent(stepId)}&level=${encodeURIComponent(level)}${idx ? `&activity=${idx}` : ''}`
       const r = await fetch(url, { credentials: 'include' })
-      
-      // Check if we got redirected to login (authentication required)
+
       if (r.status === 302 || (r.status === 200 && r.headers.get('content-type')?.includes('text/html'))) {
-        // User is not authenticated, redirect to login
         navigate('/login')
         return
       }
-      
+
       if (!r.ok) {
         throw new Error(`Failed to load remedial data (${r.status})`)
       }
-      
+
       const d = await r.json()
       setData(d)
-      setAnswers({})
+
+      // Restore saved answers
+      const storageKey = `remedial_${stepId}_${level}_${d.activity.id}`
+      const sessionAnswers = sessionStorage.getItem(storageKey)
+
+      if (sessionAnswers) {
+        try {
+          setAnswers(JSON.parse(sessionAnswers))
+        } catch (e) {
+          if (d.saved_responses && Object.keys(d.saved_responses).length > 0) {
+            setAnswers(d.saved_responses)
+          } else {
+            setAnswers({})
+          }
+        }
+      } else if (d.saved_responses && Object.keys(d.saved_responses).length > 0) {
+        setAnswers(d.saved_responses)
+        sessionStorage.setItem(storageKey, JSON.stringify(d.saved_responses))
+      } else {
+        setAnswers({})
+      }
     } catch (e) {
       setError(e.message)
     } finally {
@@ -47,155 +127,105 @@ export default function Phase2Remedial() {
 
   useEffect(() => { load() }, [stepId, level, searchParams])
 
+  // Save answers to sessionStorage
+  useEffect(() => {
+    if (data?.activity?.id && Object.keys(answers).length > 0) {
+      const storageKey = `remedial_${stepId}_${level}_${data.activity.id}`
+      sessionStorage.setItem(storageKey, JSON.stringify(answers))
+    }
+  }, [answers, data, stepId, level])
+
   const setAnswer = (key, value) => setAnswers(prev => ({ ...prev, [key]: value }))
 
-  // Helper to render input field - B1/B2 use text input, A1/A2 use dropdowns
-  const renderInputField = (key, options) => {
-    const useTextInput = data.level === 'B1' || data.level === 'B2'
+  // Play audio for listening exercises
+  const playAudio = (text) => {
+    if (!text) return
 
-    if (useTextInput) {
-      return (
-        <TextField
-          size="small"
-          value={answers[key]||''}
-          onChange={e=>setAnswer(key, e.target.value)}
-          placeholder="Type here..."
-          sx={{ minWidth: 150 }}
-        />
-      )
+    setAudioPlaying(true)
+    try {
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel()
+        const u = new SpeechSynthesisUtterance(text)
+        u.rate = 0.9
+        u.pitch = 1
+        u.lang = 'en-US'
+        u.onend = () => {
+          setAudioPlaying(false)
+          setAudioPlayed(true)
+        }
+        u.onerror = () => {
+          setAudioPlaying(false)
+          setAudioPlayed(true)
+        }
+        speechSynthesis.speak(u)
+      } else {
+        setTimeout(() => {
+          setAudioPlaying(false)
+          setAudioPlayed(true)
+        }, 3000)
+      }
+    } catch (err) {
+      console.warn('Speech synthesis failed:', err)
+      setAudioPlaying(false)
+      setAudioPlayed(true)
     }
-
-    return (
-      <FormControl size="small" sx={{ minWidth: 120 }}>
-        <Select value={answers[key]||''} onChange={e=>setAnswer(key, e.target.value)} displayEmpty sx={{ fontSize: '1rem' }}>
-          <MenuItem value=""><em>Choose...</em></MenuItem>
-          {options.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
-        </Select>
-      </FormControl>
-    )
   }
 
+  // Compute score based on answers
   const computeScore = () => {
     if (!data?.activity) return 0
     const a = data.activity
     let score = 0
-    if (a.task_type === 'matching' && a.matching_items) {
-      // answers should map description key to chosen item key
-      Object.entries(a.matching_items).forEach(([key, _desc]) => {
-        if (answers[key] && answers[key] === key) score += 1
-      })
-    } else if (a.task_type === 'fill_gaps' && Array.isArray(a.sentences)) {
-      let idx = 0
-      a.sentences.forEach(s => {
-        (s.blanks||[]).forEach(correct => {
-          const user = answers[`g_${idx}`]
-          if (user && user === correct) score += 1
-          idx += 1
-        })
-      })
-    } else if (a.task_type === 'dialogue' && Array.isArray(a.dialogue)) {
-      let idx = 0
-      a.dialogue.forEach(line => {
-        if (line.type === 'user_input') {
-          (line.blanks||[]).forEach(correct => {
-            const user = answers[`d_${idx}`]
-            if (user && user === correct) score += 1
-            idx += 1
-          })
-        }
-      })
-    } else if (a.task_type === 'listening_matching' && a.matching_items) {
-      // Same scoring as matching
-      Object.entries(a.matching_items).forEach(([key, _desc]) => {
-        if (answers[key] && answers[key] === key) score += 1
-      })
-    } else if (a.task_type === 'dialogue_completion' && Array.isArray(a.dialogue)) {
-      // Same scoring as dialogue
-      let idx = 0
-      a.dialogue.forEach(line => {
-        if (line.type === 'user_input') {
-          (line.blanks||[]).forEach(correct => {
-            const user = answers[`d_${idx}`]
-            if (user && user === correct) score += 1
-            idx += 1
-          })
-        }
-      })
-    } else if (a.task_type === 'sentence_expansion' && Array.isArray(a.expansion_exercises)) {
-      let idx = 0
-      a.expansion_exercises.forEach(ex => {
-        (ex.blanks||[]).forEach(correct => {
-          const user = answers[`g_${idx}`]
-          if (user && user === correct) score += 1
-          idx += 1
-        })
-      })
-    } else if (a.task_type === 'cultural_research' && Array.isArray(a.research_prompts)) {
-      let idx = 0
-      a.research_prompts.forEach(prompt => {
-        (prompt.blanks||[]).forEach(correct => {
-          const user = answers[`g_${idx}`]
-          if (user && user === correct) score += 1
-          idx += 1
-        })
-      })
-    } else if (a.task_type === 'team_planning' && Array.isArray(a.planning_template)) {
-      let idx = 0
-      a.planning_template.forEach(template => {
-        (template.blanks||[]).forEach(correct => {
-          const user = answers[`g_${idx}`]
-          if (user && user === correct) score += 1
-          idx += 1
-        })
-      })
-    } else if (a.task_type === 'negotiation_roleplay' && Array.isArray(a.negotiation_dialogue || a.dialogue)) {
-      // negotiation_roleplay uses dialogue format
-      let idx = 0
-      const dialogueArray = a.negotiation_dialogue || a.dialogue
-      dialogueArray.forEach(line => {
-        if (line.type === 'user_input') {
-          (line.blanks||[]).forEach(correct => {
-            const user = answers[`d_${idx}`]
-            if (user && user === correct) score += 1
-            idx += 1
-          })
-        }
-      })
-    } else if ((a.task_type === 'assignment_report' || a.task_type === 'cultural_reflection' ||
-                a.task_type === 'event_proposal' || a.task_type === 'story_writing' ||
-                a.task_type === 'proposal_writing' || a.task_type === 'listening_expansion' ||
-                a.task_type === 'priority_planning' || a.task_type === 'strategic_proposal' ||
-                a.task_type === 'analysis_report') &&
-               (Array.isArray(a.report_template) || Array.isArray(a.reflection_prompts) ||
-                Array.isArray(a.proposal_framework) || Array.isArray(a.story_template) ||
-                Array.isArray(a.story_framework) || Array.isArray(a.writing_prompts) ||
-                Array.isArray(a.expansion_exercises) || Array.isArray(a.priority_template) ||
-                Array.isArray(a.planning_items) || Array.isArray(a.strategic_template) ||
-                Array.isArray(a.proposal_template) || Array.isArray(a.analysis_template))) {
-      let idx = 0
-      const items = a.report_template || a.reflection_prompts || a.proposal_framework ||
-                    a.story_template || a.story_framework || a.writing_prompts ||
-                    a.expansion_exercises || a.priority_template || a.planning_items ||
-                    a.strategic_template || a.proposal_template || a.analysis_template
-      items.forEach(item => {
-        (item.blanks||[]).forEach(correct => {
-          const user = answers[`g_${idx}`]
-          if (user && user === correct) score += 1
-          idx += 1
-        })
-      })
-    } else {
-      // generic freeform fallback (count any non-empty as 1)
-      Object.values(answers).forEach(v => { if (v) score += 1 })
+
+    // Check correct_answers
+    if (a.correct_answers && Array.isArray(a.correct_answers)) {
+      const totalAnswers = Object.keys(answers).filter(k => answers[k]).length
+      score = Math.min(totalAnswers, a.correct_answers.length)
     }
+
+    // For pairs-based matching
+    if (a.pairs && Array.isArray(a.pairs)) {
+      a.pairs.forEach((pair) => {
+        if (answers[pair.term] === pair.term) score++
+      })
+    }
+
+    // Fallback: count non-empty answers
+    if (score === 0) {
+      Object.values(answers).forEach(v => {
+        if (v && v.toString().trim()) score++
+      })
+    }
+
     return score
   }
 
+  // Handle exercise completion from gamified components
+  const handleExerciseComplete = (result) => {
+    console.log('Exercise completed:', result)
+    setExerciseCompleted(true)
+    setExerciseResult(result)
+  }
+
+  // Handle progress updates from gamified components
+  const handleProgress = (progress) => {
+    console.log('Progress:', progress)
+    // Update answers from component progress
+    if (progress.answers) {
+      setAnswers(prev => ({ ...prev, ...progress.answers }))
+    } else if (progress.answer !== undefined) {
+      // For components that return a single answer (SocialPostMaker, etc.)
+      setAnswers({ response: progress.answer })
+    }
+  }
+
+  // Submit answers to backend
   const onSubmit = async () => {
     if (!data?.activity) return
     setSubmitting(true)
+
     try {
-      const score = computeScore()
+      const score = exerciseResult?.correctCount || computeScore()
       const r = await fetch('/api/phase2/submit-remedial', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -208,38 +238,61 @@ export default function Phase2Remedial() {
           score
         })
       })
+
       const res = await r.json()
       if (!r.ok) throw new Error(res.error || 'Submission failed')
-      
-      // Store result for later navigation
+
+      // Clear sessionStorage
+      const storageKey = `remedial_${data.step_id}_${data.level}_${data.activity.id}`
+      sessionStorage.removeItem(storageKey)
+
       window.lastRemedialResult = res
-      
-      // Get character-style feedback
-      try {
-        const fbRes = await fetch('/api/phase2/remedial/feedback', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
-          body: JSON.stringify({ step_id: data.step_id, level: data.level, activity_id: data.activity.id, score })
-        })
-        const fb = await fbRes.json()
+
+      if (res.overall_performance_low) {
         setFeedback({
-          title: res.activity_passed ? '🎉 Great Job!' : '💪 Keep Practicing!',
-          message: fb.feedback || res.message,
-          success: res.activity_passed,
-          score: score,
-          threshold: data.activity?.success_threshold || 6
-        })
-        setShowFeedback(true)
-      } catch (fbErr) {
-        console.warn('Failed to get feedback:', fbErr)
-        setFeedback({
-          title: res.activity_passed ? '🎉 Great Job!' : '💪 Keep Practicing!',
+          title: '⚠️ Overall Performance Needs Improvement',
           message: res.message,
-          success: res.activity_passed,
-          score: score,
-          threshold: data.activity?.success_threshold || 6
+          success: false,
+          score: res.overall_score,
+          threshold: res.overall_max_score,
+          overall_percentage: res.overall_percentage,
+          recommendation: res.recommendation,
+          isOverallPerformance: true
         })
-        setShowFeedback(true)
+      } else {
+        // Get character-style feedback
+        try {
+          const fbRes = await fetch('/api/phase2/remedial/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              step_id: data.step_id,
+              level: data.level,
+              activity_id: data.activity.id,
+              score
+            })
+          })
+          const fb = await fbRes.json()
+          setFeedback({
+            title: res.activity_passed ? '🎉 Great Job!' : '💪 Keep Practicing!',
+            message: fb.feedback || res.message,
+            success: res.activity_passed,
+            score: score,
+            threshold: data.activity?.success_threshold || 6
+          })
+        } catch (fbErr) {
+          setFeedback({
+            title: res.activity_passed ? '🎉 Great Job!' : '💪 Keep Practicing!',
+            message: res.message,
+            success: res.activity_passed,
+            score: score,
+            threshold: data.activity?.success_threshold || 6
+          })
+        }
       }
+
+      setShowFeedback(true)
     } catch (e) {
       console.error('Submission error:', e)
       setError(e.message)
@@ -254,55 +307,318 @@ export default function Phase2Remedial() {
     }
   }
 
-  // TEMPORARILY DISABLED - Allow pasting for testing
-  const onPaste = (e) => { /* e.preventDefault(); setPasteWarn(true) */ }
-  const onKeyDown = (e) => {
-    // if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') { e.preventDefault(); setPasteWarn(true) }
-  }
-
-  const speak = (text) => {
-    if (!text) return
-    try {
-      const u = new SpeechSynthesisUtterance(text)
-      u.rate = 0.9; u.pitch = 1; u.lang = 'en-US'
-      window.speechSynthesis.speak(u)
-    } catch (err) {
-      console.warn('Speech synthesis failed:', err)
-    }
-  }
-
+  // Handle feedback dialog close
   const handleFeedbackClose = (proceed = false) => {
     setShowFeedback(false)
 
     if (proceed && feedback) {
-      // Handle navigation based on the last submission result
       const lastResult = window.lastRemedialResult
       if (lastResult) {
         if (lastResult.remedial_complete) {
           navigate(`/phase2/step/${data.step_id}`)
-        } else if ((lastResult.next_action === 'next_remedial' || lastResult.next_action === 'level_switch') && lastResult.next_url) {
-          // Convert classic URL to SPA route
+        } else if (lastResult.next_url) {
           try {
             const u = new URL(lastResult.next_url, window.location.origin)
             const segs = u.pathname.split('/').filter(Boolean)
-            // URL format: /app/phase2/remedial/step_id/level?activity=index
-            // segs: [app, phase2, remedial, step_id, level]
-            const step = segs[3]  // step_id
-            const lvl = segs[4]   // level
+            const step = segs[3]
+            const lvl = segs[4]
             const idx = u.searchParams.get('activity')
             navigate(`/phase2/remedial/${step}/${lvl}${idx ? `?activity=${idx}` : ''}`)
           } catch {
-            load() // Fallback reload
+            load()
           }
-        } else if (lastResult.next_action === 'return_to_step') {
-          navigate(`/phase2/step/${data.step_id}`)
         } else {
-          load() // Reload for retry or other cases
+          load()
         }
       }
     }
 
     setFeedback(null)
+  }
+
+  // Render gamified exercise component
+  const renderExerciseComponent = () => {
+    if (!data?.activity) return null
+
+    const a = data.activity
+    const taskType = a.task_type || a.type
+    const componentName = TASK_COMPONENT_MAP[taskType]
+
+    // Check if this is a listening exercise and audio hasn't been played yet
+    const isListening = taskType?.startsWith('listening_')
+    const hasAudio = a.audio_script || a.audio_text || a.audio_content
+
+    if (isListening && hasAudio && !audioPlayed) {
+      return (
+        <Paper sx={{ p: 4, textAlign: 'center' }} elevation={3}>
+          <Typography variant="h5" gutterBottom>🎧 Listening Exercise</Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            {a.instruction || 'Listen to the audio carefully before completing the exercise.'}
+          </Typography>
+
+          {/* Audio waveform animation */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, height: 60, alignItems: 'center', mb: 3 }}>
+            {[...Array(15)].map((_, i) => (
+              <Box
+                key={i}
+                sx={{
+                  width: 6,
+                  bgcolor: audioPlaying ? 'primary.main' : 'grey.400',
+                  borderRadius: 1,
+                  height: audioPlaying ? `${20 + Math.random() * 40}px` : 10,
+                  transition: 'height 0.1s',
+                  animation: audioPlaying ? `wave 0.5s ease-in-out infinite ${i * 0.05}s` : 'none',
+                  '@keyframes wave': {
+                    '0%, 100%': { height: '10px' },
+                    '50%': { height: '50px' }
+                  }
+                }}
+              />
+            ))}
+          </Box>
+
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => playAudio(a.audio_script || a.audio_text || a.audio_content)}
+            disabled={audioPlaying}
+            startIcon={audioPlaying ? <CircularProgress size={20} color="inherit" /> : '🔊'}
+            sx={{ minWidth: 200 }}
+          >
+            {audioPlaying ? 'Playing...' : 'Play Audio'}
+          </Button>
+        </Paper>
+      )
+    }
+
+    // Prepare exercise data in a normalized format
+    const exerciseData = {
+      type: taskType,
+      instruction: a.instruction || '',
+      audio_script: a.audio_script || a.audio_text || a.audio_content,
+      word_bank: a.word_bank || [],
+      templates: a.templates || [],
+      pairs: a.pairs || [],
+      matching_items: a.matching_items || {},  // API returns matching_items for drag_and_drop
+      dialogue_lines: a.dialogue_lines || [],
+      correct_answers: a.correct_answers || [],
+      // Use correct_answers as guided_questions if guided_questions is missing (fallback)
+      guided_questions: a.guided_questions || (a.correct_answers && a.correct_answers.length > 0 ? ['Write your response based on the examples provided.'] : []),
+      example_of_answers: a.example_of_answers || a.correct_answers || [],
+      ai_evaluation_prompt: a.ai_evaluation?.prompt || ''
+    }
+
+    switch (componentName) {
+      case 'PuzzleGame':
+        // Use matching_items (object) if pairs array is empty
+        const hasPairs = exerciseData.pairs && exerciseData.pairs.length > 0
+        const hasMatchingItems = exerciseData.matching_items && Object.keys(exerciseData.matching_items).length > 0
+
+        // Extract items and descriptions from either format
+        let puzzleItems = []
+        let puzzleDescriptions = {}
+
+        if (hasPairs) {
+          puzzleItems = exerciseData.pairs.map(p => p.term)
+          puzzleDescriptions = exerciseData.pairs.reduce((acc, p) => ({ ...acc, [p.term]: p.definition }), {})
+        } else if (hasMatchingItems) {
+          puzzleItems = Object.keys(exerciseData.matching_items)
+          puzzleDescriptions = exerciseData.matching_items
+        }
+
+        return (
+          <PuzzleGame
+            items={puzzleItems}
+            descriptions={puzzleDescriptions}
+            answers={answers}
+            onChange={(key, value) => setAnswer(key, value)}
+            onComplete={() => handleExerciseComplete({ isPerfect: true, correctCount: puzzleItems.length })}
+          />
+        )
+
+      case 'RhythmMatcher':
+        return (
+          <RhythmMatcher
+            exercise={exerciseData}
+            onComplete={handleExerciseComplete}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'WordSniper':
+        // Transform templates to sentences format
+        const sentences = exerciseData.templates.map((template, i) => {
+          const blankCount = (template.match(/_{3,}/g) || []).length
+          return {
+            text: template,
+            blanks: Array(blankCount).fill('blank')
+          }
+        })
+        return (
+          <WordSniper
+            sentences={sentences}
+            answers={answers}
+            onChange={(key, value) => setAnswer(key, value)}
+            globalWordBank={exerciseData.word_bank}
+            correctAnswers={exerciseData.correct_answers}
+          />
+        )
+
+      case 'GapFillStory':
+        return (
+          <GapFillStory
+            templates={exerciseData.templates}
+            wordBank={exerciseData.word_bank}
+            answers={answers}
+            onChange={(key, value) => setAnswer(key, value)}
+          />
+        )
+
+      case 'DebateArena':
+        return (
+          <DebateArena
+            exercise={exerciseData}
+            onComplete={(result) => {
+              handleExerciseComplete(result)
+              if (result.isVictory) {
+                onSubmit()
+              }
+            }}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'ConversationTetris':
+        return (
+          <ConversationTetris
+            exercise={exerciseData}
+            onComplete={(result) => {
+              handleExerciseComplete(result)
+            }}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'PhoneCallSim':
+        return (
+          <PhoneCallSim
+            exercise={exerciseData}
+            onComplete={(result) => {
+              handleExerciseComplete(result)
+            }}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'SignalDecoder':
+        return (
+          <SignalDecoder
+            exercise={exerciseData}
+            onComplete={handleExerciseComplete}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'SocialPostMaker':
+        return (
+          <SocialPostMaker
+            exercise={exerciseData}
+            onComplete={(result) => {
+              handleExerciseComplete(result)
+              // Auto-submit after completion
+              setTimeout(() => onSubmit(), 500)
+            }}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'BillboardDesigner':
+        return (
+          <BillboardDesigner
+            templates={exerciseData.templates}
+            guidedQuestions={exerciseData.guided_questions}
+            exampleAnswers={exerciseData.example_of_answers}
+            answers={answers}
+            onChange={(key, value) => setAnswer(key, value)}
+          />
+        )
+
+      case 'SentenceGarden':
+        return (
+          <SentenceGarden
+            exercise={exerciseData}
+            onComplete={(result) => {
+              handleExerciseComplete(result)
+              // Auto-submit after completion
+              setTimeout(() => onSubmit(), 500)
+            }}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'PhraseExpander':
+        return (
+          <PhraseExpander
+            templates={exerciseData.templates}
+            guidedQuestions={exerciseData.guided_questions}
+            exampleAnswers={exerciseData.example_of_answers}
+            answers={answers}
+            onChange={(key, value) => setAnswer(key, value)}
+          />
+        )
+
+      case 'ChatMessengerSim':
+        return (
+          <ChatMessengerSim
+            exercise={exerciseData}
+            onComplete={handleExerciseComplete}
+            onProgress={handleProgress}
+          />
+        )
+
+      case 'EventPlannerBoard':
+        return (
+          <EventPlannerBoard
+            exercise={exerciseData}
+            templates={exerciseData.templates}
+            guidedQuestions={exerciseData.guided_questions}
+            dialogueLines={exerciseData.dialogue_lines}
+            wordBank={exerciseData.word_bank}
+            answers={answers}
+            onChange={(key, value) => setAnswer(key, value)}
+          />
+        )
+
+      default:
+        // Fallback for unsupported types
+        return (
+          <Paper sx={{ p: 3, bgcolor: 'warning.light' }} variant="outlined">
+            <Typography variant="h6" color="warning.dark">
+              Task Type: {taskType}
+            </Typography>
+            <Typography variant="body1" sx={{ mt: 1 }}>
+              {a.instruction}
+            </Typography>
+            {exerciseData.word_bank.length > 0 && (
+              <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                {exerciseData.word_bank.map((word, i) => (
+                  <Chip key={i} label={word} variant="outlined" />
+                ))}
+              </Box>
+            )}
+            <Typography variant="caption" sx={{ mt: 2, display: 'block' }}>
+              Activity ID: {a.id}
+            </Typography>
+          </Paper>
+        )
+    }
+  }
+
+  // Check if current component handles its own submission
+  const isSelfSubmitting = () => {
+    if (!data?.activity) return false
+    const componentName = TASK_COMPONENT_MAP[data.activity.task_type || data.activity.type]
+    return ['DebateArena', 'RhythmMatcher', 'SignalDecoder', 'ChatMessengerSim', 'SocialPostMaker', 'SentenceGarden', 'PhoneCallSim'].includes(componentName)
   }
 
   if (loading) return <Box sx={{ p: 3 }}><LinearProgress /></Box>
@@ -312,498 +628,89 @@ export default function Phase2Remedial() {
   const a = data.activity
 
   return (
-    <Box onPaste={onPaste} onKeyDown={onKeyDown} onContextMenu={(e)=>e.preventDefault()}>
-      <Paper elevation={0} sx={{ p: 3, mb: 2 }}>
-        <Typography variant="h5" gutterBottom>Practice Activities</Typography>
-        <Typography color="text.secondary">Build your skills step by step</Typography>
-        <Stack direction={{ xs:'column', sm:'row' }} spacing={1} sx={{ mt: 2 }}>
-          <Chip label={`Activity ${data.current_index + 1} of ${data.total}`} />
-          <Chip label={`${data.level} Level Practice`} />
-        </Stack>
-        {/* Navigation across activities (completed and current) */}
-        <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: 'wrap' }}>
-          {Array.from({ length: data.total }).map((_, i) => (
-            <Button key={i}
-              size="small"
-              variant={i === data.current_index ? 'contained' : ((data.completed_indices||[]).includes(i) ? 'outlined' : 'text')}
-              onClick={() => navigate(`/phase2/remedial/${data.step_id}/${data.level}?activity=${i}`)}
-            >
-              {i+1}
-            </Button>
-          ))}
-        </Stack>
-      </Paper>
-
+    <Box sx={{ p: 3 }}>
       <Paper variant="outlined" sx={{ p: 3 }}>
-        <Stack spacing={2}>
-          <Typography variant="h6">{a.title}</Typography>
-          
-          {a.speaker && (
-            <CharacterMessage 
-              speaker={a.speaker} 
-              message={a.instruction}
-              showRole={true}
+        {/* Navigation Header */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <IconButton
+            disabled={data.current_index <= 0}
+            onClick={() => navigate(`/phase2/remedial/${data.step_id}/${data.level}?activity=${Math.max(0, data.current_index - 1)}`)}
+            sx={{
+              border: '2px solid',
+              borderColor: data.current_index <= 0 ? 'divider' : 'primary.main',
+              '&:hover': { bgcolor: 'primary.light', borderColor: 'primary.dark' }
+            }}
+          >
+            <Typography variant="h6">←</Typography>
+          </IconButton>
+
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="body1" fontWeight="medium" color="text.secondary">
+              Activity {data.current_index + 1} of {data.total}
+            </Typography>
+            <Chip
+              label={`${data.level} Level`}
+              size="small"
+              color="primary"
+              sx={{ mt: 0.5 }}
             />
-          )}
-          
-          {!a.speaker && (
-            <Typography color="text.secondary">{a.instruction}</Typography>
-          )}
-          {a.audio_text && (
-            <Stack direction="row" spacing={1}>
-              <Button onClick={()=>speak(a.audio_text)}>Play Audio</Button>
-            </Stack>
-          )}
+          </Box>
 
-          {/* Task renderers */}
-          {a.task_type === 'matching' && a.matching_items && (
-            <>
-              <ArrowMatching
-              items={a.word_bank?.length ? a.word_bank : Object.keys(a.matching_items)}
-              descriptions={a.matching_items}
-              answers={answers}
-              onChange={setAnswer}
-              reverse={(data.current_index||0) === 0}
-            />
-            </>
-          )}
+          <IconButton
+            disabled={data.current_index >= (data.total - 1)}
+            onClick={() => navigate(`/phase2/remedial/${data.step_id}/${data.level}?activity=${Math.min(data.total - 1, data.current_index + 1)}`)}
+            sx={{
+              border: '2px solid',
+              borderColor: data.current_index >= (data.total - 1) ? 'divider' : 'primary.main',
+              '&:hover': { bgcolor: 'primary.light', borderColor: 'primary.dark' }
+            }}
+          >
+            <Typography variant="h6">→</Typography>
+          </IconButton>
+        </Box>
 
-          {a.task_type === 'fill_gaps' && Array.isArray(a.sentences) && (
-            <Stack spacing={2}>
-              {a.sentences.map((s, si) => {
-                let textParts = s.text.split('__________')
-                return (
-                  <Paper key={si} sx={{ p: 2 }} variant="outlined">
-                    <Typography variant="body2" sx={{ mb: 2 }}>Sentence {si+1}</Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                      {textParts.map((part, pi) => (
-                        <React.Fragment key={pi}>
-                          <Typography component="span" sx={{ fontSize: '1.1rem' }}>{part}</Typography>
-                          {pi < textParts.length - 1 && (
-                            (() => {
-                              const idx = s.blanks.slice(0,pi).length + a.sentences.slice(0,si).reduce((acc, cur)=>acc+(cur.blanks?cur.blanks.length:0), 0)
-                              const key = `g_${idx}`
-                              // Use per-blank choices if available, otherwise fall back to global word_bank
-                              const options = (s.choices && s.choices[pi]) ? s.choices[pi] : (a.word_bank||[])
-                              return (
-                                <FormControl size="small" sx={{ minWidth: 120 }}>
-                                  <Select
-                                    value={answers[key]||''}
-                                    onChange={e=>setAnswer(key, e.target.value)}
-                                    displayEmpty
-                                    sx={{ fontSize: '1rem' }}
-                                  >
-                                    <MenuItem value=""><em>Choose...</em></MenuItem>
-                                    {options.map(opt => (
-                                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
-                                    ))}
-                                  </Select>
-                                </FormControl>
-                              )
-                            })()
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </Box>
-                  </Paper>
-                )
-              })}
-            </Stack>
-          )}
+        {/* Task Type Badge */}
+        <Box sx={{ textAlign: 'center', mb: 3 }}>
+          <Chip
+            label={((a.task_type || a.type)?.replace(/_/g, ' ') || 'EXERCISE').toUpperCase()}
+            color="secondary"
+            sx={{ fontWeight: 'bold' }}
+          />
+        </Box>
 
-          {a.task_type === 'dialogue' && Array.isArray(a.dialogue) && (
-            <Stack spacing={2}>
-              {a.dialogue.map((line, li) => (
-                <Paper key={li} sx={{ p: 2 }} variant="outlined">
-                  {line.type === 'character' ? (
-                    <CharacterMessage 
-                      speaker={line.speaker} 
-                      message={line.text}
-                    />
-                  ) : (
-                    <>
-                      <Typography variant="body2" sx={{ mb: 2 }}><strong>Your response:</strong></Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                        {(() => {
-                          let textParts = line.text.split('__________')
-                          return textParts.map((part, pi) => (
-                            <React.Fragment key={pi}>
-                              <Typography component="span" sx={{ fontSize: '1.1rem', fontStyle: 'italic' }}>{part}</Typography>
-                              {pi < textParts.length - 1 && (
-                                (() => {
-                                  const idx = a.dialogue.slice(0,li).reduce((acc, cur)=> acc + (cur.type==='user_input' && cur.blanks ? cur.blanks.length : 0), 0) + pi
-                                  const key = `d_${idx}`
-                                  return (
-                                    <FormControl size="small" sx={{ minWidth: 120 }}>
-                                      <Select 
-                                        value={answers[key]||''} 
-                                        onChange={e=>setAnswer(key, e.target.value)}
-                                        displayEmpty
-                                        sx={{ fontSize: '1rem' }}
-                                      >
-                                        <MenuItem value=""><em>Choose...</em></MenuItem>
-                                        {(a.word_bank||[]).map(opt => (
-                                          <MenuItem key={opt} value={opt}>{opt}</MenuItem>
-                                        ))}
-                                      </Select>
-                                    </FormControl>
-                                  )
-                                })()
-                              )}
-                            </React.Fragment>
-                          ))
-                        })()}
-                      </Box>
-                    </>
-                  )}
-                </Paper>
-              ))}
-            </Stack>
-          )}
+        {/* Instruction (for non-listening or after audio played) */}
+        {(!(a.task_type || a.type)?.startsWith('listening_') || audioPlayed) && a.instruction && (
+          <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50' }} variant="outlined">
+            <Typography variant="body1" textAlign="center">
+              {a.instruction}
+            </Typography>
+          </Paper>
+        )}
 
-          {/* Sentence Expansion */}
-          {a.task_type === 'sentence_expansion' && Array.isArray(a.expansion_exercises) && (
-            <Stack spacing={2}>
-              {a.expansion_exercises.map((ex, ei) => {
-                let textParts = ex.text.split('__________')
-                return (
-                  <Paper key={ei} sx={{ p: 2 }} variant="outlined">
-                    <Typography variant="body2" sx={{ mb: 2 }}>Exercise {ei+1}</Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                      {textParts.map((part, pi) => (
-                        <React.Fragment key={pi}>
-                          <Typography component="span" sx={{ fontSize: '1.1rem' }}>{part}</Typography>
-                          {pi < textParts.length - 1 && (
-                            (() => {
-                              const idx = a.expansion_exercises.slice(0,ei).reduce((acc, cur)=>acc+(cur.blanks?cur.blanks.length:0), 0) + pi
-                              const key = `g_${idx}`
-                              const options = (ex.choices && ex.choices[pi]) ? ex.choices[pi] : (a.word_bank||[])
-                              return renderInputField(key, options)
-                            })()
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </Box>
-                  </Paper>
-                )
-              })}
-            </Stack>
-          )}
+        {/* Exercise Component */}
+        <Box sx={{ mb: 3 }}>
+          {renderExerciseComponent()}
+        </Box>
 
-          {/* Cultural Research */}
-          {a.task_type === 'cultural_research' && Array.isArray(a.research_prompts) && (
-            <Stack spacing={2}>
-              {a.research_prompts.map((prompt, pi) => {
-                let textParts = prompt.text.split('__________')
-                return (
-                  <Paper key={pi} sx={{ p: 2 }} variant="outlined">
-                    <Typography variant="body2" sx={{ mb: 2 }}>Research Question {pi+1}</Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                      {textParts.map((part, ti) => (
-                        <React.Fragment key={ti}>
-                          <Typography component="span" sx={{ fontSize: '1.1rem' }}>{part}</Typography>
-                          {ti < textParts.length - 1 && (
-                            (() => {
-                              const idx = a.research_prompts.slice(0,pi).reduce((acc, cur)=>acc+(cur.blanks?cur.blanks.length:0), 0) + ti
-                              const key = `g_${idx}`
-                              const options = (prompt.choices && prompt.choices[ti]) ? prompt.choices[ti] : (a.word_bank||[])
-                              return (
-                                <FormControl size="small" sx={{ minWidth: 120 }}>
-                                  <Select value={answers[key]||''} onChange={e=>setAnswer(key, e.target.value)} displayEmpty sx={{ fontSize: '1rem' }}>
-                                    <MenuItem value=""><em>Choose...</em></MenuItem>
-                                    {options.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
-                                  </Select>
-                                </FormControl>
-                              )
-                            })()
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </Box>
-                  </Paper>
-                )
-              })}
-            </Stack>
-          )}
-
-          {/* Team Planning */}
-          {a.task_type === 'team_planning' && Array.isArray(a.planning_template) && (
-            <Stack spacing={2}>
-              {a.planning_template.map((template, ti) => {
-                let textParts = template.text.split('__________')
-                return (
-                  <Paper key={ti} sx={{ p: 2 }} variant="outlined">
-                    <Typography variant="body2" sx={{ mb: 2 }}>Planning Item {ti+1}</Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                      {textParts.map((part, pi) => (
-                        <React.Fragment key={pi}>
-                          <Typography component="span" sx={{ fontSize: '1.1rem' }}>{part}</Typography>
-                          {pi < textParts.length - 1 && (
-                            (() => {
-                              const idx = a.planning_template.slice(0,ti).reduce((acc, cur)=>acc+(cur.blanks?cur.blanks.length:0), 0) + pi
-                              const key = `g_${idx}`
-                              const options = (template.choices && template.choices[pi]) ? template.choices[pi] : (a.word_bank||[])
-                              return (
-                                <FormControl size="small" sx={{ minWidth: 120 }}>
-                                  <Select value={answers[key]||''} onChange={e=>setAnswer(key, e.target.value)} displayEmpty sx={{ fontSize: '1rem' }}>
-                                    <MenuItem value=""><em>Choose...</em></MenuItem>
-                                    {options.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
-                                  </Select>
-                                </FormControl>
-                              )
-                            })()
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </Box>
-                  </Paper>
-                )
-              })}
-            </Stack>
-          )}
-
-          {/* Listening Matching */}
-          {a.task_type === 'listening_matching' && a.matching_items && (
-            <>
-              {a.audio_content && (
-                <Paper sx={{ p: 2, mb: 2, bgcolor: 'info.light' }} variant="outlined">
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Button variant="contained" onClick={()=>speak(a.audio_content)}>🔊 Play Audio</Button>
-                    <Typography variant="body2" color="text.secondary">Listen carefully and then match the items below</Typography>
-                  </Stack>
-                </Paper>
-              )}
-              <ArrowMatching
-                items={a.word_bank?.length ? a.word_bank : Object.keys(a.matching_items)}
-                descriptions={a.matching_items}
-                answers={answers}
-                onChange={setAnswer}
-                reverse={false}
-              />
-            </>
-          )}
-
-          {/* Dialogue Completion */}
-          {a.task_type === 'dialogue_completion' && Array.isArray(a.dialogue) && (
-            <>
-              {a.audio_content && (
-                <Paper sx={{ p: 2, mb: 2, bgcolor: 'info.light' }} variant="outlined">
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Button variant="contained" onClick={()=>speak(a.audio_content)}>🔊 Play Audio</Button>
-                    <Typography variant="body2" color="text.secondary">Listen to the conversation and complete the dialogue</Typography>
-                  </Stack>
-                </Paper>
-              )}
-              <Stack spacing={2}>
-                {a.dialogue.map((line, li) => (
-                  <Paper key={li} sx={{ p: 2 }} variant="outlined">
-                    {line.type === 'character' ? (
-                      <CharacterMessage
-                        speaker={line.speaker}
-                        message={line.text}
-                      />
-                    ) : (
-                      <>
-                        <Typography variant="body2" sx={{ mb: 2 }}><strong>Your response:</strong></Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                          {(() => {
-                            let textParts = line.text.split('__________')
-                            return textParts.map((part, pi) => (
-                              <React.Fragment key={pi}>
-                                <Typography component="span" sx={{ fontSize: '1.1rem', fontStyle: 'italic' }}>{part}</Typography>
-                                {pi < textParts.length - 1 && (
-                                  (() => {
-                                    const idx = a.dialogue.slice(0,li).reduce((acc, cur)=> acc + (cur.type==='user_input' && cur.blanks ? cur.blanks.length : 0), 0) + pi
-                                    const key = `d_${idx}`
-                                    const options = (line.choices && line.choices[pi]) ? line.choices[pi] : (a.word_bank||[])
-                                    return (
-                                      <FormControl size="small" sx={{ minWidth: 120 }}>
-                                        <Select value={answers[key]||''} onChange={e=>setAnswer(key, e.target.value)} displayEmpty sx={{ fontSize: '1rem' }}>
-                                          <MenuItem value=""><em>Choose...</em></MenuItem>
-                                          {options.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
-                                        </Select>
-                                      </FormControl>
-                                    )
-                                  })()
-                                )}
-                              </React.Fragment>
-                            ))
-                          })()}
-                        </Box>
-                      </>
-                    )}
-                  </Paper>
-                ))}
-              </Stack>
-            </>
-          )}
-
-          {/* Negotiation Roleplay (uses dialogue format) */}
-          {a.task_type === 'negotiation_roleplay' && Array.isArray(a.negotiation_dialogue || a.dialogue) && (
-            <Stack spacing={2}>
-              {(a.negotiation_dialogue || a.dialogue).map((line, li) => (
-                <Paper key={li} sx={{ p: 2 }} variant="outlined">
-                  {line.type === 'character' ? (
-                    <CharacterMessage speaker={line.speaker} message={line.text} />
-                  ) : (
-                    <>
-                      <Typography variant="body2" sx={{ mb: 2 }}><strong>Your response:</strong></Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                        {(() => {
-                          let textParts = line.text.split('__________')
-                          return textParts.map((part, pi) => (
-                            <React.Fragment key={pi}>
-                              <Typography component="span" sx={{ fontSize: '1.1rem', fontStyle: 'italic' }}>{part}</Typography>
-                              {pi < textParts.length - 1 && (
-                                (() => {
-                                  const dialogueArray = a.negotiation_dialogue || a.dialogue
-                                  const idx = dialogueArray.slice(0,li).reduce((acc, cur)=> acc + (cur.type==='user_input' && cur.blanks ? cur.blanks.length : 0), 0) + pi
-                                  const key = `d_${idx}`
-                                  const options = (line.choices && line.choices[pi]) ? line.choices[pi] : (a.word_bank||[])
-                                  return (
-                                    <FormControl size="small" sx={{ minWidth: 120 }}>
-                                      <Select value={answers[key]||''} onChange={e=>setAnswer(key, e.target.value)} displayEmpty sx={{ fontSize: '1rem' }}>
-                                        <MenuItem value=""><em>Choose...</em></MenuItem>
-                                        {options.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
-                                      </Select>
-                                    </FormControl>
-                                  )
-                                })()
-                              )}
-                            </React.Fragment>
-                          ))
-                        })()}
-                      </Box>
-                    </>
-                  )}
-                </Paper>
-              ))}
-            </Stack>
-          )}
-
-          {/* Generic renderer for all other template-based task types */}
-          {(() => {
-            const taskTypeMap = {
-              'assignment_report': { array: a.report_template, label: 'Report Item' },
-              'cultural_reflection': { array: a.reflection_prompts, label: 'Reflection' },
-              'event_proposal': { array: a.proposal_framework, label: 'Proposal Item' },
-              'story_writing': { array: a.story_template || a.story_framework, label: 'Story Element' },
-              'proposal_writing': { array: a.proposal_template || a.proposal_framework || a.writing_prompts, label: 'Proposal Element' },
-              'listening_expansion': { array: a.expansion_exercises, label: 'Listening Item', hasAudio: true },
-              'priority_planning': { array: a.priority_template || a.planning_items, label: 'Priority Item' },
-              'strategic_proposal': { array: a.strategic_template || a.proposal_framework, label: 'Strategic Item' },
-              'analysis_report': { array: a.analysis_template || a.report_template, label: 'Analysis Item' }
-            }
-
-            const config = taskTypeMap[a.task_type]
-            if (config && Array.isArray(config.array)) {
-              return (
-                <>
-                  {config.hasAudio && a.audio_content && (
-                    <Paper sx={{ p: 2, mb: 2, bgcolor: 'info.light' }} variant="outlined">
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Button variant="contained" onClick={()=>speak(a.audio_content)}>🔊 Play Audio</Button>
-                        <Typography variant="body2" color="text.secondary">Listen carefully and complete the exercises</Typography>
-                      </Stack>
-                    </Paper>
-                  )}
-                  <Stack spacing={2}>
-                    {config.array.map((item, ii) => {
-                    let textParts = item.text.split('__________')
-                    return (
-                      <Paper key={ii} sx={{ p: 2 }} variant="outlined">
-                        <Typography variant="body2" sx={{ mb: 2 }}>{config.label} {ii+1}</Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: '1.1rem' }}>
-                          {textParts.map((part, pi) => (
-                            <React.Fragment key={pi}>
-                              <Typography component="span" sx={{ fontSize: '1.1rem' }}>{part}</Typography>
-                              {pi < textParts.length - 1 && (
-                                (() => {
-                                  const idx = config.array.slice(0,ii).reduce((acc, cur)=>acc+(cur.blanks?cur.blanks.length:0), 0) + pi
-                                  const key = `g_${idx}`
-                                  const options = (item.choices && item.choices[pi]) ? item.choices[pi] : (a.word_bank||[])
-
-                                  // B1/B2 levels should use text input for more free expression
-                                  // A1/A2 use dropdowns for structured practice
-                                  const useTextInput = data.level === 'B1' || data.level === 'B2'
-
-                                  if (useTextInput) {
-                                    return (
-                                      <TextField
-                                        size="small"
-                                        value={answers[key]||''}
-                                        onChange={e=>setAnswer(key, e.target.value)}
-                                        placeholder="Type here..."
-                                        sx={{ minWidth: 150 }}
-                                      />
-                                    )
-                                  }
-
-                                  return (
-                                    <FormControl size="small" sx={{ minWidth: 120 }}>
-                                      <Select value={answers[key]||''} onChange={e=>setAnswer(key, e.target.value)} displayEmpty sx={{ fontSize: '1rem' }}>
-                                        <MenuItem value=""><em>Choose...</em></MenuItem>
-                                        {options.map(opt => <MenuItem key={opt} value={opt}>{opt}</MenuItem>)}
-                                      </Select>
-                                    </FormControl>
-                                  )
-                                })()
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </Box>
-                      </Paper>
-                    )
-                  })}
-                  </Stack>
-                </>
-              )
-            }
-            return null
-          })()}
-
-          {/* Fallback message for unsupported task types */}
-          {!['matching', 'fill_gaps', 'dialogue', 'sentence_expansion', 'cultural_research', 'team_planning',
-              'listening_matching', 'dialogue_completion', 'negotiation_roleplay', 'assignment_report',
-              'cultural_reflection', 'event_proposal', 'story_writing', 'proposal_writing',
-              'listening_expansion', 'priority_planning', 'strategic_proposal', 'analysis_report'].includes(a.task_type) && (
-            <Paper sx={{ p: 3, bgcolor: 'warning.light' }} variant="outlined">
-              <Typography variant="h6" color="warning.dark">Task Type Not Supported</Typography>
-              <Typography>Task type "{a.task_type}" is not yet implemented in the frontend.</Typography>
-              <Typography variant="caption">Activity ID: {a.id}</Typography>
-            </Paper>
-          )}
-
-          <Stack direction={{ xs:'column', sm:'row' }} spacing={2} sx={{ mt: 2 }}>
-            <Button 
-              variant="contained" 
-              disabled={submitting} 
+        {/* Submit Button (for non-self-submitting components) */}
+        {!isSelfSubmitting() && (
+          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              size="large"
+              disabled={submitting || Object.keys(answers).length === 0}
               onClick={onSubmit}
-              startIcon={submitting ? <CircularProgress size={20} /> : null}
+              startIcon={submitting ? <CircularProgress size={20} color="inherit" /> : null}
+              sx={{ minWidth: 200 }}
             >
               {submitting ? 'Submitting...' : 'Submit & Continue'}
             </Button>
-            <Button variant="outlined" onClick={()=>navigate(`/phase2/step/${data.step_id}`)}>Back to Main Activity</Button>
-            <Stack direction="row" spacing={1} sx={{ ml: 'auto' }}>
-              <Button size="small" variant="outlined"
-                disabled={data.current_index <= 0}
-                onClick={() => navigate(`/phase2/remedial/${data.step_id}/${data.level}?activity=${Math.max(0, data.current_index-1)}`)}
-              >Prev</Button>
-              <Button size="small" variant="outlined"
-                disabled={data.current_index >= (data.total-1)}
-                onClick={() => navigate(`/phase2/remedial/${data.step_id}/${data.level}?activity=${Math.min(data.total-1, data.current_index+1)}`)}
-              >Next</Button>
-            </Stack>
-          </Stack>
-        </Stack>
+          </Box>
+        )}
       </Paper>
+
       {/* Feedback Dialog */}
-      <Dialog 
-        open={showFeedback} 
-        onClose={() => handleFeedbackClose(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={showFeedback} onClose={() => handleFeedbackClose(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
           {feedback?.title}
         </DialogTitle>
@@ -811,7 +718,20 @@ export default function Phase2Remedial() {
           <Typography variant="body1" paragraph>
             {feedback?.message}
           </Typography>
-          {feedback?.score !== undefined && (
+          {feedback?.isOverallPerformance ? (
+            <Stack direction="column" spacing={2} sx={{ mt: 3 }}>
+              <Chip
+                label={`Overall Score: ${feedback.score}/${feedback.threshold} (${feedback.overall_percentage}%)`}
+                color="warning"
+                sx={{ fontSize: '1rem', py: 2 }}
+              />
+              {feedback.recommendation && (
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 2, fontStyle: 'italic' }}>
+                  💡 {feedback.recommendation}
+                </Typography>
+              )}
+            </Stack>
+          ) : feedback?.score !== undefined && (
             <Stack direction="row" justifyContent="center" spacing={2} sx={{ mt: 2 }}>
               <Chip label={`Score: ${feedback.score}/${feedback.threshold}`} color={feedback.success ? 'success' : 'warning'} />
               {feedback.success && <Chip label="✅ Passed" color="success" />}
@@ -825,249 +745,17 @@ export default function Phase2Remedial() {
         </DialogActions>
       </Dialog>
 
-      {/* Paste Warning Snackbar */}
+      {/* Paste Warning */}
       <Snackbar
         open={pasteWarn}
         autoHideDuration={2500}
-        onClose={()=>setPasteWarn(false)}
+        onClose={() => setPasteWarn(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity="warning" variant="filled" onClose={()=>setPasteWarn(false)}>
+        <Alert severity="warning" variant="filled" onClose={() => setPasteWarn(false)}>
           Pasting is disabled. Please use your own words.
         </Alert>
       </Snackbar>
-    </Box>
-  )
-}
-
-function ArrowMatching({ items, descriptions, answers, onChange, reverse=false }) {
-  const containerRef = useRef(null)
-  const leftRefs = useRef({})
-  const rightRefs = useRef({})
-  const [selected, setSelected] = useState(null)
-  const [dragPreview, setDragPreview] = useState(null)
-  
-  // Shuffle function
-  const shuffleArray = (array) => {
-    const shuffled = [...array]
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
-    return shuffled
-  }
-  
-  // Create shuffled items on component mount
-  const [shuffledItems] = useState(() => shuffleArray(items))
-
-
-  // Remove any mapping to the same item to keep one-to-one
-  const connect = (descKey, itemKey) => {
-    // Clear previous assignment of this item
-    Object.entries(answers||{}).forEach(([dk, ik]) => {
-      if (ik === itemKey && dk !== descKey) onChange(dk, '')
-    })
-    onChange(descKey, itemKey)
-  }
-
-
-  // Start drag from item chip
-  const startDrag = (itemKey, e) => {
-    console.log('startDrag called with itemKey:', itemKey)
-    e.preventDefault()
-    e.stopPropagation()
-    setSelected(itemKey)
-    setDragPreview({ 
-      x: e.clientX + 10, 
-      y: e.clientY - 20, 
-      text: itemKey 
-    })
-    console.log('startDrag for:', itemKey)
-
-    const onMove = (ev) => {
-      setDragPreview({ 
-        x: ev.clientX + 10, 
-        y: ev.clientY - 20, 
-        text: itemKey 
-      })
-    }
-    const onUp = (ev) => {
-      console.log('onUp called at:', ev.clientX, ev.clientY)
-      // Hit test descriptions
-      const dx = ev.clientX
-      const dy = ev.clientY
-      let hit = null
-      Object.entries(rightRefs.current).forEach(([dkey, el]) => {
-        if (el) {
-          const rr = el.getBoundingClientRect()
-          console.log('Testing hit for', dkey, 'rect:', rr)
-          if (dx >= rr.left && dx <= rr.right && dy >= rr.top && dy <= rr.bottom) {
-            hit = dkey
-            console.log('HIT:', dkey)
-          }
-        }
-      })
-      console.log('Final hit:', hit, 'itemKey:', itemKey)
-      if (hit && itemKey) {
-        console.log('Connecting:', hit, '->', itemKey)
-        connect(hit, itemKey)
-      }
-      setDragPreview(null)
-      window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseup', onUp)
-    }
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseup', onUp)
-  }
-
-  const used = new Set(Object.values(answers||{}).filter(Boolean))
-
-  return (
-    <Box ref={containerRef} sx={{ position: 'relative' }}>
-      
-
-      {/* Drag preview */}
-      {dragPreview && (
-        <Box
-          sx={{
-            position: 'fixed',
-            left: dragPreview.x,
-            top: dragPreview.y,
-            zIndex: 9999,
-            padding: '4px 8px',
-            backgroundColor: '#1976d2',
-            color: 'white',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            fontWeight: 'bold',
-            pointerEvents: 'none',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          {dragPreview.text}
-        </Box>
-      )}
-
-      <Grid container spacing={3}>
-        {reverse ? (
-          <>
-            {/* Descriptions on the left */}
-            <Grid item xs={12} md={7}>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>Descriptions</Typography>
-              <Stack spacing={1}>
-                {Object.entries(descriptions).map(([dkey, desc]) => (
-                  <Paper key={dkey} variant="outlined" sx={{ p: 1.5 }} ref={(el)=>{ if (el) rightRefs.current[dkey]=el }}>
-                    <Grid container spacing={1} alignItems="center">
-                      <Grid item xs={12} md={7}>
-                        <Typography variant="body2">{desc}</Typography>
-                      </Grid>
-                      <Grid item xs={12} md={5}>
-                        <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
-                          {answers[dkey] ? (
-                            <>
-                              <Chip label={answers[dkey]} />
-                              <Button size="small" onClick={()=> onChange(dkey, '')}>Clear</Button>
-                            </>
-                      ) : (
-                        <Typography variant="body2" color="text.secondary">Drag from an item to connect</Typography>
-                      )}
-                        </Stack>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                ))}
-              </Stack>
-            </Grid>
-
-            {/* Items on the right */}
-            <Grid item xs={12} md={5}>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>Items</Typography>
-              <Stack spacing={1} sx={{ p: 1, border: '1px dashed', borderColor: 'divider', borderRadius: 1 }}>
-                {shuffledItems.map(k => (
-                  <div 
-                    key={k} 
-                    ref={(el)=>{ if (el) leftRefs.current[k]=el }}
-                    onMouseDown={(ev)=> startDrag(k, ev)}
-                    onClick={()=> setSelected(k)}
-                    style={{ 
-                      cursor: 'grab', 
-                      padding: '8px 12px', 
-                      background: selected===k ? '#1976d2' : (used.has(k) ? '#bdbdbd' : '#f5f5f5'),
-                      color: selected===k ? 'white' : (used.has(k) ? '#666' : '#333'),
-                      margin: '4px 0',
-                      borderRadius: '8px',
-                      border: `2px solid ${selected===k ? '#1976d2' : (used.has(k) ? '#999' : '#ddd')}`,
-                      transition: 'all 0.2s ease',
-                      userSelect: 'none'
-                    }}
-                  >
-                    {k}
-                  </div>
-                ))}
-              </Stack>
-            </Grid>
-          </>
-        ) : (
-          <>
-            {/* Items on the left */}
-            <Grid item xs={12} md={5}>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>Items</Typography>
-              <Stack spacing={1} sx={{ p: 1, border: '1px dashed', borderColor: 'divider', borderRadius: 1 }}>
-                {shuffledItems.map(k => (
-                  <div 
-                    key={k} 
-                    ref={(el)=>{ if (el) leftRefs.current[k]=el }}
-                    onMouseDown={(ev)=> startDrag(k, ev)}
-                    onClick={()=> setSelected(k)}
-                    style={{ 
-                      cursor: 'grab', 
-                      padding: '8px 12px', 
-                      background: selected===k ? '#1976d2' : (used.has(k) ? '#bdbdbd' : '#f5f5f5'),
-                      color: selected===k ? 'white' : (used.has(k) ? '#666' : '#333'),
-                      margin: '4px 0',
-                      borderRadius: '8px',
-                      border: `2px solid ${selected===k ? '#1976d2' : (used.has(k) ? '#999' : '#ddd')}`,
-                      transition: 'all 0.2s ease',
-                      userSelect: 'none'
-                    }}
-                  >
-                    {k}
-                  </div>
-                ))}
-              </Stack>
-            </Grid>
-
-            {/* Descriptions on the right */}
-            <Grid item xs={12} md={7}>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>Descriptions</Typography>
-              <Stack spacing={1}>
-                {Object.entries(descriptions).map(([dkey, desc]) => (
-                  <Paper key={dkey} variant="outlined" sx={{ p: 1.5 }} ref={(el)=>{ if (el) rightRefs.current[dkey]=el }}>
-                    <Grid container spacing={1} alignItems="center">
-                      <Grid item xs={12} md={7}>
-                        <Typography variant="body2">{desc}</Typography>
-                      </Grid>
-                      <Grid item xs={12} md={5}>
-                        <Stack direction="row" spacing={1} alignItems="center" justifyContent="flex-end">
-                          {answers[dkey] ? (
-                            <>
-                              <Chip label={answers[dkey]} />
-                              <Button size="small" onClick={()=> onChange(dkey, '')}>Clear</Button>
-                            </>
-                          ) : (
-                            <Typography variant="body2" color="text.secondary">Drag from an item to connect</Typography>
-                          )}
-                        </Stack>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                ))}
-              </Stack>
-            </Grid>
-          </>
-        )}
-      </Grid>
     </Box>
   )
 }
