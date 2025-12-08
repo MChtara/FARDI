@@ -1,0 +1,405 @@
+/* Conversation Tetris Game Styles */
+
+.conversation-tetris {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+/* Victory & Game Over */
+.conversation-tetris.victory,
+.conversation-tetris.game-over {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+}
+
+.conversation-tetris .victory-card,
+.conversation-tetris .game-over-card {
+    padding: 48px;
+    text-align: center;
+    border-radius: 20px;
+    color: white;
+}
+
+.conversation-tetris .victory-card {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.conversation-tetris .game-over-card {
+    background: linear-gradient(135deg, #434343 0%, #000000 100%);
+}
+
+.conversation-tetris .trophy {
+    font-size: 100px;
+    color: #ffd700;
+    animation: bounce 0.5s ease infinite alternate;
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0) rotate(-5deg);
+    }
+
+    to {
+        transform: translateY(-15px) rotate(5deg);
+    }
+}
+
+.conversation-tetris .stats {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 24px 0;
+}
+
+/* Header */
+.conversation-tetris .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+}
+
+.conversation-tetris .header-left h6 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.conversation-tetris .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.conversation-tetris .lives {
+    display: flex;
+    gap: 4px;
+}
+
+.conversation-tetris .heart {
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+.conversation-tetris .heart.active {
+    color: #ff4757;
+    filter: drop-shadow(0 0 4px rgba(255, 71, 87, 0.5));
+}
+
+.conversation-tetris .heart.lost {
+    color: #555;
+    transform: scale(0.8);
+}
+
+/* Dialogue Display */
+.conversation-tetris .dialogue-container {
+    padding: 16px;
+    margin-bottom: 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    border-left: 4px solid #4facfe;
+}
+
+.conversation-tetris .speaker-label {
+    color: #4facfe;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.conversation-tetris .dialogue-template {
+    margin: 12px 0;
+    font-size: 1.15rem;
+    line-height: 2;
+    color: white;
+}
+
+.conversation-tetris .text-part {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.conversation-tetris .gap-box {
+    display: inline-block;
+    padding: 4px 12px;
+    margin: 0 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 6px;
+    min-width: 60px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.conversation-tetris .gap-box.active {
+    border-color: #00f260;
+    border-style: solid;
+    background: rgba(0, 242, 96, 0.15);
+    box-shadow: 0 0 15px rgba(0, 242, 96, 0.3);
+    animation: gapPulse 1s ease infinite;
+}
+
+.conversation-tetris .gap-box.filled {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: #4caf50;
+    color: #8bc34a;
+    font-weight: 600;
+}
+
+@keyframes gapPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px rgba(0, 242, 96, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(0, 242, 96, 0.5);
+    }
+}
+
+.conversation-tetris .progress-info {
+    display: block;
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Word Bank Reference */
+.conversation-tetris .word-bank-ref {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.conversation-tetris .word-bank-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.conversation-tetris .word-bank-chips .MuiChip-root {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Game Area Container */
+.conversation-tetris .game-area-container {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+}
+
+.conversation-tetris .game-area {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+}
+
+/* Shake animation */
+.conversation-tetris .game-area.shake {
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-10px);
+    }
+
+    40% {
+        transform: translateX(10px);
+    }
+
+    60% {
+        transform: translateX(-10px);
+    }
+
+    80% {
+        transform: translateX(10px);
+    }
+}
+
+/* Overlays */
+.conversation-tetris .start-overlay,
+.conversation-tetris .pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    color: white;
+}
+
+/* Falling Words */
+.conversation-tetris .falling-word {
+    position: absolute;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    white-space: nowrap;
+    user-select: none;
+    z-index: 10;
+}
+
+.conversation-tetris .falling-word:hover {
+    transform: scale(1.1) !important;
+    z-index: 20;
+}
+
+.conversation-tetris .falling-word.correct {
+    background: linear-gradient(145deg, #00f260 0%, #0575e6 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 242, 96, 0.4);
+}
+
+.conversation-tetris .falling-word.wrong {
+    background: linear-gradient(145deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+}
+
+/* Feedback Popup */
+.conversation-tetris .feedback-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 40px;
+    border-radius: 16px;
+    font-size: 2rem;
+    font-weight: bold;
+    z-index: 50;
+    animation: popFeedback 0.6s ease forwards;
+}
+
+@keyframes popFeedback {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(0.8);
+    }
+}
+
+.conversation-tetris .feedback-popup.correct {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.conversation-tetris .feedback-popup.wrong,
+.conversation-tetris .feedback-popup.miss {
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    color: white;
+}
+
+/* Target Zone */
+.conversation-tetris .target-zone {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    text-align: center;
+    color: white;
+}
+
+/* Controls */
+.conversation-tetris .game-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.conversation-tetris .game-controls button {
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .conversation-tetris {
+        padding: 8px;
+    }
+
+    .conversation-tetris .game-area {
+        height: 350px;
+    }
+
+    .conversation-tetris .falling-word {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+
+    .conversation-tetris .feedback-popup {
+        font-size: 1.5rem;
+        padding: 16px 32px;
+    }
+}
+
+/* Stars background effect */
+.conversation-tetris .game-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, white, transparent),
+        radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 160px 120px, white, transparent);
+    background-size: 200px 150px;
+    animation: twinkle 4s ease-in-out infinite;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
