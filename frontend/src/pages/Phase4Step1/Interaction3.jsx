@@ -21,11 +21,12 @@ export default function Phase4Step1Interaction3() {
     const navigate = useNavigate()
     const [completed, setCompleted] = useState(false)
     const [evaluationResult, setEvaluationResult] = useState(null)
+    const [isCalculating, setIsCalculating] = useState(false)
 
     const handleSentenceComplete = async (result) => {
         console.log('Sentence evaluation completed:', result)
-        setCompleted(true)
         setEvaluationResult(result)
+        setIsCalculating(true)
 
         // Calculate total score for Phase 4 Step 1
         try {
@@ -67,11 +68,18 @@ export default function Phase4Step1Interaction3() {
                 // Clear interaction scores after successful calculation
                 sessionStorage.removeItem('phase4_step1_interaction1_score')
                 sessionStorage.removeItem('phase4_step1_interaction2_score')
+
+                // Mark as completed AFTER successful API call
+                setCompleted(true)
             } else {
                 console.error('Error calculating score:', data.error)
+                alert('Error calculating your level. Please try again.')
             }
         } catch (error) {
             console.error('Failed to calculate total score:', error)
+            alert('Network error. Please check your connection and try again.')
+        } finally {
+            setIsCalculating(false)
         }
     }
 
@@ -81,6 +89,13 @@ export default function Phase4Step1Interaction3() {
 
         console.log('=== NAVIGATION DEBUG ===')
         console.log('Remedial Level from sessionStorage:', remedialLevel)
+
+        if (!remedialLevel) {
+            console.error('ERROR: Remedial level not found in sessionStorage!')
+            console.log('Available sessionStorage keys:', Object.keys(sessionStorage))
+            alert('Error: Remedial level not calculated. Please try again.')
+            return
+        }
 
         if (remedialLevel === 'Remedial A1') {
             console.log('Navigating to: /app/phase4/remedial/a1/taskA')
@@ -98,8 +113,7 @@ export default function Phase4Step1Interaction3() {
             console.log('Navigating to: /app/phase4/remedial/c1/taskA')
             navigate('/app/phase4/remedial/c1/taskA')
         } else {
-            // Default: go to dashboard
-            console.log('No remedial level found, navigating to dashboard')
+            console.log('Unknown remedial level:', remedialLevel)
             navigate('/app/dashboard')
         }
     }
@@ -141,7 +155,16 @@ export default function Phase4Step1Interaction3() {
 
             {/* Navigation */}
             <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 4 }}>
-                {completed && (
+                {isCalculating && (
+                    <Button
+                        variant="outlined"
+                        disabled
+                        size="large"
+                    >
+                        Calculating your level...
+                    </Button>
+                )}
+                {completed && !isCalculating && (
                     <Button
                         variant="contained"
                         color="success"
