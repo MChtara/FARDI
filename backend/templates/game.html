@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block title %}Cultural Event Planning Committee - Assessment{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/game.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid game-container">
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            <!-- Game Header -->
+            <div class="game-header">
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <h2 class="game-title">Cultural Event Planning</h2>
+                        <div class="step-indicator">
+                            Step {{ current_step + 1 }} of {{ total_steps }}
+                        </div>
+                    </div>
+                    
+                    <div class="xp-section">
+                        <div class="xp-container">
+                            <i class="fas fa-star xp-icon"></i>
+                            <span>{{ xp }} XP</span>
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-indicator" style="width: {{ (current_step / total_steps) * 100 }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Game Interface -->
+            <div class="game-interface">
+                <!-- Scene Header -->
+                <div class="scene-header" style="background-image: url('/static/images/scenes/{{ scene }}.jpg');">
+                    <div class="scene-header-overlay"></div>
+                    <div class="scene-title">
+                        <h3>{{ scene|replace('_', ' ')|title }}</h3>
+                        <p class="scene-subtitle">{{ scene_description }}</p>
+                    </div>
+                </div>
+                
+                <!-- Content Area -->
+                <div class="content-area">
+                    <!-- Skill Being Assessed -->
+                    <div class="skill-section">
+                        <div class="skill-info">
+                            <span class="skill-label">Currently Assessing:</span>
+                            <div class="skill-badge">
+                                <i class="fas fa-{{ 'user' if skill == 'self-expression' else 'brain' if skill == 'reasoning' else 'globe' if skill == 'world_knowledge' else 'ear' if skill == 'listening_comprehension' else 'lightbulb' if skill == 'ideation' else 'comments' if skill == 'conversation' else 'chess' if skill == 'strategic_thinking' else 'puzzle-piece' if skill == 'abstract_thinking' else 'pen' }}"></i>
+                                {{ skill|replace('_', ' ')|title }}
+                            </div>
+                        </div>
+                        <div class="skill-description">
+                            {{ skill_description }}
+                        </div>
+                    </div>
+                    
+                    <!-- NPC Dialogue -->
+                    <div class="dialogue-section">
+                        <div class="npc-container">
+                            <div class="avatar-container">
+                                {% if npcs[question.speaker].avatar %}
+                                    <img src="/static/images/avatars/{{ npcs[question.speaker].avatar }}" 
+                                         alt="{{ question.speaker }}" 
+                                         class="avatar-img">
+                                {% else %}
+                                    <div class="avatar-fallback">
+                                        {{ question.speaker[0] }}{{ question.speaker[1]|default("") }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="dialogue-content">
+                                <div class="speaker-info">
+                                    <h4 class="speaker-name">{{ question.speaker }}</h4>
+                                    <p class="speaker-role">{{ npcs[question.speaker].role }}</p>
+                                </div>
+                                
+                                <div class="dialogue-bubble">
+                                    {% if question.step != 4 or not question.audio_cue %}
+                                        <p class="dialogue-text">{{ question.question }}</p>
+                                    {% endif %}
+                                    
+                                    {% if question.instruction %}
+                                        <div class="dialogue-instruction">
+                                            <i class="fas fa-info-circle"></i>
+                                            {{ question.instruction }}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Audio Player for Listening Question -->
+                                    {% if question.step == 4 and question.audio_cue %}
+                                    <div class="audio-section">
+                                        <div class="audio-instruction">
+                                            <i class="fas fa-headphones"></i>
+                                            <span>Listen to SKANDER's suggestion and repeat what he said.</span>
+                                        </div>
+                                        
+                                        <div class="audio-player-container">
+                                            <button id="play-audio-btn" class="play-audio-btn" type="button">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            
+                                            <div class="audio-controls">
+                                                <audio id="audio-player" preload="auto">
+                                                    <source src="/static/audio/{{ question.audio_cue }}" type="audio/mpeg">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                                
+                                                <div class="audio-progress">
+                                                    <div id="audio-progress-bar" class="progress-bar"></div>
+                                                </div>
+                                                
+                                                <button id="replay-audio-btn" class="replay-btn" type="button">
+                                                    <i class="fas fa-redo-alt"></i>
+                                                    Replay
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if question.scenario_image %}
+                                        <div class="scenario-image">
+                                            <img src="/static/images/scenarios/{{ question.scenario_image }}" 
+                                                 alt="Scenario" 
+                                                 class="img-fluid rounded">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Feedback Section -->
+                    <div id="feedback-section" class="feedback-section d-none">
+                        <div class="npc-container">
+                            <div class="avatar-container">
+                                {% if npcs[question.speaker].avatar %}
+                                    <img src="/static/images/avatars/{{ npcs[question.speaker].avatar }}" 
+                                         alt="{{ question.speaker }}" 
+                                         class="avatar-img">
+                                {% else %}
+                                    <div class="avatar-fallback">
+                                        {{ question.speaker[0] }}{{ question.speaker[1]|default("") }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="dialogue-content">
+                                <div class="speaker-info">
+                                    <h4 class="speaker-name">{{ question.speaker }}</h4>
+                                    <p class="speaker-role">{{ npcs[question.speaker].role }}</p>
+                                </div>
+                                
+                                <!-- Typing Indicator -->
+                                <div id="typing-indicator" class="typing-indicator d-none">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                
+                                <!-- AI Feedback -->
+                                <div id="ai-feedback-bubble" class="dialogue-bubble feedback-bubble">
+                                    <div id="ai-feedback-text"></div>
+                                    
+                                    <div id="assessment-details" class="assessment-details d-none">
+                                        <div class="assessment-level">
+                                            <span class="level-label">Level:</span>
+                                            <span id="assessment-level" class="level-value"></span>
+                                            <div id="assessment-level-indicator" class="level-indicator"></div>
+                                        </div>
+                                        
+                                        <div id="assessment-strengths-section" class="assessment-section d-none">
+                                            <h6><i class="fas fa-thumbs-up"></i> Strengths</h6>
+                                            <ul id="assessment-strengths"></ul>
+                                        </div>
+                                        
+                                        <div id="assessment-improvements-section" class="assessment-section d-none">
+                                            <h6><i class="fas fa-target"></i> Focus Areas</h6>
+                                            <ul id="assessment-improvements"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Response Form -->
+                    <div class="response-section">
+                        <form id="responseForm" action="{{ url_for('submit_response') }}" method="post" class="response-form">
+                            <input type="hidden" name="question_type" value="{{ question.type }}">
+                            
+                            <div class="form-group">
+                                <label for="responseInput" class="form-label">
+                                    <i class="fas fa-pen-alt"></i>
+                                    Your Response
+                                </label>
+                                
+                                <textarea class="form-control response-textarea no-paste" 
+                                          id="responseInput" 
+                                          name="response" 
+                                          rows="4" 
+                                          placeholder="Type your response here..." 
+                                          required
+                                          data-word-counter="#word-counter"></textarea>
+                                
+                                <div class="response-feedback">
+                                    <small id="word-counter" class="word-counter">0 words</small>
+                                    <small class="response-tip">
+                                        <i class="fas fa-lightbulb"></i>
+                                        Aim for 20-30 words for a comprehensive response
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button type="submit" class="btn btn-primary submit-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span>Submit & Continue</span>
+                                </button>
+                            </div>
+                            
+                            <div class="security-notice">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Your response will be automatically checked for authenticity</span>
+                            </div>
+                        </form>
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/game.js') }}"></script>
+<script>
+// Combined JavaScript with anti-paste protection and existing functionality
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ========================================
+    // ANTI-PASTE PROTECTION FUNCTIONALITY
+    // ========================================
+    
+    // Select all textarea elements with class 'no-paste' or ID 'responseInput'
+    const noPasteElements = document.querySelectorAll('.no-paste, #responseInput');
+    
+    noPasteElements.forEach(function(element) {
+        // Disable paste using the onpaste event
+        element.addEventListener('paste', function(e) {
+            e.preventDefault();
+            
+            // Show a message to the user
+            const alertMessage = document.createElement('div');
+            alertMessage.classList.add('alert', 'alert-warning', 'mt-2');
+            alertMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Pasting is not allowed. Please type your response.';
+            
+            // Insert the message after the textarea
+            this.parentNode.insertBefore(alertMessage, this.nextSibling);
+            
+            // Remove the message after 3 seconds
+            setTimeout(function() {
+                if (alertMessage.parentNode) {
+                    alertMessage.remove();
+                }
+            }, 3000);
+            
+            return false;
+        });
+        
+        // Also disable context menu (right-click) to prevent paste from context menu
+        element.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Disable keyboard shortcuts for paste (Ctrl+V or Command+V)
+        element.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.keyCode === 86) {
+                e.preventDefault();
+                
+                // Show warning message for keyboard paste attempt
+                const alertMessage = document.createElement('div');
+                alertMessage.classList.add('alert', 'alert-warning', 'mt-2');
+                alertMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Keyboard pasting (Ctrl+V) is disabled. Please type your response.';
+                
+                this.parentNode.insertBefore(alertMessage, this.nextSibling);
+                
+                setTimeout(function() {
+                    if (alertMessage.parentNode) {
+                        alertMessage.remove();
+                    }
+                }, 3000);
+                
+                return false;
+            }
+        });
+    });
+    
+    // ========================================
+    // EXISTING GAME FUNCTIONALITY
+    // ========================================
+    
+    // Audio player initialization
+    const audioPlayer = document.getElementById('audio-player');
+    const playButton = document.getElementById('play-audio-btn');
+    const replayButton = document.getElementById('replay-audio-btn');
+    const progressBar = document.getElementById('audio-progress-bar');
+    
+    if (audioPlayer && playButton) {
+        // Audio event listeners
+        audioPlayer.addEventListener('timeupdate', function() {
+            if (audioPlayer.duration) {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        });
+        
+        playButton.addEventListener('click', function() {
+            if (audioPlayer.paused) {
+                audioPlayer.play().catch(console.error);
+                this.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                audioPlayer.pause();
+                this.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+        
+        if (replayButton) {
+            replayButton.addEventListener('click', function() {
+                audioPlayer.currentTime = 0;
+                audioPlayer.play().catch(console.error);
+                playButton.innerHTML = '<i class="fas fa-pause"></i>';
+            });
+        }
+        
+        audioPlayer.addEventListener('ended', function() {
+            playButton.innerHTML = '<i class="fas fa-play"></i>';
+            progressBar.style.width = '0%';
+        });
+    }
+    
+    // Word counter functionality
+    const responseInput = document.getElementById('responseInput');
+    const wordCounter = document.getElementById('word-counter');
+    
+    if (responseInput && wordCounter) {
+        responseInput.addEventListener('input', function() {
+            const words = this.value.split(/\s+/).filter(word => word.length > 0).length;
+            wordCounter.textContent = words + ' words';
+        });
+    }
+    
+    // Get Feedback functionality
+    $('#get-feedback').click(function() {
+        const response = $('#responseInput').val().trim();
+        if (!response) {
+            FARDI.showToast("Please type a response first.", "warning");
+            return;
+        }
+        
+        // Show feedback section and typing indicator
+        $('#feedback-section').removeClass('d-none');
+        $('#typing-indicator').removeClass('d-none');
+        $('#ai-feedback-bubble').addClass('d-none');
+        
+        // Disable button and show loading
+        $(this).prop('disabled', true);
+        $(this).find('span').text('Getting feedback...');
+        $(this).prepend('<span class="spinner-border spinner-border-sm me-2"></span>');
+        
+        // FIXED: Use correct API endpoint
+        $.ajax({
+            url: "{{ url_for('api.get_ai_feedback') }}",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                question: "{{ question.question|safe }}",
+                response: response,
+                speaker: "{{ question.speaker }}",
+                type: "{{ question.type }}"
+            }),
+            success: function(data) {
+                setTimeout(function() {
+                    $('#typing-indicator').addClass('d-none');
+                    $('#ai-feedback-bubble').removeClass('d-none');
+                    $('#ai-feedback-text').html(data.ai_response);
+                    
+                    // Show assessment details if available
+                    if (data.assessment) {
+                        showAssessmentDetails(data.assessment);
+                    }
+                }, 1500);
+                
+                // Reset button
+                resetFeedbackButton();
+            },
+            error: function() {
+                $('#typing-indicator').addClass('d-none');
+                $('#ai-feedback-bubble').removeClass('d-none');
+                $('#ai-feedback-text').text("I'm sorry, I couldn't analyze your response at the moment. Please try again.");
+                resetFeedbackButton();
+            }
+        });
+    });
+    
+    function resetFeedbackButton() {
+        const btn = $('#get-feedback');
+        btn.prop('disabled', false);
+        btn.find('.spinner-border').remove();
+        btn.find('span').text('Get Feedback');
+    }
+    
+    function showAssessmentDetails(assessment) {
+        $('#assessment-details').removeClass('d-none');
+        $('#assessment-level').text(assessment.level);
+        
+        // Set level indicator color
+        const levelColors = {
+            'A1': 'assessment-a1',
+            'A2': 'assessment-a2', 
+            'B1': 'assessment-b1',
+            'B2': 'assessment-b2',
+            'C1': 'assessment-c1'
+        };
+        $('#assessment-level-indicator')
+            .removeClass('assessment-a1 assessment-a2 assessment-b1 assessment-b2 assessment-c1')
+            .addClass(levelColors[assessment.level] || 'assessment-b1');
+        
+        // Show strengths
+        if (assessment.strengths && assessment.strengths.length > 0) {
+            $('#assessment-strengths-section').removeClass('d-none');
+            const strengthsList = $('#assessment-strengths').empty();
+            assessment.strengths.forEach(strength => {
+                strengthsList.append(`<li>${strength}</li>`);
+            });
+        }
+        
+        // Show improvements
+        if (assessment.improvements && assessment.improvements.length > 0) {
+            $('#assessment-improvements-section').removeClass('d-none');
+            const improvementsList = $('#assessment-improvements').empty();
+            assessment.improvements.forEach(improvement => {
+                improvementsList.append(`<li>${improvement}</li>`);
+            });
+        }
+    }
+    
+    // Form submission with AI checking
+    $('#responseForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const response = $('#responseInput').val().trim();
+        if (!response) {
+            FARDI.showToast("Please type a response first.", "warning");
+            return;
+        }
+        
+        const submitBtn = $(this).find('.submit-btn');
+        const originalText = submitBtn.html();
+        submitBtn.prop('disabled', true)
+               .html('<span class="spinner-border spinner-border-sm me-2"></span>Checking...');
+        
+        // FIXED: Use correct API endpoint for AI checking
+        $.ajax({
+            url: "{{ url_for('api.check_ai_response') }}",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ response: response }),
+            success: (data) => {
+                if (data.is_ai && data.score > 0.5) {
+                    FARDI.showToast(
+                        `AI content detected (${Math.round(data.score * 100)}%). Please write your own response.`,
+                        "danger"
+                    );
+                    submitBtn.prop('disabled', false).html(originalText);
+                    $('#responseInput').val('').focus();
+                } else {
+                    // Submit the form
+                    submitBtn.prop('disabled', false).html(originalText);
+                    this.submit();
+                }
+            },
+            error: () => {
+                // On error, allow submission
+                submitBtn.prop('disabled', false).html(originalText);
+                this.submit();
+            }
+        });
+    });
+    
+    // Load language tips
+    $('#languageTips').on('show.bs.collapse', function() {
+        // FIXED: Use correct API endpoint
+        $.ajax({
+            url: "{{ url_for('api.language_tips') }}",
+            type: "GET",
+            data: { level: "B1" },
+            success: function(data) {
+                const tipsContent = $('#tips-content');
+                tipsContent.empty();
+                
+                if (data.tips && data.tips.length > 0) {
+                    const tipsList = $('<ul class="tips-list"></ul>');
+                    data.tips.forEach(tip => {
+                        tipsList.append(`<li><i class="fas fa-check-circle"></i> ${tip}</li>`);
+                    });
+                    tipsContent.append(tipsList);
+                } else {
+                    tipsContent.html('<p class="text-muted">No tips available at the moment.</p>');
+                }
+            },
+            error: function() {
+                $('#tips-content').html('<p class="text-danger">Could not load language tips. Please try again later.</p>');
+            }
+        });
+    });
+    
+});
+</script>
+{% endblock %}

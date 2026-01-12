@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block title %}403 - Access Forbidden{% endblock %}
+
+{% block extra_head %}
+<style>
+    .error-container {
+        min-height: calc(100vh - 160px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacing-xl) 0;
+        background: linear-gradient(135deg, var(--off-white), var(--light-blue));
+    }
+
+    .error-card {
+        background: white;
+        border-radius: var(--border-radius-xl);
+        box-shadow: var(--shadow-xl);
+        padding: var(--spacing-xxl);
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+        margin: 0 var(--spacing-lg);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .error-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--spacing-xl);
+        font-size: 3rem;
+        color: white;
+        box-shadow: var(--shadow-lg);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .error-code {
+        font-family: var(--font-display);
+        font-size: 4rem;
+        font-weight: 700;
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-md);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .error-title {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .error-description {
+        font-size: 1.1rem;
+        color: #6c757d;
+        line-height: 1.6;
+        margin-bottom: var(--spacing-xxl);
+    }
+
+    .error-actions {
+        display: flex;
+        gap: var(--spacing-lg);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .error-btn {
+        padding: var(--spacing-md) var(--spacing-xl);
+        border-radius: var(--border-radius-lg);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition-normal);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        min-width: 150px;
+        justify-content: center;
+    }
+
+    .error-btn.primary {
+        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+        color: white;
+        border: none;
+    }
+
+    .error-btn.primary:hover {
+        background: linear-gradient(135deg, var(--secondary-blue), var(--tertiary-blue));
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        color: white;
+    }
+
+    .error-btn.secondary {
+        background: transparent;
+        color: var(--primary-blue);
+        border: 2px solid var(--primary-blue);
+    }
+
+    .error-btn.secondary:hover {
+        background: var(--primary-blue);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .error-details {
+        margin-top: var(--spacing-xxl);
+        padding: var(--spacing-lg);
+        background: var(--off-white);
+        border-radius: var(--border-radius-lg);
+        border-left: 4px solid var(--primary-blue);
+    }
+
+    .error-details h5 {
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-md);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .error-details ul {
+        margin: 0;
+        padding-left: var(--spacing-lg);
+        color: #6c757d;
+    }
+
+    .error-details li {
+        margin-bottom: var(--spacing-sm);
+        line-height: 1.5;
+    }
+
+    .help-section {
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-xl);
+        border-top: 1px solid var(--border-light);
+    }
+
+    .help-section h6 {
+        color: var(--primary-blue);
+        margin-bottom: var(--spacing-md);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        justify-content: center;
+    }
+
+    .help-links {
+        display: flex;
+        gap: var(--spacing-lg);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .help-link {
+        color: var(--primary-blue);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: var(--transition-fast);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+
+    .help-link:hover {
+        color: var(--tertiary-blue);
+        text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .error-card {
+            padding: var(--spacing-lg);
+            margin: 0 var(--spacing-md);
+        }
+
+        .error-code {
+            font-size: 3rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+        }
+
+        .error-description {
+            font-size: 1rem;
+        }
+
+        .error-actions {
+            flex-direction: column;
+        }
+
+        .error-btn {
+            width: 100%;
+        }
+
+        .help-links {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+        }
+
+        .error-code {
+            font-size: 2.5rem;
+        }
+
+        .error-title {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-icon">
+            <i class="fas fa-ban"></i>
+        </div>
+        
+        <div class="error-code">403</div>
+        
+        <h1 class="error-title">Access Forbidden</h1>
+        
+        <p class="error-description">
+            Sorry, you don't have permission to access this resource. This could be due to insufficient privileges 
+            or attempting to access a restricted area of the platform.
+        </p>
+        
+        <div class="error-actions">
+            {% if session.user_id %}
+            <a href="{{ url_for('index') }}" class="error-btn primary">
+                <i class="fas fa-home"></i>
+                <span>Go to Home</span>
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="error-btn secondary">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="error-btn primary">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Sign In</span>
+            </a>
+            <a href="{{ url_for('welcome') }}" class="error-btn secondary">
+                <i class="fas fa-home"></i>
+                <span>Go Home</span>
+            </a>
+            {% endif %}
+        </div>
+        
+        <div class="error-details">
+            <h5>
+                <i class="fas fa-info-circle"></i>
+                Why am I seeing this?
+            </h5>
+            <ul>
+                <li>You may not be logged in to your account</li>
+                <li>Your account may not have the required permissions</li>
+                <li>The page you're trying to access is restricted</li>
+                <li>Your session may have expired</li>
+                <li>You may have followed an invalid or outdated link</li>
+            </ul>
+        </div>
+        
+        <div class="help-section">
+            <h6>
+                <i class="fas fa-question-circle"></i>
+                Need Help?
+            </h6>
+            <div class="help-links">
+                {% if not session.user_id %}
+                <a href="{{ url_for('auth.login') }}" class="help-link">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Sign In</span>
+                </a>
+                <a href="{{ url_for('auth.signup') }}" class="help-link">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Create Account</span>
+                </a>
+                {% endif %}
+                <a href="#" class="help-link">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Support</span>
+                </a>
+                <a href="#" class="help-link">
+                    <i class="fas fa-question"></i>
+                    <span>FAQ</span>
+                </a>
+                <a href="#" class="help-link">
+                    <i class="fas fa-book"></i>
+                    <span>Help Center</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add some interactive feedback
+    const errorCard = document.querySelector('.error-card');
+    const errorIcon = document.querySelector('.error-icon');
+    
+    // Add hover effect to the error card
+    errorCard.addEventListener('mouseenter', function() {
+        errorIcon.style.animationDuration = '1s';
+    });
+    
+    errorCard.addEventListener('mouseleave', function() {
+        errorIcon.style.animationDuration = '2s';
+    });
+    
+    // Log the error for debugging (in development)
+    console.warn('403 Forbidden: Access denied to resource');
+    
+    // Optional: Auto-redirect after a certain time for logged-out users
+    {% if not session.user_id %}
+    let redirectTimer = 30; // 30 seconds
+    const createRedirectMessage = () => {
+        const existingMessage = document.getElementById('redirect-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        if (redirectTimer > 0) {
+            const message = document.createElement('div');
+            message.id = 'redirect-message';
+            message.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: rgba(69, 123, 157, 0.9);
+                color: white;
+                padding: 1rem;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+            `;
+            message.innerHTML = `
+                <i class="fas fa-info-circle"></i>
+                Redirecting to login in ${redirectTimer}s
+                <button onclick="this.parentElement.remove()" style="background:none;border:none;color:white;margin-left:10px;cursor:pointer;">×</button>
+            `;
+            document.body.appendChild(message);
+            
+            redirectTimer--;
+            setTimeout(createRedirectMessage, 1000);
+        } else {
+            window.location.href = "{{ url_for('auth.login') }}";
+        }
+    };
+    
+    // Start the redirect timer after 5 seconds of inactivity
+    setTimeout(createRedirectMessage, 5000);
+    {% endif %}
+});
+</script>
+{% endblock %}

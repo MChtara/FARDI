@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - {{ user.first_name or user.username }}{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="row">
+        <!-- Profile Header -->
+        <div class="col-12">
+            <div class="profile-header-card">
+                <div class="profile-banner">
+                    <div class="banner-overlay"></div>
+                </div>
+                <div class="profile-header-content">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-large">
+                            {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture }}" alt="Profile Picture">
+                            {% else %}
+                            <div class="avatar-placeholder-large">
+                                {{ (user.first_name or user.username or 'U')[0].upper() }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="profile-info">
+                            <h1>{{ user.first_name or user.username or 'User' }} 
+                                {% if user.last_name %}{{ user.last_name }}{% endif %}
+                            </h1>
+                            <p class="profile-email">{{ user.email }}</p>
+                            <p class="profile-member-since">
+                                <i class="fas fa-calendar"></i>
+                                Member since {{ user.created_at.split(' ')[0] if user.created_at else 'Unknown' }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </a>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/auth/change-password">
+                                    <i class="fas fa-key"></i> Change Password
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/auth/delete-account">
+                                    <i class="fas fa-trash"></i> Delete Account
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Stats and Overview -->
+        <div class="col-lg-4">
+            <!-- Quick Stats -->
+            <div class="stats-card">
+                <h5><i class="fas fa-chart-bar"></i> Assessment Statistics</h5>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ (stats.total_assessments if stats else 0) or 0 }}</div>
+                        <div class="stat-label">Total Assessments</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ (stats.best_level if stats else 'N/A') or 'N/A' }}</div>
+                        <div class="stat-label">Best Level</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ (stats.total_xp if stats else 0) or 0 }}</div>
+                        <div class="stat-label">Total XP</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ "%.1f"|format((stats.avg_ai_usage if stats else 0) or 0) }}%</div>
+                        <div class="stat-label">Avg AI Usage</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Preferences -->
+            <div class="preferences-card">
+                <h5><i class="fas fa-sliders-h"></i> Preferences</h5>
+                <div class="preference-item">
+                    <span class="preference-label">Language:</span>
+                    <span class="preference-value">{{ user.preferred_language or 'English' }}</span>
+                </div>
+                <div class="preference-item">
+                    <span class="preference-label">Timezone:</span>
+                    <span class="preference-value">{{ user.timezone or 'UTC' }}</span>
+                </div>
+                <div class="preference-item">
+                    <span class="preference-label">Email Verified:</span>
+                    <span class="preference-value">
+                        {% if user.email_verified %}
+                        <span class="badge bg-success">Verified</span>
+                        {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions-card">
+                <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                <div class="action-buttons">
+                    <a href="{{ url_for('start_game') }}" class="action-btn primary">
+                        <i class="fas fa-play-circle"></i>
+                        <span>New Assessment</span>
+                    </a>
+                    <a href="{{ url_for('certificate') }}" class="action-btn">
+                        <i class="fas fa-certificate"></i>
+                        <span>Download Certificate</span>
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="action-btn">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Assessment History -->
+        <div class="col-lg-8">
+            <div class="assessment-history-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-history"></i> Assessment History</h5>
+                    {% if recent_assessments %}
+                    <span class="assessment-count">{{ recent_assessments|length }} recent assessments</span>
+                    {% endif %}
+                </div>
+                
+                {% if recent_assessments %}
+                <div class="assessment-timeline">
+                    {% for assessment in recent_assessments %}
+                    <div class="assessment-entry">
+                        <div class="assessment-date">
+                            <div class="date-circle">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="date-info">
+                                <div class="date-primary">{{ (assessment.completed_at or '').split(' ')[0] if assessment.completed_at else 'Unknown' }}</div>
+                                <div class="date-secondary">{{ (assessment.completed_at or '').split(' ')[1] if assessment.completed_at and ' ' in assessment.completed_at else '' }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="assessment-content">
+                            <div class="assessment-header">
+                                <div class="assessment-level-info">
+                                    <span class="level-badge {{ (assessment.overall_level or 'unknown').lower() }}">
+                                        {{ assessment.overall_level or 'N/A' }}
+                                    </span>
+                                    <h6>CEFR Language Assessment</h6>
+                                </div>
+                                <div class="assessment-metrics">
+                                    <span class="metric">
+                                        <i class="fas fa-star"></i>
+                                        {{ assessment.xp_earned or 0 }} XP
+                                    </span>
+                                    <span class="metric">
+                                        <i class="fas fa-clock"></i>
+                                        {{ "%.1f"|format((assessment.time_taken or 0) / 60) }} min
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {% if assessment.skill_levels %}
+                            <div class="skill-breakdown">
+                                <h6>Skill Breakdown:</h6>
+                                <div class="skills-grid">
+                                    {% set skill_levels = assessment.skill_levels %}
+                                    {% if skill_levels %}
+                                    {% for skill, level in skill_levels.items() %}
+                                    <div class="skill-item">
+                                        <span class="skill-name">{{ skill|title }}</span>
+                                        <span class="skill-level {{ (level or 'unknown').lower() }}">{{ level or 'N/A' }}</span>
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if assessment.ai_usage_percentage and assessment.ai_usage_percentage > 0 %}
+                            <div class="ai-usage-warning">
+                                <i class="fas fa-robot"></i>
+                                {{ "%.0f"|format(assessment.ai_usage_percentage or 0) }}% AI usage detected
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if recent_assessments|length >= 5 %}
+                <div class="load-more-section">
+                    <button class="btn btn-outline-primary" id="loadMoreAssessments">
+                        <i class="fas fa-chevron-down"></i>
+                        Load More Assessments
+                    </button>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h4>No assessments yet</h4>
+                    <p>You haven't completed any language assessments yet. Start your first assessment to see your progress here.</p>
+                    <a href="{{ url_for('start_game') }}" class="btn btn-primary">
+                        <i class="fas fa-play-circle"></i>
+                        Take Your First Assessment
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize profile page functionality
+    FARDI.Profile.init();
+});
+</script>
+{% endblock %}

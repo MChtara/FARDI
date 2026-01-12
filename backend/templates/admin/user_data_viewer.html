@@ -1,0 +1,945 @@
+{% extends "base.html" %}
+
+{% block title %}User Data Viewer - Admin{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+<style>
+    .user-data-container {
+        background: #f8fafc;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .data-section {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .data-section-header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+    }
+    
+    .data-section-header h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .data-section-body {
+        padding: 2rem;
+    }
+    
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .data-item {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #6b7280;
+    }
+    
+    .data-item-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .data-item-value {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+    
+    .response-card {
+        border-left: 4px solid #3b82f6;
+        background: #f8fafc;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .level-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .level-badge.a1 { background: #fee2e2; color: #dc2626; }
+    .level-badge.a2 { background: #fef3c7; color: #d97706; }
+    .level-badge.b1 { background: #dbeafe; color: #2563eb; }
+    .level-badge.b2 { background: #dcfce7; color: #16a34a; }
+    .level-badge.c1 { background: #f3e8ff; color: #9333ea; }
+    
+    .ai-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .ai-badge.human { background: #dcfce7; color: #16a34a; }
+    .ai-badge.ai { background: #fef3c7; color: #d97706; }
+    
+    .question-box {
+        background: #e0f2fe;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #0891b2;
+    }
+    
+    .response-box {
+        background: #f0fdf4;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #16a34a;
+    }
+    
+    .assessment-box {
+        background: #fefce8;
+        border-radius: 8px;
+        padding: 1rem;
+        border-left: 4px solid #eab308;
+    }
+    
+    .nav-tabs {
+        border-bottom: 2px solid #e2e8f0;
+        margin-bottom: 2rem;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #64748b;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        border-radius: 0;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        color: #3b82f6;
+        background: #f1f5f9;
+        border-color: transparent;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #3b82f6;
+        background: white;
+        border-bottom-color: #3b82f6;
+        font-weight: 600;
+    }
+    
+    .tab-content {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+    
+    .timestamp {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #cbd5e1;
+    }
+    
+    .small-data-item {
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+    
+    .small-data-item:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+    
+    .step-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .prompt-text {
+        line-height: 1.6;
+        padding: 0.75rem;
+        background: #e0f2fe;
+        border-radius: 6px;
+        border-left: 3px solid #0891b2;
+        font-style: italic;
+    }
+    
+    .response-text {
+        line-height: 1.6;
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 6px;
+        border-left: 3px solid #16a34a;
+    }
+    
+    .feedback-text {
+        line-height: 1.6;
+        padding: 0.75rem;
+        background: #fefce8;
+        border-radius: 6px;
+        border-left: 3px solid #eab308;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="user-data-container">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            {{ (user_data.user_info.first_name or user_data.user_info.username)[0].upper() }}
+                        </div>
+                        <div>
+                            <h2 class="mb-0">{{ user_data.user_info.first_name or user_data.user_info.username }}</h2>
+                            <small class="text-muted">User ID: #{{ user_data.user_info.id }} | {{ user_data.user_info.email }}</small>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button onclick="printData()" class="btn btn-outline-primary">
+                            <i class="fas fa-print me-2"></i>Print
+                        </button>
+                        <button onclick="downloadJSON()" class="btn btn-primary">
+                            <i class="fas fa-download me-2"></i>Export
+                        </button>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="userDataTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                    <i class="fas fa-chart-line me-2"></i>Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab">
+                    <i class="fas fa-user me-2"></i>Account Details
+                </button>
+            </li>
+            {% if user_data.phase1_assessments %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="phase1-tab" data-bs-toggle="tab" data-bs-target="#phase1" type="button" role="tab">
+                    <i class="fas fa-graduation-cap me-2"></i>Phase 1 <span class="badge bg-primary ms-1">{{ user_data.phase1_assessments|length }}</span>
+                </button>
+            </li>
+            {% endif %}
+            {% if user_data.phase2_responses %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="phase2-tab" data-bs-toggle="tab" data-bs-target="#phase2" type="button" role="tab">
+                    <i class="fas fa-users me-2"></i>Phase 2 <span class="badge bg-success ms-1">{{ user_data.phase2_responses|length }}</span>
+                </button>
+            </li>
+            {% endif %}
+            {% if user_data.remedial_activities %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="remedial-tab" data-bs-toggle="tab" data-bs-target="#remedial" type="button" role="tab">
+                    <i class="fas fa-tools me-2"></i>Practice <span class="badge bg-warning ms-1">{{ user_data.remedial_activities|length }}</span>
+                </button>
+            </li>
+            {% endif %}
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="userDataTabContent">
+            
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                <h3><i class="fas fa-chart-line me-2"></i>User Overview</h3>
+                
+                <!-- Summary Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="data-item text-center">
+                            <div class="data-item-value">{{ user_data.phase1_assessments|length }}</div>
+                            <div class="data-item-label">Phase 1 Assessments</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="data-item text-center">
+                            <div class="data-item-value">{{ user_data.phase2_responses|length }}</div>
+                            <div class="data-item-label">Phase 2 Responses</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="data-item text-center">
+                            <div class="data-item-value">{{ user_data.remedial_activities|length }}</div>
+                            <div class="data-item-label">Practice Activities</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="data-item text-center">
+                            {% if user_data.phase1_assessments %}
+                            <div class="data-item-value">
+                                <span class="level-badge {{ user_data.phase1_assessments[0].overall_level.lower() if user_data.phase1_assessments[0].overall_level else 'a1' }}">
+                                    {{ user_data.phase1_assessments[0].overall_level or 'N/A' }}
+                                </span>
+                            </div>
+                            <div class="data-item-label">Best Level</div>
+                            {% else %}
+                            <div class="data-item-value">N/A</div>
+                            <div class="data-item-label">Best Level</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if user_data.phase1_assessments %}
+                {% set assessment = user_data.phase1_assessments[0] %}
+                <div class="data-section">
+                    <div class="data-section-header">
+                        <h3><i class="fas fa-chart-bar me-2"></i>Learning Progress Summary</h3>
+                    </div>
+                    <div class="data-section-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="data-item">
+                                    <div class="data-item-label">Total XP Earned</div>
+                                    <div class="data-item-value">{{ assessment.xp_earned or 0 }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item">
+                                    <div class="data-item-label">Time Spent</div>
+                                    <div class="data-item-value">{{ (assessment.time_taken // 60) if assessment.time_taken else 0 }} minutes</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item">
+                                    <div class="data-item-label">AI Usage</div>
+                                    <div class="data-item-value">{{ assessment.ai_usage_percentage or 0 }}%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item">
+                                    <div class="data-item-label">Responses</div>
+                                    <div class="data-item-value">{{ assessment.responses|length if assessment.responses else 0 }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if assessment.skill_levels %}
+                        <div class="mt-4">
+                            <h5>Skill Level Breakdown</h5>
+                            <div class="row">
+                                {% for skill, level in assessment.skill_levels.items() %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
+                                        <span class="fw-medium">{{ skill.replace('_', ' ').title() }}:</span>
+                                        <span class="level-badge {{ level.lower() if level else 'a1' }}">{{ level or 'N/A' }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if assessment.achievements %}
+                        <div class="mt-4">
+                            <h5>Achievements</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for achievement in assessment.achievements %}
+                                <span class="badge bg-success fs-6">{{ achievement }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Account Details Tab -->
+            <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account-tab">
+                <h3><i class="fas fa-user me-2"></i>Account Details</h3>
+                
+                <div class="data-section">
+                    <div class="data-section-header">
+                        <h3>Basic Information</h3>
+                    </div>
+                    <div class="data-section-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Full Name</div>
+                                    <div class="data-item-value">{{ user_data.user_info.first_name or user_data.user_info.username }} {{ user_data.user_info.last_name or '' }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Username</div>
+                                    <div class="data-item-value">{{ user_data.user_info.username }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Email</div>
+                                    <div class="data-item-value">{{ user_data.user_info.email }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Role</div>
+                                    <div class="data-item-value">
+                                        <span class="badge bg-{{ 'warning' if user_data.user_info.role == 'admin' else 'secondary' }}">
+                                            {{ user_data.user_info.role or 'user' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Account Status</div>
+                                    <div class="data-item-value">
+                                        <span class="badge bg-{{ 'success' if user_data.user_info.is_active else 'danger' }}">
+                                            {{ 'Active' if user_data.user_info.is_active else 'Inactive' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Email Verified</div>
+                                    <div class="data-item-value">
+                                        <span class="badge bg-{{ 'success' if user_data.user_info.email_verified else 'warning' }}">
+                                            {{ 'Yes' if user_data.user_info.email_verified else 'No' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Account Created</div>
+                                    <div class="data-item-value">{{ user_data.user_info.created_at.split('T')[0] if 'T' in user_data.user_info.created_at else user_data.user_info.created_at }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="data-item">
+                                    <div class="data-item-label">Last Login</div>
+                                    <div class="data-item-value">{{ user_data.user_info.last_login.split('T')[0] if user_data.user_info.last_login and 'T' in user_data.user_info.last_login else user_data.user_info.last_login or 'Never' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 1 Tab -->
+            {% if user_data.phase1_assessments %}
+            <div class="tab-pane fade" id="phase1" role="tabpanel" aria-labelledby="phase1-tab">
+                <h3><i class="fas fa-graduation-cap me-2"></i>Phase 1: Language Assessment</h3>
+                
+                {% set assessment = user_data.phase1_assessments[0] %}
+                
+                <!-- Assessment Summary -->
+                <div class="data-section">
+                    <div class="data-section-header">
+                        <h3>Assessment Summary</h3>
+                    </div>
+                    <div class="data-section-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    <div class="data-item-value">
+                                        <span class="level-badge {{ assessment.overall_level.lower() if assessment.overall_level else 'a1' }}">
+                                            {{ assessment.overall_level or 'N/A' }}
+                                        </span>
+                                    </div>
+                                    <div class="data-item-label">Overall Level</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    <div class="data-item-value">{{ assessment.xp_earned or 0 }}</div>
+                                    <div class="data-item-label">XP Earned</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    <div class="data-item-value">{{ (assessment.time_taken // 60) if assessment.time_taken else 0 }}</div>
+                                    <div class="data-item-label">Minutes</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    <div class="data-item-value">{{ assessment.ai_usage_percentage or 0 }}%</div>
+                                    <div class="data-item-label">AI Usage</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Responses -->
+                {% if assessment.responses %}
+                <div class="data-section">
+                    <div class="data-section-header">
+                        <h3>Question & Response Details</h3>
+                    </div>
+                    <div class="data-section-body">
+                        <div class="accordion" id="responsesAccordion">
+                            {% for response in assessment.responses %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ loop.index }}">
+                                    <button class="accordion-button {{ 'collapsed' if loop.index > 1 else '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}">
+                                        <div class="d-flex justify-content-between w-100 me-3">
+                                            <span><strong>Step {{ response.step }}:</strong> {{ response.type.replace('_', ' ').title() if response.type else 'Unknown' }}</span>
+                                            <div class="d-flex gap-2">
+                                                {% if assessment.assessments and assessment.assessments[loop.index0] %}
+                                                <span class="level-badge {{ assessment.assessments[loop.index0].level.lower() if assessment.assessments[loop.index0].level else 'a1' }}">
+                                                    {{ assessment.assessments[loop.index0].level or 'N/A' }}
+                                                </span>
+                                                {% endif %}
+                                                <span class="ai-badge {{ 'ai' if response.ai_generated else 'human' }}">
+                                                    {{ 'AI' if response.ai_generated else 'Human' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {{ 'show' if loop.index == 1 else '' }}" data-bs-parent="#responsesAccordion">
+                                    <div class="accordion-body">
+                                        <div class="question-box">
+                                            <strong>Question:</strong> {{ response.question or 'N/A' }}
+                                        </div>
+                                        <div class="response-box">
+                                            <strong>Student Response:</strong> {{ response.response or 'N/A' }}
+                                        </div>
+                                        
+                                        {% if assessment.assessments and assessment.assessments[loop.index0] %}
+                                        {% set resp_assessment = assessment.assessments[loop.index0] %}
+                                        <div class="assessment-box">
+                                            <strong>Assessment Feedback:</strong>
+                                            <br>{{ resp_assessment.justification if resp_assessment.justification else 'No detailed feedback available' }}
+                                            
+                                            {% if resp_assessment.specific_strengths %}
+                                            <br><br><strong>Strengths:</strong>
+                                            <ul class="mb-2">
+                                                {% for strength in resp_assessment.specific_strengths %}
+                                                <li>{{ strength }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                            
+                                            {% if resp_assessment.specific_areas_for_improvement %}
+                                            <br><strong>Areas for Improvement:</strong>
+                                            <ul class="mb-2">
+                                                {% for area in resp_assessment.specific_areas_for_improvement %}
+                                                <li>{{ area }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                            
+                                            {% if resp_assessment.grammar_score %}
+                                            <div class="row mt-3">
+                                                <div class="col-md-3">
+                                                    <small class="text-muted">Grammar:</small> <strong>{{ resp_assessment.grammar_score }}/10</strong>
+                                                </div>
+                                                {% if resp_assessment.vocabulary_score %}
+                                                <div class="col-md-3">
+                                                    <small class="text-muted">Vocabulary:</small> <strong>{{ resp_assessment.vocabulary_score }}/10</strong>
+                                                </div>
+                                                {% endif %}
+                                                {% if resp_assessment.coherence_score %}
+                                                <div class="col-md-3">
+                                                    <small class="text-muted">Coherence:</small> <strong>{{ resp_assessment.coherence_score }}/10</strong>
+                                                </div>
+                                                {% endif %}
+                                                {% if resp_assessment.content_score %}
+                                                <div class="col-md-3">
+                                                    <small class="text-muted">Content:</small> <strong>{{ resp_assessment.content_score }}/10</strong>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="timestamp">Submitted: {{ response.timestamp }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Phase 2 Tab -->
+            {% if user_data.phase2_responses %}
+            <div class="tab-pane fade" id="phase2" role="tabpanel" aria-labelledby="phase2-tab">
+                <h3><i class="fas fa-users me-2"></i>Phase 2: Cultural Event Planning</h3>
+                
+                <!-- Project Overview -->
+                <div class="data-section">
+                    <div class="data-section-header">
+                        <h3><i class="fas fa-chart-pie me-2"></i>Cultural Event Planning Progress</h3>
+                    </div>
+                    <div class="data-section-body">
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    <div class="data-item-value">{{ user_data.phase2_responses|length }}</div>
+                                    <div class="data-item-label">Action Items Completed</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    <div class="data-item-value">{{ user_data.phase2_responses | sum(attribute='points_earned') or 0 }}</div>
+                                    <div class="data-item-label">Total Points Earned</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    <div class="data-item-value">{{ ((user_data.phase2_responses | selectattr('ai_detected') | list | length) / user_data.phase2_responses|length * 100) | round if user_data.phase2_responses|length > 0 else 0 }}%</div>
+                                    <div class="data-item-label">AI Usage Rate</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="data-item text-center">
+                                    {% set steps_completed = user_data.phase2_responses | map(attribute='step_id') | unique | list | length %}
+                                    <div class="data-item-value">{{ steps_completed }}/3</div>
+                                    <div class="data-item-label">Planning Steps</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Progress -->
+                {% set step_info = {
+                    'step_1': {'title': 'Assigning Roles', 'description': 'Work with the team to assign roles for the cultural event', 'icon': 'fas fa-users-cog', 'color': 'primary'},
+                    'step_2': {'title': 'Scheduling Meetings', 'description': 'Coordinate meeting times and agendas with the team', 'icon': 'fas fa-calendar-alt', 'color': 'success'},
+                    'step_3': {'title': 'Planning Tasks', 'description': 'Organize specific tasks and assign responsibilities', 'icon': 'fas fa-tasks', 'color': 'info'}
+                } %}
+                
+                {% set step_groups = user_data.phase2_responses | groupby('step_id') %}
+                {% for step_id, step_responses in step_groups %}
+                {% set step_info_current = step_info[step_id] if step_id in step_info else {'title': step_id, 'description': 'Cultural event planning activities', 'icon': 'fas fa-layer-group', 'color': 'secondary'} %}
+                
+                <div class="data-section">
+                    <div class="data-section-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="step-icon me-3">
+                                    <i class="{{ step_info_current.icon }} fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h3 class="mb-1">{{ step_info_current.title }}</h3>
+                                    <p class="mb-0 opacity-75">{{ step_info_current.description }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-{{ step_info_current.color }}">{{ step_responses | list | length }} Action Items</span>
+                                <span class="badge bg-warning">{{ step_responses | list | sum(attribute='points_earned') or 0 }} Points</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-section-body">
+                        
+                        <!-- Action Items for this step -->
+                        {% set action_item_map = {
+                            'storytelling_intro': 'Sharing Phase 1 Inspiration',
+                            'role_suggestion': 'Suggesting Team Roles',
+                            'peer_negotiation': 'Negotiating Role Assignments',
+                            'role_confirmation': 'Confirming Final Roles',
+                            'team_reflection': 'Reflecting on Role Impact',
+                            'meeting_proposal': 'Proposing Meeting Times',
+                            'purpose_explanation': 'Explaining Meeting Purpose',
+                            'schedule_negotiation': 'Negotiating Schedule',
+                            'agenda_setting': 'Setting Meeting Agenda',
+                            'meeting_confirmation': 'Confirming Meeting Details',
+                            'task_proposal': 'Proposing Initial Tasks',
+                            'task_detail': 'Detailing Task Requirements',
+                            'resource_planning': 'Planning Resource Needs',
+                            'timeline_setting': 'Setting Task Timeline',
+                            'task_confirmation': 'Confirming Task Assignments'
+                        } %}
+                        
+                        {% for response in step_responses %}
+                        <div class="card mb-3 border-start border-5 border-{{ step_info_current.color }}">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-bold text-{{ step_info_current.color }}">
+                                            <i class="fas fa-comment-dots me-2"></i>
+                                            {{ action_item_map[response.action_item_id] if response.action_item_id in action_item_map else response.action_item_id }}
+                                        </h6>
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>{{ response.submitted_at }}
+                                            <span class="ms-3"><i class="fas fa-tag me-1"></i>{{ response.action_item_id }}</span>
+                                        </small>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-2 ms-3">
+                                        <span class="level-badge {{ response.cefr_level.lower() if response.cefr_level else 'a1' }}">
+                                            {{ response.cefr_level or 'N/A' }}
+                                        </span>
+                                        <span class="badge bg-success">
+                                            {{ response.points_earned or 1 }} pts
+                                        </span>
+                                        <span class="ai-badge {{ 'ai' if response.ai_detected else 'human' }}">
+                                            {{ 'AI Generated' if response.ai_detected else 'Human Written' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Question/Prompt Context -->
+                                <div class="question-box mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-question-circle text-info me-2"></i>
+                                        <strong>Action Item Prompt</strong>
+                                    </div>
+                                    <div class="prompt-text">
+                                        Based on the cultural event planning scenario for {{ step_info_current.title.lower() }}
+                                    </div>
+                                </div>
+                                
+                                <!-- Student Response -->
+                                <div class="response-box mb-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-user-edit text-success me-2"></i>
+                                        <strong>Student Response</strong>
+                                        {% if response.word_count %}
+                                        <span class="badge bg-secondary ms-2">{{ response.word_count }} words</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="response-text">
+                                        {{ response.response_text if response.response_text else 'No response provided' }}
+                                    </div>
+                                </div>
+                                
+                                <!-- AI Assessment & Feedback -->
+                                {% if response.feedback %}
+                                <div class="assessment-box">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-brain text-warning me-2"></i>
+                                        <strong>AI Assessment & Feedback</strong>
+                                        {% if response.ai_confidence %}
+                                        <span class="badge bg-warning ms-2">{{ (response.ai_confidence * 100) | round }}% confidence</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="feedback-text">
+                                        {{ response.feedback }}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Performance Metrics Grid -->
+                                <div class="row mt-3 g-2">
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="small-data-item">
+                                            <i class="fas fa-graduation-cap text-primary me-2"></i>
+                                            <div>
+                                                <span class="text-muted small">CEFR Level</span>
+                                                <div class="fw-bold">{{ response.cefr_level or 'Not assessed' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="small-data-item">
+                                            <i class="fas fa-star text-warning me-2"></i>
+                                            <div>
+                                                <span class="text-muted small">Points Earned</span>
+                                                <div class="fw-bold">{{ response.points_earned or 1 }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="small-data-item">
+                                            <i class="fas fa-robot text-info me-2"></i>
+                                            <div>
+                                                <span class="text-muted small">AI Detection</span>
+                                                <div class="fw-bold">{{ 'Detected' if response.ai_detected else 'Not Detected' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="small-data-item">
+                                            <i class="fas fa-language text-success me-2"></i>
+                                            <div>
+                                                <span class="text-muted small">Language Focus</span>
+                                                <div class="fw-bold">Cultural Planning</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Cultural Event Context -->
+                                <div class="mt-3 p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-flag text-danger me-2"></i>
+                                        <strong class="text-muted">Cultural Event Context:</strong>
+                                        <span class="ms-2">Tunisian Cultural Event Planning with Team Collaboration</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Remedial Activities Tab -->
+            {% if user_data.remedial_activities %}
+            <div class="tab-pane fade" id="remedial" role="tabpanel" aria-labelledby="remedial-tab">
+                <h3><i class="fas fa-tools me-2"></i>Practice & Remedial Activities</h3>
+                
+                <div class="data-section">
+                    <div class="data-section-body">
+                        <div class="accordion" id="remedialAccordion">
+                            {% for activity in user_data.remedial_activities %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="remedialheading{{ loop.index }}">
+                                    <button class="accordion-button {{ 'collapsed' if loop.index > 1 else '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#remedialcollapse{{ loop.index }}">
+                                        <div class="d-flex justify-content-between w-100 me-3">
+                                            <span><strong>{{ activity.step_id }} - {{ activity.level }} Level Practice</strong></span>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge bg-{{ 'success' if activity.completed else 'warning' }}">
+                                                    {{ activity.score }}/{{ activity.max_score or 6 }}
+                                                </span>
+                                                <span class="badge bg-{{ 'success' if activity.completed else 'secondary' }}">
+                                                    {{ 'Passed' if activity.completed else 'Practice Needed' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="remedialcollapse{{ loop.index }}" class="accordion-collapse collapse {{ 'show' if loop.index == 1 else '' }}" data-bs-parent="#remedialAccordion">
+                                    <div class="accordion-body">
+                                        <div class="data-item mb-3">
+                                            <div class="data-item-label">Activity ID</div>
+                                            <div class="data-item-value">{{ activity.activity_id }}</div>
+                                        </div>
+                                        
+                                        {% if activity.questions_attempted %}
+                                        <div class="question-box">
+                                            <strong>Questions Attempted:</strong> {{ activity.questions_attempted | length }}
+                                            {% for question in activity.questions_attempted %}
+                                            <div class="mt-2 p-2 border-start border-3 border-primary ms-3">
+                                                <strong>Q{{ loop.index }}:</strong> {{ question.question or 'N/A' }}<br>
+                                                <strong>Answer:</strong> {{ question.answer or 'N/A' }}<br>
+                                                <span class="badge bg-{{ 'success' if question.correct else 'danger' }}">
+                                                    {{ 'Correct' if question.correct else 'Incorrect' }}
+                                                </span>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if activity.feedback %}
+                                        <div class="assessment-box">
+                                            <strong>Feedback:</strong><br>
+                                            {{ activity.feedback }}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <div class="row mt-3">
+                                            <div class="col-md-4">
+                                                <small class="text-muted">Submitted:</small> <strong>{{ activity.submitted_at }}</strong>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="text-muted">Attempts:</small> <strong>{{ activity.attempts or 1 }}</strong>
+                                            </div>
+                                            {% if activity.time_spent %}
+                                            <div class="col-md-4">
+                                                <small class="text-muted">Time Spent:</small> <strong>{{ activity.time_spent }} minutes</strong>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+<script>
+const userData = {{ user_data | tojson }};
+
+function printData() {
+    window.print();
+}
+
+function downloadJSON() {
+    const dataStr = JSON.stringify(userData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `user_${userData.user_info.username}_${userData.user_info.id}_detailed_data_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+</script>
+
+<style media="print">
+    .nav-tabs, .btn { display: none !important; }
+    .user-data-container { background: white !important; }
+    .data-section { page-break-inside: avoid; margin-bottom: 1rem !important; }
+    .response-card { page-break-inside: avoid; }
+</style>
+{% endblock %}

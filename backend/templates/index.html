@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to FARDI - Cultural Event Planning Committee{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-background">
+        <div class="hero-overlay"></div>
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+    </div>
+    
+    <div class="container hero-content">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Welcome to <span class="gradient-text">Tunisia</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Join the Cultural Event Planning Committee and discover your English language proficiency through an immersive, AI-powered assessment experience.
+                    </p>
+                    
+                    <div class="hero-features">
+                        <div class="hero-feature">
+                            <i class="fas fa-brain"></i>
+                            <span>AI-Powered Assessment</span>
+                        </div>
+                        <div class="hero-feature">
+                            <i class="fas fa-certificate"></i>
+                            <span>CEFR Certification</span>
+                        </div>
+                        <div class="hero-feature">
+                            <i class="fas fa-globe"></i>
+                            <span>Cultural Immersion</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#start-game" class="btn hero-cta-btn">
+                        <span>Begin Your Journey</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="hero-visual">
+                    <div class="tunisia-map-container">
+                        <div class="map-glow"></div>
+                        <i class="fas fa-map-marked-alt tunisia-icon"></i>
+                        <div class="cultural-icons">
+                            <div class="cultural-icon" style="--delay: 0s"><i class="fas fa-mosque"></i></div>
+                            <div class="cultural-icon" style="--delay: 0.5s"><i class="fas fa-utensils"></i></div>
+                            <div class="cultural-icon" style="--delay: 1s"><i class="fas fa-music"></i></div>
+                            <div class="cultural-icon" style="--delay: 1.5s"><i class="fas fa-palette"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-title">
+                    <span class="title-accent">About</span> The Experience
+                </h2>
+                <p class="section-subtitle">
+                    Step into the role of a committee member planning a major cultural event at a Tunisian university. 
+                    Your English language skills will be naturally assessed through engaging conversations and real-world scenarios.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4 mt-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-comments feature-icon"></i>
+                    </div>
+                    <h4>Interactive Dialogue</h4>
+                    <p>Engage in meaningful conversations with AI-powered committee members, each with unique personalities and backgrounds.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-chart-line feature-icon"></i>
+                    </div>
+                    <h4>Real-time Assessment</h4>
+                    <p>Advanced AI evaluates your vocabulary, grammar, comprehension, and fluency as you naturally communicate.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-award feature-icon"></i>
+                    </div>
+                    <h4>Gamified Learning</h4>
+                    <p>Earn XP points, unlock achievements, and track your progress through an engaging game-like experience.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <i class="fas fa-certificate feature-icon"></i>
+                    </div>
+                    <h4>Official Results</h4>
+                    <p>Receive a detailed CEFR assessment and downloadable certificate showcasing your English proficiency level.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Committee Members Section -->
+<section class="committee-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-title">
+                    Meet Your <span class="title-accent">Committee</span>
+                </h2>
+                <p class="section-subtitle">
+                    Get to know the diverse team of committee members you'll be working with throughout your cultural event planning journey.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4 mt-4">
+            {% for name, character in npcs.items() %}
+            <div class="col-md-6 col-lg-4">
+                <div class="committee-card">
+                    <div class="committee-header">
+                        <div class="committee-avatar">
+                            <span>{{ name[0] }}{{ name[1]|default("") }}</span>
+                        </div>
+                        <div class="committee-info">
+                            <h5 class="committee-name">{{ name }}</h5>
+                            <p class="committee-role">{{ character.role }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="committee-body">
+                        <p class="committee-description">{{ character.description }}</p>
+                        
+                        {% if character.background %}
+                        <div class="committee-background">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{{ character.background }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if character.personality %}
+                        <div class="committee-personality">
+                            <span class="personality-badge">{{ character.personality }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CEFR Levels Section -->
+<section class="cefr-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-title">
+                    <span class="title-accent">CEFR</span> Assessment Levels
+                </h2>
+                <p class="section-subtitle">
+                    Your language proficiency will be evaluated according to the Common European Framework of Reference for Languages (CEFR), 
+                    the international standard for describing language ability.
+                </p>
+            </div>
+        </div>
+        
+        <div class="cefr-container">
+            <div class="cefr-levels-grid">
+                <div class="cefr-level-card" data-level="a1">
+                    <div class="cefr-badge a1-badge">A1</div>
+                    <h4>Beginner</h4>
+                    <p>Can understand and use familiar everyday expressions and very basic phrases aimed at the satisfaction of needs of a concrete type.</p>
+                    <div class="cefr-skills">
+                        <span class="skill-tag">Basic phrases</span>
+                        <span class="skill-tag">Simple interactions</span>
+                    </div>
+                </div>
+                
+                <div class="cefr-level-card" data-level="a2">
+                    <div class="cefr-badge a2-badge">A2</div>
+                    <h4>Elementary</h4>
+                    <p>Can communicate in simple and routine tasks requiring a simple and direct exchange of information on familiar topics.</p>
+                    <div class="cefr-skills">
+                        <span class="skill-tag">Simple sentences</span>
+                        <span class="skill-tag">Routine tasks</span>
+                    </div>
+                </div>
+                
+                <div class="cefr-level-card" data-level="b1">
+                    <div class="cefr-badge b1-badge">B1</div>
+                    <h4>Intermediate</h4>
+                    <p>Can deal with most situations likely to arise while traveling in an area where the language is spoken.</p>
+                    <div class="cefr-skills">
+                        <span class="skill-tag">Connected text</span>
+                        <span class="skill-tag">Travel situations</span>
+                    </div>
+                </div>
+                
+                <div class="cefr-level-card" data-level="b2">
+                    <div class="cefr-badge b2-badge">B2</div>
+                    <h4>Upper Intermediate</h4>
+                    <p>Can interact with a degree of fluency and spontaneity that makes regular interaction with native speakers quite possible.</p>
+                    <div class="cefr-skills">
+                        <span class="skill-tag">Fluent interaction</span>
+                        <span class="skill-tag">Complex topics</span>
+                    </div>
+                </div>
+                
+                <div class="cefr-level-card" data-level="c1">
+                    <div class="cefr-badge c1-badge">C1</div>
+                    <h4>Advanced</h4>
+                    <p>Can express ideas fluently and spontaneously without much obvious searching for expressions.</p>
+                    <div class="cefr-skills">
+                        <span class="skill-tag">Fluent expression</span>
+                        <span class="skill-tag">Professional use</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Start Game Section -->
+<section id="start-game" class="start-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="start-card">
+                    <div class="start-header">
+                        <h2>Ready to Begin?</h2>
+                        <p>Join the Cultural Event Planning Committee and discover your English language level through an engaging, interactive experience.</p>
+                    </div>
+                    
+                    <div class="start-form-container">
+                        <form action="{{ url_for('start_game') }}" method="post" class="start-form" id="startForm">
+                            <div class="form-group">
+                                <label for="player_name" class="form-label">What's your name?</label>
+                                <input type="text" 
+                                       class="form-control name-input" 
+                                       id="player_name" 
+                                       name="player_name" 
+                                       placeholder="Enter your name" 
+                                       required
+                                       autocomplete="given-name">
+                                <div class="input-feedback">
+                                    <small class="text-muted">This will be used throughout your assessment journey</small>
+                                </div>
+                            </div>
+                            
+                            <div class="assessment-info">
+                                <h5><i class="fas fa-clock"></i> Assessment Details</h5>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">Duration:</span>
+                                        <span class="info-value">15-20 minutes</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Questions:</span>
+                                        <span class="info-value">9 interactive scenarios</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Skills Tested:</span>
+                                        <span class="info-value">Speaking, Listening, Writing</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Result:</span>
+                                        <span class="info-value">CEFR Level Certificate</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn start-button">
+                                <span class="btn-text">Begin Assessment</span>
+                                <i class="fas fa-rocket btn-icon"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Highlight -->
+<section class="features-highlight">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h3>Why Choose FARDI?</h3>
+                <div class="highlight-features">
+                    <div class="highlight-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <h5>AI Content Detection</h5>
+                            <p>Advanced algorithms ensure authentic responses and prevent cheating</p>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-feature">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <h5>Culturally Rich Experience</h5>
+                            <p>Learn about Tunisian culture while improving your English skills</p>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-feature">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>
+                            <h5>Mobile Friendly</h5>
+                            <p>Take your assessment on any device, anywhere, anytime</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Accuracy Rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50k+</div>
+                        <div class="stat-label">Assessments Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4.8/5</div>
+                        <div class="stat-label">User Satisfaction</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="newsletter-card">
+                    <h3>Stay Updated</h3>
+                    <p>Get notified about new features, assessment updates, and language learning tips.</p>
+                    
+                    <form class="newsletter-form" action="#" method="post">
+                        <div class="input-group">
+                            <input type="email" 
+                                   class="form-control newsletter-input" 
+                                   placeholder="Enter your email address" 
+                                   required>
+                            <button type="submit" class="btn newsletter-btn">
+                                <i class="fas fa-paper-plane"></i>
+                                Subscribe
+                            </button>
+                        </div>
+                        <small class="newsletter-disclaimer">
+                            We respect your privacy. Unsubscribe at any time.
+                        </small>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title text-center">
+                    Frequently Asked <span class="title-accent">Questions</span>
+                </h2>
+                
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                How accurate is the CEFR assessment?
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Our AI-powered assessment system achieves 95% accuracy compared to traditional CEFR testing methods. 
+                                The system evaluates multiple language skills including vocabulary, grammar, fluency, and comprehension 
+                                to provide a comprehensive assessment of your English proficiency.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                How long does the assessment take?
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                The complete assessment typically takes 15-20 minutes. It includes 9 interactive scenarios 
+                                that test different aspects of your English language skills through natural conversations 
+                                and real-world situations.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                Can I retake the assessment?
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, you can retake the assessment at any time. We recommend waiting at least 2-3 weeks 
+                                between assessments to allow time for language improvement. Each assessment provides detailed 
+                                feedback to help you focus your learning efforts.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                Is the certificate officially recognized?
+                            </button>
+                        </h2>
+                        <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Our CEFR-based certificates are widely accepted by educational institutions and employers 
+                                as a reliable indicator of English proficiency. The assessment follows international CEFR 
+                                standards and provides detailed skill breakdowns.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

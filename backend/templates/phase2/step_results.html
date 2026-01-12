@@ -1,0 +1,659 @@
+{% extends "base.html" %}
+
+{% block title %}{{ step.title }} - Results{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/results.css') }}" rel="stylesheet">
+<style>
+    .progress-container {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .step-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    
+    .step-progress::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+    
+    .step-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        border: 2px solid;
+    }
+    
+    .step-circle.completed {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+    }
+    
+    .step-circle.current {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+    }
+    
+    .step-circle.pending {
+        background: white;
+        border-color: #d1d5db;
+        color: #6b7280;
+    }
+    
+    .step-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-align: center;
+        max-width: 80px;
+        line-height: 1.2;
+    }
+    
+    .next-action-card {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: center;
+    }
+    
+    .remedial-action-card {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: center;
+    }
+    
+    .action-button {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .action-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center my-4">
+        <div class="col-lg-10">
+            
+            <!-- Progress Overview -->
+            <div class="progress-container">
+                <h3 class="text-center mb-4">Your Phase 2 Progress</h3>
+                <div class="step-progress">
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'step_1' %}current{% else %}completed{% endif %}">
+                            {% if step_id != 'step_1' %}✓{% else %}1{% endif %}
+                        </div>
+                        <div class="step-label">Assigning Roles</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'step_2' %}current{% elif step_id in ['step_3', 'final_writing'] %}completed{% else %}pending{% endif %}">
+                            {% if step_id in ['step_3', 'final_writing'] %}✓{% else %}2{% endif %}
+                        </div>
+                        <div class="step-label">Scheduling Meetings</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'step_3' %}current{% elif step_id == 'final_writing' %}completed{% else %}pending{% endif %}">
+                            {% if step_id == 'final_writing' %}✓{% else %}3{% endif %}
+                        </div>
+                        <div class="step-label">Planning Tasks</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle {% if step_id == 'final_writing' %}current{% else %}pending{% endif %}">
+                            4
+                        </div>
+                        <div class="step-label">Final Action Plan</div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="text-gray-600 mb-0">
+                        {% if total_score >= success_threshold %}
+                            ✅ <strong>{{ step.title }}</strong> completed successfully!
+                        {% else %}
+                            📚 <strong>{{ step.title }}</strong> needs some practice first.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Results Header -->
+            {% if total_score >= success_threshold %}
+            <div class="next-action-card">
+                <h1>🎉 Excellent Work, {{ player_name }}!</h1>
+                <p class="mb-3">You've successfully completed <strong>{{ step.title }}</strong> with great collaboration skills.</p>
+                
+                {% if next_step %}
+                <p class="mb-0">Ready for the next challenge?</p>
+                <a href="{{ url_for('phase2_step', step_id=next_step) }}" class="action-button">
+                    Continue to {{ next_step_title }} →
+                </a>
+                {% else %}
+                <p class="mb-0">🏆 Congratulations! You've completed Phase 2!</p>
+                <a href="{{ url_for('dashboard') }}" class="action-button">
+                    View Your Achievement →
+                </a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="remedial-action-card">
+                <h1>💪 Keep Building Skills, {{ player_name }}!</h1>
+                <p class="mb-3">Let's practice <strong>{{ step.title }}</strong> with some targeted activities to strengthen your skills.</p>
+                <p class="mb-0">Don't worry - this extra practice will make you even stronger!</p>
+                <a href="{{ url_for('phase2_remedial', step_id=step_id, level=user_level) }}" class="action-button">
+                    Start Practice Activities →
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <!-- Main results column -->
+                <div class="col-lg-8">
+                    <!-- Performance results -->
+                    <div class="results-container mb-4">
+                        <div class="text-center mb-4">
+                            {% if total_score >= success_threshold %}
+                            <div class="level-badge success">
+                                <div class="level">✓</div>
+                                <div class="level-name">Complete</div>
+                            </div>
+                            <h3>Mission Accomplished!</h3>
+                            <p class="lead">Your teamwork and planning skills are impressive</p>
+                            {% else %}
+                            <div class="level-badge warning" style="background: white; border: 2px solid #e9ecef;">
+                                <div class="level" style="color: #6c757d;">→</div>
+                                <div class="level-name" style="color: #6c757d;">Practice</div>
+                            </div>
+                            <h3>Keep Building Skills</h3>
+                            <p class="lead">Practice activities will help you grow stronger</p>
+                            
+                            <div class="mt-3">
+                                <a href="{{ url_for('phase2_remedial', step_id=step_id, level=user_level) }}" class="btn btn-warning btn-lg">
+                                    <i class="fas fa-dumbbell me-2"></i> Start Practice Activities
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            <div class="xp-container my-3">
+                                <span class="xp-icon">⭐</span> {{ total_score }}/{{ success_threshold }} Points Earned
+                            </div>
+                        </div>
+
+                        <!-- Collaboration skills breakdown -->
+                        <h4 class="mb-3">Skills Demonstrated</h4>
+
+                        <div class="row mb-3">
+                            <div class="col-8 col-md-9">
+                                <div class="skill-label">Teamwork</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success"
+                                         role="progressbar"
+                                         style="width: {{ (total_score/success_threshold*100)|round }}%"
+                                         aria-valuenow="{{ (total_score/success_threshold*100)|round }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-3">
+                                <div class="skill-level">
+                                    {% if total_score >= success_threshold %}Excellent{% else %}Developing{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-8 col-md-9">
+                                <div class="skill-label">Communication</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info"
+                                         role="progressbar"
+                                         style="width: {{ (total_score/success_threshold*100)|round }}%"
+                                         aria-valuenow="{{ (total_score/success_threshold*100)|round }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-3">
+                                <div class="skill-level">
+                                    {% if total_score >= success_threshold %}Strong{% else %}Growing{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-8 col-md-9">
+                                <div class="skill-label">Cultural Awareness</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning"
+                                         role="progressbar"
+                                         style="width: {{ (total_score/success_threshold*100)|round }}%"
+                                         aria-valuenow="{{ (total_score/success_threshold*100)|round }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-3">
+                                <div class="skill-level">
+                                    {% if total_score >= success_threshold %}Aware{% else %}Learning{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-8 col-md-9">
+                                <div class="skill-label">Planning & Organization</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary"
+                                         role="progressbar"
+                                         style="width: {{ (total_score/success_threshold*100)|round }}%"
+                                         aria-valuenow="{{ (total_score/success_threshold*100)|round }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-3">
+                                <div class="skill-level">
+                                    {% if total_score >= success_threshold %}Organized{% else %}Developing{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2 Journey Progress -->
+                    <div class="results-container mb-4">
+                        <h4 class="mb-3">Your Phase 2 Journey</h4>
+                        <div class="text-center mb-3">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="{% if step_id == 'step_1' %}text-success{% else %}text-muted{% endif %}">
+                                        <i class="fas fa-user-friends fa-2x mb-2"></i>
+                                        <div class="small">Step 1: Assign Roles</div>
+                                        {% if step_id == 'step_1' %}<div class="badge bg-success mt-1">Current</div>{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="{% if step_id == 'step_2' %}text-info{% else %}text-muted{% endif %}">
+                                        <i class="fas fa-calendar fa-2x mb-2"></i>
+                                        <div class="small">Step 2: Schedule</div>
+                                        {% if step_id == 'step_2' %}<div class="badge bg-info mt-1">Current</div>{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="{% if step_id == 'step_3' %}text-warning{% else %}text-muted{% endif %}">
+                                        <i class="fas fa-tasks fa-2x mb-2"></i>
+                                        <div class="small">Step 3: Plan Tasks</div>
+                                        {% if step_id == 'step_3' %}<div class="badge bg-warning mt-1">Current</div>{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="{% if step_id == 'final_writing' %}text-danger{% else %}text-muted{% endif %}">
+                                        <i class="fas fa-file-alt fa-2x mb-2"></i>
+                                        <div class="small">Final: Action Plan</div>
+                                        {% if step_id == 'final_writing' %}<div class="badge bg-danger mt-1">Current</div>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements section -->
+                    <div class="results-container mb-4">
+                        <h3 class="mb-4">Phase 2 Achievements</h3>
+
+                        <div class="row row-cols-1 row-cols-md-3 g-4">
+                            <div class="col">
+                                <div class="card h-100 achievement-card {% if total_score >= success_threshold %}{% else %}achievement-locked{% endif %}">
+                                    <div class="card-body">
+                                        <div class="achievement-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <h5 class="achievement-title">Team Player</h5>
+                                        <p class="achievement-desc">Successfully collaborated on {{ step.title }}</p>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        {% if total_score >= success_threshold %}
+                                        <span class="badge bg-success">Unlocked!</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Locked</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <div class="card h-100 achievement-card achievement-locked">
+                                    <div class="card-body">
+                                        <div class="achievement-icon">
+                                            <i class="fas fa-trophy"></i>
+                                        </div>
+                                        <h5 class="achievement-title">Cultural Ambassador</h5>
+                                        <p class="achievement-desc">Complete all Phase 2 steps successfully</p>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        <span class="badge bg-secondary">Complete Phase 2</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <div class="card h-100 achievement-card achievement-locked">
+                                    <div class="card-body">
+                                        <div class="achievement-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <h5 class="achievement-title">Event Planner</h5>
+                                        <p class="achievement-desc">Master the art of cultural event planning</p>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        <span class="badge bg-secondary">Final Step</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Next Phase Section (only if successful) -->
+                    {% if total_score >= success_threshold and next_step %}
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <div class="card border-success shadow">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-arrow-right"></i> Ready for the Next Step?
+                                    </h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">{{ next_step_title }}</h6>
+                                    <p class="card-text">
+                                        Excellent work on {{ step.title }}! You're ready to move forward in your cultural event planning journey.
+                                    </p>
+                                    <a href="{{ url_for('phase2_step', step_id=next_step) }}" class="btn btn-success btn-lg">
+                                        <i class="fas fa-play"></i> Continue to {{ next_step_title }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Cultural Elements Guide -->
+                    <div class="results-container mb-4">
+                        <h3 class="mb-4">Cultural Elements Explored</h3>
+
+                        <div class="row row-cols-1 row-cols-md-2 g-4">
+                            <div class="col">
+                                <div class="card level-card h-100">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-music me-2"></i>Malouf Music</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Traditional Tunisian musical heritage integrated into event planning</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <div class="card level-card h-100">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-palette me-2"></i>Decorative Patterns</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Authentic Tunisian visual elements and cultural aesthetics</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <div class="card level-card h-100">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-utensils me-2"></i>Traditional Cuisine</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Culinary traditions and food culture in event planning</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <div class="card level-card h-100">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-handshake me-2"></i>Community Spirit</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Collaborative approaches to cultural celebration</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Team Feedback -->
+                    <div class="results-container mb-4">
+                        <h4 class="mb-3">Team Feedback</h4>
+                        <div class="text-center mb-3">
+                            <div class="avatar-container mx-auto">
+                                <div class="avatar-fallback">MB</div>
+                            </div>
+                        </div>
+                        <div class="dialogue-bubble">
+                            {% if total_score >= success_threshold %}
+                            <p>
+                                "Wonderful work on {{ step.title }}, {{ player_name }}! Your collaboration and planning skills are really developing well. I'm excited to see how you handle the next phase of our cultural event planning."
+                            </p>
+                            {% else %}
+                            <p>
+                                "{{ player_name }}, you're making good progress with {{ step.title }}. Let's work together on some practice activities to strengthen your skills before moving forward. Remember, every expert was once a beginner!"
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Performance Badge -->
+                    <div class="results-container mb-4">
+                        <h4 class="mb-3">Step Badge</h4>
+                        <div class="text-center">
+                            <div class="mb-3">
+                                {% if total_score >= success_threshold %}
+                                <i class="fas fa-trophy" style="font-size: 4rem; color: #28a745;"></i>
+                                {% else %}
+                                <i class="fas fa-dumbbell" style="font-size: 4rem; color: #ffc107;"></i>
+                                {% endif %}
+                            </div>
+                            {% if total_score >= success_threshold %}
+                            <h5>Step Champion</h5>
+                            <p class="text-muted">Successfully completed {{ step.title }}</p>
+                            {% else %}
+                            <h5>Skill Builder</h5>
+                            <p class="text-muted">Developing collaboration abilities</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Progress Summary -->
+                    <div class="results-container mb-4">
+                        <h4 class="mb-3">Progress Summary</h4>
+                        <div class="text-center">
+                            <div class="progress mb-3" style="height: 20px;">
+                                <div class="progress-bar {% if total_score >= success_threshold %}bg-success{% else %}bg-warning{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {{ (total_score/success_threshold*100)|round }}%" 
+                                     aria-valuenow="{{ (total_score/success_threshold*100)|round }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ total_score }}/{{ success_threshold }}
+                                </div>
+                            </div>
+                            <p class="text-muted">Points earned in {{ step.title }}</p>
+                        </div>
+                        
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-users text-primary"></i> Teamwork Skills</li>
+                            <li><i class="fas fa-palette text-info"></i> Cultural Awareness</li>
+                            <li><i class="fas fa-comments text-success"></i> Communication</li>
+                        </ul>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="results-container">
+                        <h4 class="mb-3">Next Steps</h4>
+                        <div class="text-center mb-3">
+                            {% if total_score >= success_threshold %}
+                            <a href="{{ url_for('phase2_step', step_id=next_step) }}" class="btn btn-lg certificate-btn">
+                                <i class="fas fa-arrow-right me-2"></i> Continue to {{ next_step_title }}
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('phase2_step', step_id=step_id) }}" class="btn btn-outline-primary">
+                                <i class="fas fa-redo me-2"></i> Retry {{ step.title }}
+                            </a>
+                            
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i> Return to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function () {
+    // Animate skill bars on load
+    $(".progress-bar").each(function () {
+        const bar = $(this);
+        const width = bar.css("width");
+        bar.css("width", "0%").animate({ width: width }, 1500);
+    });
+
+    // Success confetti animation
+    {% if total_score >= success_threshold %}
+    const createConfetti = () => {
+        const canvas = document.createElement("canvas");
+        canvas.style.position = "fixed";
+        canvas.style.top = "0";
+        canvas.style.left = "0";
+        canvas.style.pointerEvents = "none";
+        canvas.style.zIndex = "1000";
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext("2d");
+        const pieces = [];
+        const numberOfPieces = 100;
+        const colors = ["#28a745", "#20c997", "#007bff", "#ffc107", "#dc3545"];
+
+        for (let i = 0; i < numberOfPieces; i++) {
+            pieces.push({
+                x: Math.random() * canvas.width,
+                y: -20,
+                rotation: Math.random() * 360,
+                size: Math.random() * 15 + 5,
+                speed: Math.random() * 2 + 1,
+                color: colors[Math.floor(Math.random() * colors.length)],
+            });
+        }
+
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            pieces.forEach((piece) => {
+                piece.y += piece.speed;
+                piece.rotation += 2;
+
+                ctx.save();
+                ctx.translate(piece.x, piece.y);
+                ctx.rotate((piece.rotation * Math.PI) / 180);
+                ctx.fillStyle = piece.color;
+                ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
+                ctx.restore();
+
+                if (piece.y > canvas.height) {
+                    piece.y = -20;
+                    piece.x = Math.random() * canvas.width;
+                }
+            });
+
+            requestAnimationFrame(animate);
+        };
+
+        animate();
+
+        setTimeout(() => {
+            canvas.remove();
+        }, 5000);
+    };
+
+    // Trigger confetti for success
+    setTimeout(createConfetti, 500);
+    {% endif %}
+    
+    // Animate achievement cards
+    $('.achievement-card').each(function(index) {
+        setTimeout(() => {
+            $(this).addClass('animate__animated animate__fadeInUp');
+        }, index * 200);
+    });
+});
+</script>
+{% endblock %}

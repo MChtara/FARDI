@@ -1,0 +1,24 @@
+/**
+ * PowerUpShop Styles
+ */
+
+.powerup-shop {
+    padding: var(--space-4);
+}
+
+.powerup-card {
+    height: 100%;
+    transition: var(--transition-all-base);
+    border: 2px solid transparent;
+}
+
+.powerup-card:hover:not(.disabled) {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
+}
+
+.powerup-card.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python app.py)",
+      "Bash(timeout:*)",
+      "Bash(npm run build)",
+      "Bash(python:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(curl:*)",
+      "Bash(node test_letters.js)",
+      "Bash(node test_grid_generation.js)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

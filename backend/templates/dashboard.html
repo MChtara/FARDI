@@ -1,0 +1,554 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FARDI{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+<style>
+    .phase-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        border: none;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    
+    .phase-card.phase-2 {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .phase-card.completed {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .continue-btn {
+        background: rgba(255,255,255,0.2);
+        border: 2px solid rgba(255,255,255,0.3);
+        color: white;
+        backdrop-filter: blur(10px);
+    }
+    
+    .continue-btn:hover {
+        background: rgba(255,255,255,0.3);
+        color: white;
+    }
+    
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .progress-ring circle {
+        fill: none;
+        stroke-width: 8;
+    }
+    
+    .progress-ring .bg {
+        stroke: rgba(255,255,255,0.2);
+    }
+    
+    .progress-ring .progress {
+        stroke: white;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.5s ease;
+    }
+    
+    .remedial-indicator {
+        background: #ff6b6b;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .step-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.5rem 0;
+    }
+    
+    .step-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+    }
+    
+    .step-dot.completed {
+        background: #4ade80;
+    }
+    
+    .step-dot.current {
+        background: #fbbf24;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-content">
+                    <h1>Welcome back, {{ session.first_name or session.username }}!</h1>
+                    <p>Continue your language learning journey with FARDI</p>
+                </div>
+            </div>
+            
+            <!-- Phase Progress Cards -->
+            <div class="row mb-4">
+                <!-- Phase 1 Card -->
+                <div class="col-md-6">
+                    <div class="phase-card {% if user_stats.phase_completion and user_stats.phase_completion[0].completed %}completed{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h3 class="mb-1">Phase 1</h3>
+                                <p class="mb-0 opacity-75">Initial Language Assessment</p>
+                            </div>
+                            <div class="progress-ring">
+                                <svg width="80" height="80">
+                                    <circle class="bg" cx="40" cy="40" r="36"></circle>
+                                    <circle class="progress" cx="40" cy="40" r="36" 
+                                            stroke-dasharray="226" 
+                                            stroke-dashoffset="{{ 226 - (user_stats.total_assessments > 0 and 226 or 0) }}"></circle>
+                                </svg>
+                                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                    <div class="fw-bold">{{ user_stats.total_assessments or 0 }}</div>
+                                    <div style="font-size: 0.7rem;">completed</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if user_stats.total_assessments > 0 %}
+                        <div class="mb-3">
+                            <div class="small opacity-75">Best Level: <strong>{{ user_stats.best_level or 'N/A' }}</strong></div>
+                            <div class="small opacity-75">Total XP: <strong>{{ user_stats.total_xp or 0 }}</strong></div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('start_game') }}" class="btn continue-btn flex-fill">
+                                <i class="fas fa-play me-2"></i>{{ 'Retake Assessment' if user_stats.total_assessments > 0 else 'Start Assessment' }}
+                            </a>
+                            {% if user_stats.total_assessments > 0 %}
+                            <a href="{{ url_for('results') }}" class="btn continue-btn">
+                                <i class="fas fa-chart-line"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Phase 2 Card -->
+                <div class="col-md-6">
+                    <div class="phase-card phase-2 {% if user_stats.phase_completion and user_stats.phase_completion|length > 1 and user_stats.phase_completion[1].completed %}completed{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h3 class="mb-1">Phase 2</h3>
+                                <p class="mb-0 opacity-75">Cultural Event Planning</p>
+                                {% if user_stats.current_progress and user_stats.current_progress.needs_remedial %}
+                                <span class="remedial-indicator mt-2">Practice Mode</span>
+                                {% endif %}
+                            </div>
+                            <div class="progress-ring">
+                                <svg width="80" height="80">
+                                    <circle class="bg" cx="40" cy="40" r="36"></circle>
+                                    <circle class="progress" cx="40" cy="40" r="36" 
+                                            stroke-dasharray="226" 
+                                            stroke-dashoffset="{{ 226 - (user_stats.phase2_completed_steps * 56.5) }}"></circle>
+                                </svg>
+                                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                    <div class="fw-bold">{{ user_stats.phase2_completed_steps or 0 }}/4</div>
+                                    <div style="font-size: 0.7rem;">steps</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step Indicators -->
+                        <div class="mb-3">
+                            {% for step_num in range(1, 5) %}
+                            <div class="step-indicator">
+                                <div class="step-dot {% if user_stats.phase2_completed_steps >= step_num %}completed{% elif user_stats.current_progress and user_stats.current_progress.step_id == 'step_' + step_num|string %}current{% endif %}"></div>
+                                <span class="small opacity-75">
+                                    Step {{ step_num }}: 
+                                    {% if step_num == 1 %}Assign Roles
+                                    {% elif step_num == 2 %}Schedule Events
+                                    {% elif step_num == 3 %}Plan Tasks
+                                    {% else %}Action Plan{% endif %}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if user_stats.current_progress %}
+                        <div class="mb-3">
+                            <div class="small opacity-75">Current: {{ user_stats.current_progress.step_id|replace('_', ' ')|title }} ({{ user_stats.current_progress.current_item + 1 }}/{{ user_stats.current_progress.total_items }})</div>
+                            {% if user_stats.current_progress.needs_remedial %}
+                            <div class="small opacity-75">Practice Level: {{ user_stats.current_progress.remedial_level }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2">
+                            {% if user_stats.total_assessments > 0 %}
+                                {% if user_stats.current_progress %}
+                                    {% if user_stats.current_progress.needs_remedial %}
+                                    <a href="{{ url_for('phase2_remedial', step_id=user_stats.current_progress.step_id, level=user_stats.current_progress.remedial_level) }}" class="btn continue-btn flex-fill">
+                                        <i class="fas fa-dumbbell me-2"></i>Continue Practice
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('phase2_step', step_id=user_stats.current_progress.step_id) }}" class="btn continue-btn flex-fill">
+                                        <i class="fas fa-play me-2"></i>Continue Step
+                                    </a>
+                                    {% endif %}
+                                {% else %}
+                                <a href="{{ url_for('phase2_intro') }}" class="btn continue-btn flex-fill">
+                                    <i class="fas fa-users me-2"></i>Start Phase 2
+                                </a>
+                                {% endif %}
+                            {% else %}
+                            <div class="btn continue-btn flex-fill disabled opacity-50">
+                                <i class="fas fa-lock me-2"></i>Complete Phase 1 First
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ user_stats.total_assessments or 0 }}</h3>
+                        <p>Assessments Completed</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ user_stats.best_level or 'N/A' }}</h3>
+                        <p>Best CEFR Level</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ user_stats.total_xp or 0 }}</h3>
+                        <p>Total XP Earned</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ "%.0f"|format(user_stats.avg_xp or 0) }}</h3>
+                        <p>Average XP</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="recent-assessments">
+                <div class="section-header">
+                    <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                    {% if recent_assessments or phase2_progress %}
+                    <a href="{{ url_for('auth.profile') }}" class="view-all-link">View All</a>
+                    {% endif %}
+                </div>
+                
+                <!-- Phase 2 Recent Activity -->
+                {% if phase2_progress and phase2_progress.responses %}
+                <div class="mb-4">
+                    <h5 class="text-muted mb-3">Phase 2 - Cultural Event Planning</h5>
+                    {% for response in phase2_progress.responses[-3:] %}
+                    <div class="assessment-item">
+                        <div class="assessment-info">
+                            <div class="assessment-level">
+                                <span class="level-badge {{ response.cefr_level.lower() }}">
+                                    {{ response.cefr_level }}
+                                </span>
+                            </div>
+                            <div class="assessment-details">
+                                <h5>{{ response.step_id|replace('_', ' ')|title }} - Item {{ response.action_item_id[-1] }}</h5>
+                                <p class="assessment-date">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ response.submitted_at.split('T')[0] if 'T' in response.submitted_at else response.submitted_at }}
+                                </p>
+                                <div class="assessment-metrics">
+                                    <span class="metric">
+                                        <i class="fas fa-star"></i>
+                                        {{ response.points_earned }} points
+                                    </span>
+                                    {% if response.ai_detected %}
+                                    <span class="metric ai-usage">
+                                        <i class="fas fa-robot"></i>
+                                        AI detected
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="assessment-actions">
+                            <a href="{{ url_for('phase2_step', step_id=response.step_id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                                View Step
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Phase 1 Assessments -->
+                {% if recent_assessments %}
+                <div class="mb-4">
+                    <h5 class="text-muted mb-3">Phase 1 - Language Assessments</h5>
+                    {% for assessment in recent_assessments[-3:] %}
+                    <div class="assessment-item">
+                        <div class="assessment-info">
+                            <div class="assessment-level">
+                                <span class="level-badge {{ assessment.overall_level.lower() }}">
+                                    {{ assessment.overall_level }}
+                                </span>
+                            </div>
+                            <div class="assessment-details">
+                                <h5>CEFR Assessment</h5>
+                                <p class="assessment-date">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ assessment.completed_at.split('T')[0] if 'T' in assessment.completed_at else assessment.completed_at }}
+                                </p>
+                                <div class="assessment-metrics">
+                                    <span class="metric">
+                                        <i class="fas fa-star"></i>
+                                        {{ assessment.xp_earned }} XP
+                                    </span>
+                                    <span class="metric">
+                                        <i class="fas fa-clock"></i>
+                                        {{ "%.1f"|format(assessment.time_taken / 60) }} min
+                                    </span>
+                                    {% if assessment.ai_usage_percentage > 0 %}
+                                    <span class="metric ai-usage">
+                                        <i class="fas fa-robot"></i>
+                                        {{ "%.0f"|format(assessment.ai_usage_percentage) }}% AI
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="assessment-actions">
+                            <button class="btn btn-sm btn-outline-primary view-details-btn" 
+                                    data-assessment-id="{{ assessment.id }}">
+                                <i class="fas fa-eye"></i>
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if not recent_assessments and not (phase2_progress and phase2_progress.responses) %}
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h4>No activity yet</h4>
+                    <p>Start your language learning journey to see your progress here.</p>
+                    <a href="{{ url_for('start_game') }}" class="btn btn-primary">
+                        <i class="fas fa-play-circle"></i>
+                        Take Your First Assessment
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- User Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture }}" alt="Profile Picture">
+                        {% else %}
+                        <div class="avatar-placeholder">
+                            {{ (session.first_name or session.username)[0].upper() }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="profile-info">
+                        <h4>{{ session.first_name or session.username }}</h4>
+                        <p>{{ session.email }}</p>
+                        {% if user_stats.best_level %}
+                        <span class="current-level {{ user_stats.best_level.lower() }}">
+                            {{ user_stats.best_level }} Level
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Progress Chart -->
+            {% if recent_assessments %}
+            <div class="progress-card">
+                <h5><i class="fas fa-chart-area"></i> Progress Overview</h5>
+                <div class="progress-chart">
+                    <canvas id="progressChart" width="300" height="200"></canvas>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                <div class="action-buttons">
+                    {% if user_stats.current_progress %}
+                        {% if user_stats.current_progress.needs_remedial %}
+                        <a href="{{ url_for('phase2_remedial', step_id=user_stats.current_progress.step_id, level=user_stats.current_progress.remedial_level) }}" class="action-btn">
+                            <i class="fas fa-dumbbell"></i>
+                            <span>Continue Practice</span>
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('phase2_step', step_id=user_stats.current_progress.step_id) }}" class="action-btn">
+                            <i class="fas fa-play"></i>
+                            <span>Continue Phase 2</span>
+                        </a>
+                        {% endif %}
+                    {% elif user_stats.total_assessments > 0 %}
+                    <a href="{{ url_for('phase2_intro') }}" class="action-btn">
+                        <i class="fas fa-users"></i>
+                        <span>Start Phase 2</span>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('start_game') }}" class="action-btn">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Start Assessment</span>
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('auth.profile') }}" class="action-btn">
+                        <i class="fas fa-user"></i>
+                        <span>View Profile</span>
+                    </a>
+                    
+                    {% if user_stats.total_assessments > 0 %}
+                    <a href="{{ url_for('certificate') }}" class="action-btn">
+                        <i class="fas fa-certificate"></i>
+                        <span>Certificates</span>
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('auth.logout') }}" class="action-btn logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sign Out</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Learning Tips & Progress Summary -->
+            <div class="tips-card">
+                <h5><i class="fas fa-lightbulb"></i> Learning Progress</h5>
+                <div class="tip-content">
+                    {% if user_stats.current_progress %}
+                    <div class="alert alert-info mb-3">
+                        <strong>Current Activity:</strong><br>
+                        {{ user_stats.current_progress.step_id|replace('_', ' ')|title }}
+                        {% if user_stats.current_progress.needs_remedial %}
+                        <br><small>Practice activities at {{ user_stats.current_progress.remedial_level }} level</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <p><strong>Total Progress:</strong></p>
+                    <ul class="small mb-3">
+                        <li>Phase 1: {{ user_stats.total_assessments or 0 }} assessments{% if user_stats.best_level %} (best: {{ user_stats.best_level }}){% endif %}</li>
+                        <li>Phase 2: {{ user_stats.phase2_completed_steps or 0 }}/4 steps completed</li>
+                        {% if user_stats.total_xp %}<li>Total XP: {{ user_stats.total_xp }}</li>{% endif %}
+                    </ul>
+                    
+                    <p><strong>Tips:</strong></p>
+                    <p class="small mb-1"><strong>Be authentic:</strong> Always use your own responses for accurate results.</p>
+                    <p class="small mb-1"><strong>Practice mode:</strong> Complete practice activities when suggested to build confidence.</p>
+                    <p class="small mb-0"><strong>Cultural learning:</strong> Phase 2 teaches both language and Tunisian culture.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assessment Details Modal -->
+<div class="modal fade" id="assessmentModal" tabindex="-1" aria-labelledby="assessmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assessmentModalLabel">Assessment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="assessmentDetails">
+                    <!-- Assessment details will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dashboard
+    FARDI.Dashboard.init();
+    
+    {% if recent_assessments %}
+    // Initialize progress chart
+    const progressData = [
+        {% for assessment in recent_assessments %}
+        {
+            date: '{{ assessment.completed_at }}',
+            level: '{{ assessment.overall_level }}',
+            xp: {{ assessment.xp_earned }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    FARDI.Dashboard.initProgressChart(progressData);
+    {% endif %}
+});
+</script>
+{% endblock %}

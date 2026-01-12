@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - FARDI{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/auth.css') }}" rel="stylesheet">
+<style>
+.edit-profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.edit-profile-card {
+    background: var(--pure-white);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-light);
+}
+
+.edit-profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.edit-profile-header h1 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.edit-profile-header p {
+    color: var(--accent-blue);
+    font-size: 1.1rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    color: var(--primary-blue);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--tertiary-blue);
+}
+
+.form-group .form-control {
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+    padding: 0.875rem 1rem;
+    transition: all 0.3s ease;
+    background: var(--off-white);
+}
+
+.form-group .form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.25rem rgba(30, 58, 138, 0.15);
+    background: var(--pure-white);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.btn-save {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+    color: white;
+}
+
+.btn-save:hover {
+    background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--tertiary-blue) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(30, 58, 138, 0.4);
+    color: white;
+}
+
+.btn-cancel {
+    background: var(--pure-white);
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .edit-profile-container {
+        margin: 1rem auto;
+    }
+    
+    .edit-profile-card {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <div class="edit-profile-card">
+        <div class="edit-profile-header">
+            <h1>Edit Profile</h1>
+            <p>Update your personal information and preferences</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('auth.edit_profile') }}" id="editProfileForm">
+            <div class="form-section">
+                <h3><i class="fas fa-user"></i> Personal Information</h3>
+                
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="first_name" 
+                           name="first_name" 
+                           value="{{ user.first_name or '' }}"
+                           placeholder="Enter your first name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="last_name" 
+                           name="last_name" 
+                           value="{{ user.last_name or '' }}"
+                           placeholder="Enter your last name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="email" 
+                           value="{{ user.email }}"
+                           required
+                           placeholder="Enter your email address">
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3><i class="fas fa-cog"></i> Preferences</h3>
+                
+                <div class="form-group">
+                    <label for="preferred_language">Preferred Language</label>
+                    <select class="form-control" id="preferred_language" name="preferred_language">
+                        <option value="en" {{ 'selected' if (user.preferred_language or 'en') == 'en' }}>English</option>
+                        <option value="fr" {{ 'selected' if user.preferred_language == 'fr' }}>French</option>
+                        <option value="ar" {{ 'selected' if user.preferred_language == 'ar' }}>Arabic</option>
+                        <option value="es" {{ 'selected' if user.preferred_language == 'es' }}>Spanish</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="timezone">Timezone</label>
+                    <select class="form-control" id="timezone" name="timezone">
+                        <option value="UTC" {{ 'selected' if (user.timezone or 'UTC') == 'UTC' }}>UTC</option>
+                        <option value="Europe/London" {{ 'selected' if user.timezone == 'Europe/London' }}>London</option>
+                        <option value="Europe/Paris" {{ 'selected' if user.timezone == 'Europe/Paris' }}>Paris</option>
+                        <option value="Africa/Tunis" {{ 'selected' if user.timezone == 'Africa/Tunis' }}>Tunis</option>
+                        <option value="America/New_York" {{ 'selected' if user.timezone == 'America/New_York' }}>New York</option>
+                        <option value="America/Los_Angeles" {{ 'selected' if user.timezone == 'America/Los_Angeles' }}>Los Angeles</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('auth.profile') }}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editProfileForm');
+    const saveBtn = form.querySelector('.btn-save');
+    
+    form.addEventListener('submit', function(e) {
+        // Show loading state
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveBtn.disabled = true;
+        
+        // Let the form submit naturally, but provide visual feedback
+        setTimeout(() => {
+            if (saveBtn.disabled) {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
+        }, 5000); // Reset after 5 seconds if still loading
+    });
+    
+    // Add real-time validation
+    const emailInput = document.getElementById('email');
+    emailInput.addEventListener('blur', function() {
+        const email = this.value.trim();
+        if (email && !isValidEmail(email)) {
+            this.style.borderColor = '#ef4444';
+            showFieldError(this, 'Please enter a valid email address');
+        } else {
+            this.style.borderColor = '';
+            hideFieldError(this);
+        }
+    });
+    
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    function showFieldError(field, message) {
+        hideFieldError(field);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
+        errorDiv.textContent = message;
+        field.parentNode.appendChild(errorDiv);
+    }
+    
+    function hideFieldError(field) {
+        const existingError = field.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Account - FARDI{% endblock %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/auth.css') }}" rel="stylesheet">
+<style>
+.delete-account-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.delete-account-card {
+    background: var(--pure-white);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid #fecaca;
+}
+
+.delete-account-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #fecaca;
+}
+
+.delete-account-header h1 {
+    color: #dc2626;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.delete-account-header p {
+    color: #991b1b;
+    font-size: 1.1rem;
+}
+
+.danger-warning {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.warning-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.warning-header i {
+    color: #dc2626;
+    font-size: 1.5rem;
+}
+
+.warning-header h3 {
+    color: #dc2626;
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.warning-content {
+    color: #991b1b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.warning-content ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.warning-content li {
+    margin-bottom: 0.5rem;
+}
+
+.confirmation-section {
+    background: var(--off-white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.confirmation-section h4 {
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--tertiary-blue);
+}
+
+.form-group .form-control {
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+    padding: 0.875rem 1rem;
+    transition: all 0.3s ease;
+    background: var(--pure-white);
+}
+
+.form-group .form-control:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.15);
+}
+
+.confirmation-input {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #fecaca;
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+    color: white;
+}
+
+.btn-delete:hover {
+    background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);
+    color: white;
+}
+
+.btn-delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.2);
+}
+
+.btn-cancel {
+    background: var(--pure-white);
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .delete-account-container {
+        margin: 1rem auto;
+    }
+    
+    .delete-account-card {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-delete,
+    .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-account-container">
+    <div class="delete-account-card">
+        <div class="delete-account-header">
+            <h1>Delete Account</h1>
+            <p>This action cannot be undone</p>
+        </div>
+        
+        <div class="danger-warning">
+            <div class="warning-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Warning: This action is permanent</h3>
+            </div>
+            <div class="warning-content">
+                <p>Deleting your account will permanently remove:</p>
+                <ul>
+                    <li>All your assessment history and results</li>
+                    <li>Your profile information and preferences</li>
+                    <li>Any certificates you have earned</li>
+                    <li>Your progress and achievements</li>
+                </ul>
+                <p><strong>This action cannot be reversed.</strong> If you're unsure, consider just logging out instead.</p>
+            </div>
+        </div>
+        
+        <form method="POST" action="{{ url_for('auth.delete_account') }}" id="deleteAccountForm">
+            <div class="confirmation-section">
+                <h4>Confirmation Required</h4>
+                
+                <div class="form-group">
+                    <label for="password">Enter your password to confirm</label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="password" 
+                           name="password" 
+                           required
+                           placeholder="Enter your current password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmation">Type "DELETE" to confirm (case sensitive)</label>
+                    <input type="text" 
+                           class="form-control confirmation-input" 
+                           id="confirmation" 
+                           name="confirmation" 
+                           required
+                           placeholder="DELETE"
+                           autocomplete="off">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('auth.profile') }}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button type="submit" class="btn-delete" id="deleteBtn" disabled>
+                    <i class="fas fa-trash"></i> Delete My Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('deleteAccountForm');
+    const passwordInput = document.getElementById('password');
+    const confirmationInput = document.getElementById('confirmation');
+    const deleteBtn = document.getElementById('deleteBtn');
+    
+    // Enable delete button only when both fields are filled correctly
+    function checkForm() {
+        const password = passwordInput.value.trim();
+        const confirmation = confirmationInput.value.trim();
+        
+        if (password && confirmation === 'DELETE') {
+            deleteBtn.disabled = false;
+            deleteBtn.style.opacity = '1';
+        } else {
+            deleteBtn.disabled = true;
+            deleteBtn.style.opacity = '0.5';
+        }
+    }
+    
+    passwordInput.addEventListener('input', checkForm);
+    confirmationInput.addEventListener('input', checkForm);
+    
+    // Validate confirmation text
+    confirmationInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        if (value && value !== 'DELETE') {
+            this.style.borderColor = '#dc2626';
+            showFieldError(this, 'Please type "DELETE" exactly as shown');
+        } else if (value === 'DELETE') {
+            this.style.borderColor = '#10b981';
+            hideFieldError(this);
+        } else {
+            this.style.borderColor = '';
+            hideFieldError(this);
+        }
+        checkForm();
+    });
+    
+    form.addEventListener('submit', function(e) {
+        // Final confirmation
+        if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Show loading state
+        const originalText = deleteBtn.innerHTML;
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+        deleteBtn.disabled = true;
+        
+        // Reset button after 10 seconds if still loading
+        setTimeout(() => {
+            if (deleteBtn.disabled) {
+                deleteBtn.innerHTML = originalText;
+                checkForm();
+            }
+        }, 10000);
+    });
+    
+    function showFieldError(field, message) {
+        hideFieldError(field);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.style.cssText = 'color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;';
+        errorDiv.textContent = message;
+        field.parentNode.appendChild(errorDiv);
+    }
+    
+    function hideFieldError(field) {
+        const existingError = field.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+});
+</script>
+{% endblock %}
