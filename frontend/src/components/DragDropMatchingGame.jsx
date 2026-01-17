@@ -179,10 +179,7 @@ const DragDropMatchingGame = ({ pairs = [], duration = 300, onComplete }) => {
     return matches[id] !== undefined
   }
 
-  if (gameComplete) {
-    // Game is complete - parent component will handle display
-    return null
-  }
+  // Don't return null - keep showing the game with feedback colors
 
   return (
     <Box sx={{ width: '100%', maxWidth: 1200, mx: 'auto' }}>

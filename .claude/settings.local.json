@@ -13,7 +13,16 @@
       "Bash(findstr:*)",
       "Bash(curl:*)",
       "Bash(node test_letters.js)",
-      "Bash(node test_grid_generation.js)"
+      "Bash(node test_grid_generation.js)",
+      "Bash(for file in frontend/src/pages/Phase4Step2/RemedialC1/Task*.jsx)",
+      "Bash(done)",
+      "Bash(for:*)",
+      "Bash(do sed -i 's/phase4_step2/phase4_step3/g' \"$file\")",
+      "Bash(do sed -i 's/remedial_step2/remedial_step3/g' \"$file\")",
+      "Bash(node:*)",
+      "Bash(for file in frontend/src/pages/Phase4Step4/*.jsx)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(xargs ls:*)"
     ],
     "deny": [],
     "ask": []

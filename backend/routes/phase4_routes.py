@@ -7,6 +7,7 @@ from routes.auth_routes import login_required
 from models.phase4_loader import get_phase4_step
 from services.ai_service import AIService
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -669,9 +670,9 @@ Return ONLY valid JSON."""
             'feedback': 'Unable to evaluate answer. Please try again.'
         })
 
-@phase4_bp.route('/step2/remedial/a1/final-score', methods=['POST'])
+@phase4_bp.route('/step3/remedial/a1/final-score', methods=['POST'])
 @login_required
-def calculate_step2_a1_final_score():
+def calculate_step3_a1_final_score():
     """
     Calculate and log Phase 4 Step 2 Remedial A1 final score
     Pass threshold: >= 18/22 (~82%)
@@ -725,9 +726,9 @@ def calculate_step2_a1_final_score():
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/a2/final-score', methods=['POST'])
+@phase4_bp.route('/step3/remedial/a2/final-score', methods=['POST'])
 @login_required
-def calculate_step2_a2_final_score():
+def calculate_step3_a2_final_score():
     """
     Calculate and log Phase 4 Step 2 Remedial A2 final score
     Pass threshold: >= 18/22 (~82%)
@@ -1204,9 +1205,9 @@ Return ONLY valid JSON."""
             'feedback': 'Unable to evaluate answer. Please try again.'
         })
 
-@phase4_bp.route('/step2/remedial/b2/final-score', methods=['POST'])
+@phase4_bp.route('/step3/remedial/b2/final-score', methods=['POST'])
 @login_required
-def calculate_step2_b2_final_score():
+def calculate_step3_b2_final_score():
     """
     Calculate and log Phase 4 Step 2 Remedial B2 final score
     Pass threshold: >= 15/18 (~83%)
@@ -1256,9 +1257,9 @@ def calculate_step2_b2_final_score():
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/b1/final-score', methods=['POST'])
+@phase4_bp.route('/step3/remedial/b1/final-score', methods=['POST'])
 @login_required
-def calculate_step2_b1_final_score():
+def calculate_step3_b1_final_score():
     """
     Calculate and log Phase 4 Step 2 Remedial B1 final score
     Pass threshold: >= 22/27 (~81%)
@@ -1339,7 +1340,7 @@ def calculate_step2_b1_final_score():
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/b1/evaluate-definitions', methods=['POST'])
+@phase4_bp.route('/step3/remedial/b1/evaluate-definitions', methods=['POST'])
 @login_required
 def evaluate_b1_definitions():
     """
@@ -1510,7 +1511,7 @@ Evaluate and return ONLY valid JSON."""
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/b2/evaluate-explanations', methods=['POST'])
+@phase4_bp.route('/step3/remedial/b2/evaluate-explanations', methods=['POST'])
 @login_required
 def evaluate_b2_explanations():
     """
@@ -1917,7 +1918,7 @@ Return ONLY valid JSON."""
             'feedback': 'Unable to evaluate answer. Please try again.'
         })
 
-@phase4_bp.route('/step2/remedial/b2/evaluate-spell-explanation', methods=['POST'])
+@phase4_bp.route('/step3/remedial/b2/evaluate-spell-explanation', methods=['POST'])
 @login_required
 def evaluate_b2_spell_explanation():
     """
@@ -2065,7 +2066,7 @@ Return ONLY valid JSON."""
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/c1/evaluate-analyses', methods=['POST'])
+@phase4_bp.route('/step3/remedial/c1/evaluate-analyses', methods=['POST'])
 @login_required
 def evaluate_c1_analyses():
     """
@@ -2326,7 +2327,7 @@ Return ONLY valid JSON with results array. Each result must have "score" (0 or 1
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/c1/evaluate-justification', methods=['POST'])
+@phase4_bp.route('/step3/remedial/c1/evaluate-justification', methods=['POST'])
 @login_required
 def evaluate_c1_justification():
     """
@@ -2465,7 +2466,7 @@ Evaluate and return JSON with score and feedback."""
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/c1/evaluate-critique', methods=['POST'])
+@phase4_bp.route('/step3/remedial/c1/evaluate-critique', methods=['POST'])
 @login_required
 def evaluate_c1_critique():
     """
@@ -2603,7 +2604,7 @@ Evaluate for nuance (both sides), critical thinking, and use of relevant concept
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/c1/evaluate-critiques-batch', methods=['POST'])
+@phase4_bp.route('/step3/remedial/c1/evaluate-critiques-batch', methods=['POST'])
 @login_required
 def evaluate_c1_critiques_batch():
     """
@@ -2829,7 +2830,7 @@ Return ONLY valid JSON with results array. Each result must have "score" (0 or 1
             'error': str(e)
         }), 500
 
-@phase4_bp.route('/step2/remedial/c1/evaluate-clauses-batch', methods=['POST'])
+@phase4_bp.route('/step3/remedial/c1/evaluate-clauses-batch', methods=['POST'])
 def evaluate_c1_clauses_batch():
     """
     Evaluate C1 Task F - Clause Conquest sentences in batch
@@ -2857,17 +2858,18 @@ def evaluate_c1_clauses_batch():
 The student wrote relative clauses to complete 6 sentences. Each sentence tests a specific grammar structure.
 
 IMPORTANT EVALUATION CRITERIA:
-1. **Correct relative pronoun** - Must use "which", "that", "by which" etc. as specified in the concept
-2. **Grammatical structure** - The relative clause must be grammatically correct
-3. **Passive voice (when required)** - Check if passive construction is used correctly where needed
-4. **Sentence makes sense** - The complete sentence must be logical and coherent
-5. **Creative answers are ALLOWED** - Students don't need exact answers, just correct grammar
+1. **The clause MUST be present** - If blank is empty or contains only the infinitive verb, score 0
+2. **Correct relative pronoun** - Must use "which", "that", "by which" etc. as specified in the concept
+3. **Grammatical structure** - The relative clause must be grammatically correct
+4. **Passive voice (when required)** - Check if passive construction is used correctly where needed
+5. **Sentence makes sense** - The complete sentence must be logical and coherent
+6. **Creative answers are ALLOWED** - Students don't need exact answers, just correct grammar
 
 {sentences_text}
 
 SCORING GUIDELINES:
 - Score 1: Relative clause is grammatically correct with proper structure (even if wording differs from expected)
-- Score 0: Grammar errors, wrong relative pronoun, missing passive voice when required, or sentence doesn't make sense
+- Score 0: Empty/missing clause, contains only infinitive (like "to design"), grammar errors, wrong relative pronoun, missing passive voice when required, or sentence doesn't make sense
 
 For EACH sentence, provide:
 - Score: 1 or 0
@@ -2949,6 +2951,1167 @@ Feedback: [brief feedback on grammar correctness]"""
 
     except Exception as e:
         logger.error(f"Error evaluating C1 clauses batch: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ============================================================================
+# PHASE 4 STEP 4: APPLY - POSTER AND VIDEO DESCRIPTION
+# ============================================================================
+
+@phase4_bp.route('/step4/evaluate-poster-description', methods=['POST'])
+def evaluate_poster_description():
+    """
+    Evaluate poster description writing with AI
+
+    Scoring System (each correct element +1):
+    - A1 (1): Basic attempt with title or colors
+    - A2 (2): Basic template use with title/layout and colors/slogan
+    - B1 (3): Complete 4+ sentence description following template
+    - B2 (4): Detailed description with persuasive vocabulary
+    - C1 (5): Sophisticated essay-like description with advanced vocabulary
+
+    Expected Response Examples:
+    - A1: "My poster has title 'Festival'. It is big. Colors red. Date March 8."
+    - A2: "My poster has gatefold with title 'Global Festival'. It use colors because eye-catcher. Slogan is 'Come!'. Date March 8."
+    - B1: "My poster has a gatefold layout with title 'Global Cultures Festival'. It uses bright colors and cultural images because they are eye-catchers. The slogan is 'Join the Celebration!' with bold lettering. Date is March 8 at Student Center—come join!"
+    - B2: "My poster features a gatefold layout for extra space, with the title 'Global Cultures Festival' in elegant lettering. It uses vibrant colors and diverse cultural images as eye-catchers to attract students. The slogan 'Discover Worlds in One Day' is bold and persuasive. Details include date March 8 at Student Center—don't miss this immersive experience!"
+    - C1: "In this descriptive essay, the poster employs a sophisticated gatefold layout to unfold a narrative of cultural unity, titled 'Global Cultures Festival' in precise, elegant lettering for visual hierarchy. Vibrant colors and authentic cultural images serve as eye-catchers, persuasively drawing viewers in through emotional resonance. The slogan 'Unite Through Diversity' encapsulates the event's ethos in bold, memorable phrasing. Practical details—March 8 at the Student Center—are structured for clarity, culminating in a compelling call to action: 'Join us for an unforgettable celebration!'."
+
+    Request body:
+    {
+        "description": "Student's poster description"
+    }
+
+    Returns:
+    {
+        "score": 1-5,
+        "level": "A1" | "A2" | "B1" | "B2" | "C1",
+        "feedback": "AI feedback message",
+        "details": {
+            "grammar": "Grammar assessment",
+            "spelling": "Spelling assessment",
+            "structure": "Structure assessment"
+        }
+    }
+    """
+    try:
+        data = request.get_json()
+        description = data.get('description', '').strip()
+
+        if not description:
+            return jsonify({
+                'success': False,
+                'score': 0,
+                'level': 'Below A1',
+                'feedback': 'Please write your poster description using the template.'
+            })
+
+        # Check minimum length
+        sentences = [s.strip() for s in description.replace('!', '.').replace('?', '.').split('.') if s.strip()]
+        sentence_count = len(sentences)
+        word_count = len(description.split())
+
+        if word_count < 5:
+            return jsonify({
+                'success': False,
+                'score': 0,
+                'level': 'Below A1',
+                'feedback': 'Your description is too short. Please write 4-8 sentences following the template.'
+            })
+
+        # Use AI evaluation if available
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR language assessment expert evaluating poster description writing.
+
+Evaluate the student's poster description based on:
+
+TEMPLATE ELEMENTS (must include):
+1. Title/Layout: Mentions "gatefold" or layout type with title
+2. Colors/Images: Describes colors/images as "eye-catcher"
+3. Slogan/Lettering: States slogan with lettering style
+4. Details/Call to Action: Includes date (March 8), place (Student Center), call to action (come join)
+
+ASSESSMENT CRITERIA:
+1. Grammar: Subject-verb agreement, article use, sentence structure
+2. Spelling: Correct spelling (especially "gatefold")
+3. Structure: Logical flow, complete sentences
+4. Vocabulary: Appropriate marketing terms (persuasive, vibrant, elegant, etc.)
+5. Template Adaptation: Following examples while making it their own
+
+SCORING (each correct element +1):
+- C1 (5 points): Sophisticated essay-like description with advanced vocabulary (unfold, narrative, hierarchy, ethos, authentic, persuasive, encapsulate, culminating), complex sentences, 60+ words, 4+ sentences
+- B2 (4 points): Detailed description with persuasive vocabulary (vibrant, elegant, persuasive, immersive, diverse, attract), all template elements, 40+ words, 4+ sentences
+- B1 (3 points): Complete description following template with all 4 elements, good grammar with subject-verb agreement, logical structure, 4+ sentences
+- A2 (2 points): Basic template use with some elements (title/layout + colors/slogan), basic grammar, 3+ sentences
+- A1 (1 point): Very basic attempt with at least title or colors, simple sentences
+
+IMPORTANT:
+- Give credit for effort and understanding even if grammar isn't perfect
+- Focus on whether they followed the template structure
+- Recognize when they adapted examples creatively
+- Each correct template element should earn +1 point
+
+Expected Response Examples:
+A1: "My poster has title 'Festival'. It is big. Colors red. Date March 8."
+A2: "My poster has gatefold with title 'Global Festival'. It use colors because eye-catcher. Slogan is 'Come!'. Date March 8."
+B1: "My poster has a gatefold layout with title 'Global Cultures Festival'. It uses bright colors and cultural images because they are eye-catchers. The slogan is 'Join the Celebration!' with bold lettering. Date is March 8 at Student Center—come join!"
+B2: "My poster features a gatefold layout for extra space, with the title 'Global Cultures Festival' in elegant lettering. It uses vibrant colors and diverse cultural images as eye-catchers to attract students. The slogan 'Discover Worlds in One Day' is bold and persuasive. Details include date March 8 at Student Center—don't miss this immersive experience!"
+C1: "In this descriptive essay, the poster employs a sophisticated gatefold layout to unfold a narrative of cultural unity, titled 'Global Cultures Festival' in precise, elegant lettering for visual hierarchy. Vibrant colors and authentic cultural images serve as eye-catchers, persuasively drawing viewers in through emotional resonance. The slogan 'Unite Through Diversity' encapsulates the event's ethos in bold, memorable phrasing. Practical details—March 8 at the Student Center—are structured for clarity, culminating in a compelling call to action: 'Join us for an unforgettable celebration!'."
+
+Respond ONLY in JSON format:
+{
+    "score": 1-5,
+    "level": "A1" | "A2" | "B1" | "B2" | "C1",
+    "feedback": "Brief encouraging feedback (2-3 sentences)",
+    "details": {
+        "grammar": "Brief grammar assessment",
+        "spelling": "Brief spelling assessment",
+        "structure": "Brief structure assessment"
+    }
+}"""
+
+                user_prompt = f"""
+Student's Poster Description:
+"{description}"
+
+Sentence count: {sentence_count}
+Word count: {word_count}
+
+Evaluate this poster description and determine the CEFR level and score.
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=300,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                import json
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                # Ensure score is within valid range
+                score = max(1, min(5, result.get('score', 1)))
+
+                logger.info(f"Poster description AI evaluation - Score: {score}/5 | Level: {result.get('level', 'A1')}")
+
+                return jsonify({
+                    'success': True,
+                    'score': score,
+                    'level': result.get('level', 'A1'),
+                    'feedback': result.get('feedback', 'Good work on your poster description!'),
+                    'details': result.get('details', {})
+                })
+
+            except Exception as ai_error:
+                logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+                # Fall through to fallback evaluation
+
+        # Fallback evaluation based on CEFR criteria
+        desc_lower = description.lower()
+
+        # Check for template elements
+        has_title = 'title' in desc_lower or 'poster' in desc_lower
+        has_layout = 'gatefold' in desc_lower or 'layout' in desc_lower
+        has_colors = 'color' in desc_lower or 'colour' in desc_lower or 'bright' in desc_lower or 'vibrant' in desc_lower
+        has_images = 'image' in desc_lower or 'picture' in desc_lower or 'photo' in desc_lower or 'cultural' in desc_lower
+        has_slogan = 'slogan' in desc_lower
+        has_date = 'march' in desc_lower or 'date' in desc_lower
+        has_place = 'student center' in desc_lower or 'place' in desc_lower
+        has_call_to_action = 'join' in desc_lower or 'come' in desc_lower or "don't miss" in desc_lower
+
+        # Grammar indicators
+        has_subject_verb = bool(__import__('re').search(r'\b(it|poster|slogan|layout)\s+(is|has|uses|features|employs)\b', description, __import__('re').IGNORECASE))
+        has_articles = bool(__import__('re').search(r'\b(a|an|the)\b', description, __import__('re').IGNORECASE))
+        has_because = 'because' in desc_lower
+        has_eye_catcher = 'eye-catcher' in desc_lower or 'eye catcher' in desc_lower
+
+        # Advanced vocabulary indicators
+        has_advanced_vocab = any(word in desc_lower for word in [
+            'unfold', 'narrative', 'hierarchy', 'ethos', 'authentic', 'persuasive',
+            'encapsulate', 'culminat', 'resonate', 'compelling'
+        ])
+        has_b2_vocab = any(word in desc_lower for word in [
+            'vibrant', 'elegant', 'immersive', 'diverse', 'attract', 'persuasive'
+        ])
+
+        score = 0
+        level = 'Below A1'
+        feedback = ''
+
+        # C1: 5 points - Sophisticated essay-like description
+        if (sentence_count >= 4 and word_count >= 60 and
+            has_layout and has_title and has_colors and has_slogan and
+            has_advanced_vocab and has_subject_verb):
+            score = 5
+            level = 'C1'
+            feedback = 'Excellent! Your description demonstrates sophisticated writing with advanced vocabulary, complex sentence structures, and essay-like narrative quality. You effectively described the poster\'s visual hierarchy and persuasive elements.'
+        # B2: 4 points - Detailed description with persuasive elements
+        elif (sentence_count >= 4 and word_count >= 40 and
+              has_layout and has_title and has_colors and has_slogan and has_date and
+              (has_b2_vocab or (has_images and has_call_to_action)) and has_subject_verb):
+            score = 4
+            level = 'B2'
+            feedback = 'Very good! Your description includes detailed elements with persuasive vocabulary. You featured the gatefold layout, vibrant colors, and compelling call to action with good grammar and structure.'
+        # B1: 3 points - Complete description following template
+        elif (sentence_count >= 4 and
+              has_layout and has_title and has_colors and has_slogan and
+              has_subject_verb):
+            score = 3
+            level = 'B1'
+            feedback = 'Good! You followed the template well with 4+ sentences describing layout, colors, slogan, and date. Your grammar shows subject-verb agreement and logical structure.'
+        # A2: 2 points - Basic template use with some elements
+        elif (sentence_count >= 3 and
+              (has_title or has_layout) and (has_colors or has_slogan) and
+              has_subject_verb):
+            score = 2
+            level = 'A2'
+            feedback = 'Good start! You used the template and included some poster elements. Try to add more details like date, place, and call to action. Check spelling (e.g., "gatefold").'
+        # A1: 1 point - Very basic attempt
+        elif sentence_count >= 1 and (has_title or has_colors or 'poster' in desc_lower):
+            score = 1
+            level = 'A1'
+            feedback = 'You made an attempt at describing the poster. Try to follow the template more closely with title, layout, colors, slogan, and date. Use complete sentences with subject-verb structure.'
+        else:
+            score = 0
+            level = 'Below A1'
+            feedback = 'Please try again following the template. Write 4-8 sentences describing: 1) Title/Layout, 2) Colors/Images, 3) Slogan/Lettering, 4) Date/Place/Call to Action. Use the examples as models.'
+
+        logger.info(f"Poster description fallback evaluation - Score: {score}/5 | Level: {level}")
+
+        return jsonify({
+            'success': score > 0,
+            'score': score,
+            'level': level,
+            'feedback': feedback,
+            'details': {
+                'grammar': 'Check subject-verb agreement and article use' if not has_subject_verb or not has_articles else 'Good grammar',
+                'spelling': 'Check spelling of "gatefold"' if 'gatefold' in desc_lower or 'layout' in desc_lower else 'OK',
+                'structure': f'{sentence_count} sentences - aim for 4-8' if sentence_count < 4 else 'Good structure'
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error evaluating poster description: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step4/evaluate-video-script', methods=['POST'])
+def evaluate_video_script():
+    """
+    Evaluate video script writing with AI
+
+    Scoring System (each correct element +1):
+    - A1 (1): Basic attempt with video opening or clip
+    - A2 (2): Basic template use with opening/animation and dramatisation
+    - B1 (3): Complete 3+ scene script following template
+    - B2 (4): Dynamic script with persuasive language and character development
+    - C1 (5): Autonomous script with sophisticated vocabulary and layered storytelling
+
+    Expected Response Examples:
+    - A1: "Video open with clip. Show dancing. Music jingle. Come festival."
+    - A2: "The video opens with animation and jingle. Show dramatisation with people dance. Feature date March March 8."
+    - B1: "The video opens with colorful animation of cultures and a catchy jingle. Show dramatisation with students discovering traditions (goal) and enjoying together. Feature details: March 8 at Student Center—come join the fun!"
+    - B2: "The video script opens with dynamic animation transitioning cultures, accompanied by an upbeat jingle for memorability. Dramatisation follows with relatable characters pursuing the goal of unity amid light obstacles, resolved joyfully. Features include quick clips of food/music, ending with persuasive call: 'Join Global Cultures Festival on March 8 at Student Center—don't miss out!'."
+    - C1: "This autonomous video script commences with seamless animation illustrating cultural convergence, underscored by a custom jingle for rhythmic consistency and emotional hook. Dramatisation unfolds through nuanced storytelling—relatable characters navigate goals of cross-cultural understanding amid subtle obstacles, resolved in celebratory harmony. Features are layered persuasively: clips highlighting diversity, overlaid text for details (March 8, Student Center), culminating in an urgent, inclusive call to action: 'Be part of this transformative experience—join us!'."
+
+    Request body:
+    {
+        "script": "Student's video script"
+    }
+
+    Returns:
+    {
+        "score": 1-5,
+        "level": "A1" | "A2" | "B1" | "B2" | "C1",
+        "feedback": "AI feedback message",
+        "details": {
+            "grammar": "Grammar assessment",
+            "spelling": "Spelling assessment",
+            "structure": "Structure assessment"
+        }
+    }
+    """
+    try:
+        data = request.get_json()
+        script = data.get('script', '').strip()
+
+        if not script:
+            return jsonify({
+                'success': False,
+                'score': 0,
+                'level': 'Below A1',
+                'feedback': 'Please write your video script using the template.'
+            })
+
+        # Check minimum length
+        sentences = [s.strip() for s in script.replace('!', '.').replace('?', '.').split('.') if s.strip()]
+        sentence_count = len(sentences)
+        word_count = len(script.split())
+
+        if word_count < 5:
+            return jsonify({
+                'success': False,
+                'score': 0,
+                'level': 'Below A1',
+                'feedback': 'Your script is too short. Please write 4-8 sentences for video scenes following the template.'
+            })
+
+        # Use AI evaluation if available
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR language assessment expert evaluating video script writing.
+
+Evaluate the student's video script based on:
+
+TEMPLATE ELEMENTS (must include):
+1. Scene 1 (Opening/Sketch): Opens with animation/clip and jingle
+2. Scene 2 (Dramatisation/Storytelling): Shows dramatisation with characters, goals, and obstacles
+3. Scene 3 (Features/Call to Action): Features event details and ends with call to action (Come on March 8!)
+
+ASSESSMENT CRITERIA:
+1. Grammar: Tense consistency, subject-verb agreement, sentence structure
+2. Spelling: Correct spelling (especially "dramatisation")
+3. Structure: Scene sequence, logical flow
+4. Vocabulary: Appropriate video production terms (animation, dramatisation, jingle, etc.)
+5. Template Adaptation: Following examples while making it their own
+
+SCORING (each correct element +1):
+- C1 (5 points): Autonomous script with sophisticated vocabulary (seamless, nuanced, transformative, convergence, culminating), layered storytelling with character arcs, 60+ words, 4+ sentences
+- B2 (4 points): Dynamic script with persuasive language (dynamic, transitioning, relatable, memorability), character development with goals/obstacles, 40+ words, 4+ sentences
+- B1 (3 points): Complete 3+ scene script following template with opening/jingle, dramatisation with characters/goals, features with call to action, good grammar
+- A2 (2 points): Basic template use with some scenes (opening/animation + dramatisation or features), basic grammar, 2+ sentences
+- A1 (1 point): Very basic attempt with at least video opening or clip mention, simple sentences
+
+IMPORTANT:
+- Give credit for effort and understanding even if grammar isn't perfect
+- Focus on whether they followed the template structure with scenes
+- Recognize when they adapted examples creatively
+- Each correct scene element should contribute to the score
+
+Expected Response Examples:
+A1: "Video open with clip. Show dancing. Music jingle. Come festival."
+A2: "The video opens with animation and jingle. Show dramatisation with people dance. Feature date March March 8."
+B1: "The video opens with colorful animation of cultures and a catchy jingle. Show dramatisation with students discovering traditions (goal) and enjoying together. Feature details: March 8 at Student Center—come join the fun!"
+B2: "The video script opens with dynamic animation transitioning cultures, accompanied by an upbeat jingle for memorability. Dramatisation follows with relatable characters pursuing the goal of unity amid light obstacles, resolved joyfully. Features include quick clips of food/music, ending with persuasive call: 'Join Global Cultures Festival on March 8 at Student Center—don't miss out!'."
+C1: "This autonomous video script commences with seamless animation illustrating cultural convergence, underscored by a custom jingle for rhythmic consistency and emotional hook. Dramatisation unfolds through nuanced storytelling—relatable characters navigate goals of cross-cultural understanding amid subtle obstacles, resolved in celebratory harmony. Features are layered persuasively: clips highlighting diversity, overlaid text for details (March 8, Student Center), culminating in an urgent, inclusive call to action: 'Be part of this transformative experience—join us!'."
+
+Respond ONLY in JSON format:
+{
+    "score": 1-5,
+    "level": "A1" | "A2" | "B1" | "B2" | "C1",
+    "feedback": "Brief encouraging feedback (2-3 sentences)",
+    "details": {
+        "grammar": "Brief grammar assessment",
+        "spelling": "Brief spelling assessment",
+        "structure": "Brief structure assessment"
+    }
+}"""
+
+                user_prompt = f"""
+Student's Video Script:
+"{script}"
+
+Sentence count: {sentence_count}
+Word count: {word_count}
+
+Evaluate this video script and determine the CEFR level and score.
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=300,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                import json
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                # Ensure score is within valid range
+                score = max(1, min(5, result.get('score', 1)))
+
+                logger.info(f"Video script AI evaluation - Score: {score}/5 | Level: {result.get('level', 'A1')}")
+
+                return jsonify({
+                    'success': True,
+                    'score': score,
+                    'level': result.get('level', 'A1'),
+                    'feedback': result.get('feedback', 'Good work on your video script!'),
+                    'details': result.get('details', {})
+                })
+
+            except Exception as ai_error:
+                logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+                # Fall through to fallback evaluation
+
+        # Fallback evaluation based on CEFR criteria
+        script_lower = script.lower()
+
+        # Check for template elements
+        has_opening = 'video' in script_lower and ('open' in script_lower or 'start' in script_lower or 'begin' in script_lower)
+        has_animation = 'animation' in script_lower or 'clip' in script_lower or 'sketch' in script_lower
+        has_jingle = 'jingle' in script_lower
+        has_dramatisation = 'dramatisation' in script_lower or 'dramatization' in script_lower or 'show' in script_lower
+        has_character = 'character' in script_lower or 'student' in script_lower or 'people' in script_lower
+        has_goal = 'goal' in script_lower or 'discover' in script_lower or 'unity' in script_lower
+        has_obstacle = 'obstacle' in script_lower or 'overcome' in script_lower or 'shy' in script_lower
+        has_features = 'feature' in script_lower or 'detail' in script_lower
+        has_date = 'march' in script_lower or 'date' in script_lower
+        has_call_to_action = 'come' in script_lower or 'join' in script_lower or "don't miss" in script_lower
+
+        # Grammar indicators
+        has_subject_verb = bool(__import__('re').search(r'\b(video|scene|script)\s+(open|start|show|feature)', script, __import__('re').IGNORECASE))
+
+        # Advanced vocabulary indicators
+        has_advanced_vocab = any(word in script_lower for word in [
+            'autonomous', 'commence', 'seamless', 'nuanced', 'transformative', 'convergence',
+            'underscored', 'unfold', 'navigate', 'culminating'
+        ])
+        has_b2_vocab = any(word in script_lower for word in [
+            'dynamic', 'transitioning', 'relatable', 'memorability', 'persuasive'
+        ])
+
+        score = 0
+        level = 'Below A1'
+        feedback = ''
+
+        # C1: 5 points - Autonomous script with sophisticated vocabulary
+        if (sentence_count >= 4 and word_count >= 60 and
+            has_opening and has_animation and has_jingle and has_dramatisation and
+            has_goal and has_features and has_call_to_action and has_advanced_vocab):
+            score = 5
+            level = 'C1'
+            feedback = 'Excellent! Your script demonstrates autonomous, sophisticated writing with advanced vocabulary (seamless, nuanced, transformative), layered storytelling, and persuasive elements. The script shows deep understanding of video structure and narrative techniques.'
+        # B2: 4 points - Dynamic script with persuasive language
+        elif (sentence_count >= 4 and word_count >= 40 and
+              has_opening and has_animation and has_jingle and has_dramatisation and
+              has_character and has_goal and has_features and has_call_to_action and
+              (has_b2_vocab or has_obstacle)):
+            score = 4
+            level = 'B2'
+            feedback = 'Very good! Your script includes dynamic transitions, relatable characters with clear goals and obstacles, and persuasive call to action. You used effective vocabulary and structured scenes logically.'
+        # B1: 3 points - Complete script following template
+        elif (sentence_count >= 3 and
+              has_opening and has_dramatisation and has_features and
+              has_subject_verb):
+            score = 3
+            level = 'B1'
+            feedback = 'Good! You followed the template with 3+ scenes: opening with animation/jingle, dramatisation with characters discovering traditions, and features with call to action. Your grammar shows good structure.'
+        # A2: 2 points - Basic template use with some scenes
+        elif (sentence_count >= 2 and
+              (has_opening or has_animation) and (has_dramatisation or has_features)):
+            score = 2
+            level = 'A2'
+            feedback = 'Good start! You included some video scenes with animation and dramatisation. Try to add more details about characters, goals, obstacles, and a clear call to action. Check spelling (e.g., "dramatisation").'
+        # A1: 1 point - Very basic attempt
+        elif sentence_count >= 1 and (has_opening or 'video' in script_lower or 'clip' in script_lower):
+            score = 1
+            level = 'A1'
+            feedback = 'You made an attempt at writing a video script. Try to follow the template more closely with: 1) Opening/Animation/Jingle, 2) Dramatisation with characters/goals/obstacles, 3) Features and call to action.'
+        else:
+            score = 0
+            level = 'Below A1'
+            feedback = 'Please try again following the template. Write 4-8 sentences for video scenes: 1) Opening/Sketch with animation and jingle, 2) Dramatisation/Storytelling with characters/goals/obstacles, 3) Features/Call to Action with event details.'
+
+        logger.info(f"Video script fallback evaluation - Score: {score}/5 | Level: {level}")
+
+        return jsonify({
+            'success': score > 0,
+            'score': score,
+            'level': level,
+            'feedback': feedback,
+            'details': {
+                'grammar': 'Check tense consistency' if not has_subject_verb else 'Good grammar',
+                'spelling': 'Check spelling of "dramatisation"' if 'dramatisation' in script_lower or 'show' in script_lower else 'OK',
+                'structure': f'{sentence_count} scenes - aim for 3+ scenes' if sentence_count < 3 else 'Good scene sequence'
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error evaluating video script: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step4/evaluate-vocabulary-integration', methods=['POST'])
+def evaluate_vocabulary_integration():
+    """
+    Evaluate vocabulary integration with Sushi Spell game
+
+    Scoring System (each correct element +1):
+    - A1 (1): Basic attempt using a vocabulary term
+    - A2 (2): Basic use of term with some sentence structure
+    - B1 (3): Uses term correctly with basic revision showing improvement
+    - B2 (4): Well-structured revision with clear improvement and error correction
+    - C1 (5): Complex sentence with autonomous error detection and sophisticated revision
+
+    Expected Response Examples:
+    - A1: "Spell gatefold. Poster gatefold."
+    - A2: "Sushi Spell for dramatisation because add to video. Revised: Video has dramatisation."
+    - B1: "Use Sushi Spell for 'jingle'—revised script: 'Add jingle for music' fixed to 'The script adds a jingle for catchy music'."
+    - B2: "Incorporate Sushi Spell for 'lettering'—revised description: 'Poster lettering for appeal' fixed structure to 'The poster uses elegant lettering for visual appeal'."
+    - C1: "Leverage Sushi Spell for 'sketch'—revised essay: Detected run-on in 'Sketches plan video it has goal' to 'Sketches, which plan the video, incorporate a clear goal for narrative drive'."
+
+    Request body:
+    {
+        "spelledTerms": "Terms student spelled in Sushi Spell",
+        "revisedSentence": "Revised sentence using one of the terms"
+    }
+
+    Returns:
+    {
+        "score": 1-5,
+        "level": "A1" | "A2" | "B1" | "B2" | "C1",
+        "feedback": "AI feedback message",
+        "details": {
+            "usedTerm": "Term used in sentence",
+            "grammar": "Grammar assessment",
+            "structure": "Structure assessment"
+        }
+    }
+    """
+    try:
+        data = request.get_json()
+        spelled_terms = data.get('spelledTerms', '').strip()
+        revised_sentence = data.get('revisedSentence', '').strip()
+
+        if not spelled_terms or not revised_sentence:
+            return jsonify({
+                'success': False,
+                'score': 0,
+                'level': 'Below A1',
+                'feedback': 'Please list the terms you spelled in Sushi Spell AND write a revised sentence using one of those terms.'
+            })
+
+        word_count = len(revised_sentence.split())
+
+        if word_count < 3:
+            return jsonify({
+                'success': False,
+                'score': 0,
+                'level': 'Below A1',
+                'feedback': 'Your revised sentence is too short. Please write a complete sentence showing how you fixed errors.'
+            })
+
+        # Vocabulary terms to check
+        vocabulary_terms = ['gatefold', 'dramatisation', 'animation', 'jingle', 'lettering', 'sketch']
+
+        # Use AI evaluation if available
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR language assessment expert evaluating vocabulary integration and writing revision.
+
+Evaluate the student's response based on:
+
+REQUIREMENTS:
+1. Must list terms spelled in Sushi Spell game
+2. Must use ONE of those terms in a revised sentence
+3. Must show how they fixed errors (grammar/spelling/structure)
+4. Must demonstrate autonomous error detection
+
+VOCABULARY TERMS (from Sushi Spell):
+- gatefold, dramatisation, animation, jingle, lettering, sketch
+
+ASSESSMENT CRITERIA:
+1. Vocabulary Integration: Uses spelled term correctly in context
+2. Error Detection: Identifies specific errors to fix (run-on, subject-verb, structure)
+3. Revision Quality: Shows clear improvement from original to revised sentence
+4. Grammar: Proper sentence structure, tense consistency
+5. Autonomous Learning: Self-corrects without prompting
+
+SCORING (each correct element +1):
+- C1 (5 points): Complex sentence with clause structure (which, that), autonomous error detection (run-on, complex issues), sophisticated vocabulary (leverage, incorporate, narrative drive), 15+ words
+- B2 (4 points): Well-structured revision showing specific error fixed (structure, grammar), clear improvement explanation, good vocabulary (incorporate, elegant, visual appeal), 10+ words
+- B1 (3 points): Uses term correctly with basic revision, shows improvement (fixed to), subject-verb agreement, proper structure, 8+ words
+- A2 (2 points): Basic use of term in sentence, some structure, mentions fixing, 5+ words
+- A1 (1 point): Very basic attempt using vocabulary term, simple sentence
+
+IMPORTANT:
+- Student MUST use one of the spelled terms in their revised sentence
+- Focus on whether they demonstrated autonomous error correction
+- Give credit for identifying and fixing specific errors
+- Recognize improvement in grammar, spelling, or structure
+
+Expected Response Examples:
+A1: "Spell gatefold. Poster gatefold."
+A2: "Sushi Spell for dramatisation because add to video. Revised: Video has dramatisation."
+B1: "Use Sushi Spell for 'jingle'—revised script: 'Add jingle for music' fixed to 'The script adds a jingle for catchy music'."
+B2: "Incorporate Sushi Spell for 'lettering'—revised description: 'Poster lettering for appeal' fixed structure to 'The poster uses elegant lettering for visual appeal'."
+C1: "Leverage Sushi Spell for 'sketch'—revised essay: Detected run-on in 'Sketches plan video it has goal' to 'Sketches, which plan the video, incorporate a clear goal for narrative drive'."
+
+Respond ONLY in JSON format:
+{
+    "score": 1-5,
+    "level": "A1" | "A2" | "B1" | "B2" | "C1",
+    "feedback": "Brief encouraging feedback mentioning the term used and quality of revision (2-3 sentences)",
+    "details": {
+        "usedTerm": "The vocabulary term used",
+        "grammar": "Brief grammar assessment",
+        "structure": "Brief structure assessment"
+    }
+}"""
+
+                user_prompt = f"""
+Spelled Terms: "{spelled_terms}"
+
+Revised Sentence: "{revised_sentence}"
+
+Word count: {word_count}
+
+Evaluate this vocabulary integration response and determine the CEFR level and score.
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=300,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                import json
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                # Ensure score is within valid range
+                score = max(1, min(5, result.get('score', 1)))
+
+                logger.info(f"Vocabulary integration AI evaluation - Score: {score}/5 | Level: {result.get('level', 'A1')}")
+
+                return jsonify({
+                    'success': True,
+                    'score': score,
+                    'level': result.get('level', 'A1'),
+                    'feedback': result.get('feedback', 'Good work on vocabulary integration!'),
+                    'details': result.get('details', {})
+                })
+
+            except Exception as ai_error:
+                logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+                # Fall through to fallback evaluation
+
+        # Fallback evaluation based on CEFR criteria
+        sentence_lower = revised_sentence.lower()
+        terms_lower = spelled_terms.lower()
+
+        # Check if any vocabulary term is used
+        used_term = None
+        for term in vocabulary_terms:
+            if term.lower() in sentence_lower:
+                used_term = term
+                break
+
+        listed_term = None
+        for term in vocabulary_terms:
+            if term.lower() in terms_lower:
+                listed_term = term
+                break
+
+        # Grammar indicators
+        has_subject_verb = bool(__import__('re').search(r'\b(poster|video|script|scene)\s+(has|uses|features|employs|adds|incorporates)\b', revised_sentence, __import__('re').IGNORECASE))
+        has_articles = bool(__import__('re').search(r'\b(a|an|the)\b', revised_sentence, __import__('re').IGNORECASE))
+        has_proper_structure = word_count >= 5
+
+        # Error detection indicators
+        mentions_error = 'fixed' in sentence_lower or 'corrected' in sentence_lower or 'revised' in sentence_lower or 'detected' in sentence_lower
+        shows_improvement = 'to' in sentence_lower and has_subject_verb
+
+        # Advanced writing indicators
+        has_complex = 'which' in sentence_lower or 'that' in sentence_lower or ',' in revised_sentence
+        has_advanced_vocab = 'autonomous' in sentence_lower or 'leverage' in sentence_lower or 'incorporate' in sentence_lower or 'narrative drive' in sentence_lower
+
+        score = 0
+        level = 'Below A1'
+        feedback = ''
+
+        # C1: 5 points - Complex sentence with error detection and sophisticated revision
+        if used_term and listed_term and word_count >= 15 and has_complex and has_advanced_vocab and mentions_error:
+            score = 5
+            level = 'C1'
+            feedback = f'Excellent! You successfully spelled "{used_term}" in Sushi Spell and leveraged it in a sophisticated revised sentence. Your sentence demonstrates autonomous error detection (identifying run-on sentences or structure issues) and complex grammar with clauses. Outstanding improvement!'
+        # B2: 4 points - Well-structured revision with clear improvement
+        elif used_term and listed_term and word_count >= 10 and has_subject_verb and has_articles and (mentions_error or shows_improvement):
+            score = 4
+            level = 'B2'
+            feedback = f'Very good! You incorporated "{used_term}" from Sushi Spell into a well-structured revised sentence. You showed clear improvement from the original sentence with better grammar and structure. Good work on autonomous correction!'
+        # B1: 3 points - Uses term correctly with basic revision
+        elif used_term and listed_term and word_count >= 8 and has_subject_verb and has_proper_structure:
+            score = 3
+            level = 'B1'
+            feedback = f'Good! You used "{used_term}" from Sushi Spell in your revised sentence. Your sentence shows improvement with subject-verb agreement and proper structure. Keep working on identifying and fixing errors autonomously.'
+        # A2: 2 points - Basic use of term with some structure
+        elif used_term and word_count >= 5 and has_proper_structure:
+            score = 2
+            level = 'A2'
+            feedback = f'Good start! You used "{used_term}" in your sentence. Try to show more clearly how you revised/fixed the original sentence. Make sure to list the terms you spelled in Sushi Spell and explain the improvement.'
+        # A1: 1 point - Very basic attempt
+        elif (used_term or listed_term) and len(revised_sentence.strip()) > 0:
+            score = 1
+            level = 'A1'
+            feedback = 'You made an attempt. Make sure to: 1) Play Sushi Spell and list 5 terms you spelled, 2) Use ONE of those terms in a revised sentence, 3) Show how you fixed errors in grammar/spelling/structure.'
+        else:
+            score = 0
+            level = 'Below A1'
+            feedback = 'Please try again. First play Sushi Spell for terms like "gatefold", "dramatisation", "animation", "jingle", "lettering", "sketch". Then list the terms you spelled AND write a revised sentence using one term, showing how you fixed errors.'
+
+        logger.info(f"Vocabulary integration fallback evaluation - Score: {score}/5 | Level: {level}")
+
+        return jsonify({
+            'success': score > 0,
+            'score': score,
+            'level': level,
+            'feedback': feedback,
+            'details': {
+                'usedTerm': used_term or 'None detected',
+                'grammar': 'Good subject-verb agreement' if has_subject_verb else 'Check subject-verb agreement',
+                'structure': 'Good structure' if has_proper_structure else 'Sentence needs more development'
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error evaluating vocabulary integration: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ============================================================================
+# PHASE 4 STEP 4: REMEDIAL LOGGING
+# ============================================================================
+
+@phase4_bp.route('/step4/remedial/log', methods=['POST'])
+def log_step4_remedial_task():
+    """
+    Log Phase 4 Step 4 remedial task completion
+    """
+    try:
+        user_id = session.get('user_id', 'anonymous')
+        data = request.json
+
+        level = data.get('level', 'Unknown')
+        task = data.get('task', 'Unknown')
+        score = data.get('score', 0)
+        max_score = data.get('max_score', 0)
+        time_taken = data.get('time_taken', 0)
+
+        # TERMINAL OUTPUT - Detailed logging
+        print("\n" + "="*60)
+        print(f"PHASE 4 STEP 4 - REMEDIAL {level} - TASK {task}")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"Score: {score}/{max_score} points")
+        if time_taken > 0:
+            print(f"Time Taken: {time_taken} seconds")
+        print(f"Success Rate: {(score/max_score)*100:.1f}%")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4 Step 4 - Remedial {level} Task {task} - User {user_id}: Score={score}/{max_score}, Time={time_taken}s")
+
+        return jsonify({
+            'success': True,
+            'message': 'Phase 4 Step 4 remedial task logged successfully'
+        })
+
+    except Exception as e:
+        logger.error(f"Error logging Phase 4 Step 4 remedial task: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step4/remedial/a1/final-score', methods=['POST'])
+def calculate_step4_a1_final_score():
+    """
+    Calculate Phase 4 Step 4 Remedial A1 final score
+
+    Task A: 8 points (Drag & Drop Matching)
+    Task B: 8 points (Gap Fill)
+    Task C: 6 points (Sentence Builder)
+    Total: 22 points
+    Pass threshold: 70% = 16 points
+    """
+    try:
+        user_id = session.get('user_id', 'anonymous')
+        data = request.json
+
+        task_a = data.get('task_a_score', 0)
+        task_b = data.get('task_b_score', 0)
+        task_c = data.get('task_c_score', 0)
+
+        total = task_a + task_b + task_c
+        max_score = 22
+        threshold = 16  # 70%
+        passed = total >= threshold
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print("PHASE 4 STEP 4 - REMEDIAL A1 - FINAL SCORE")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"Task A (Term Treasure Hunt): {task_a}/8")
+        print(f"Task B (Fill Quest): {task_b}/8")
+        print(f"Task C (Sentence Builder): {task_c}/6")
+        print("-"*60)
+        print(f"TOTAL SCORE: {total}/{max_score}")
+        print(f"Pass Threshold: {threshold}/{max_score} (70%)")
+        print(f"Result: {'✅ PASSED' if passed else '❌ FAILED'}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4 Step 4 - Remedial A1 Final - User {user_id}: {total}/{max_score} ({'PASS' if passed else 'FAIL'})")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a': task_a,
+                'task_b': task_b,
+                'task_c': task_c,
+                'total': total,
+                'max_score': max_score,
+                'threshold': threshold,
+                'passed': passed
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 4 A1 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# =========================================================================
+# Phase 4 Step 4 - Remedial B1 Routes
+# =========================================================================
+
+@phase4_bp.route('/step4/remedial/b1/evaluate-definitions', methods=['POST'])
+@login_required
+def evaluate_step4_b1_definitions():
+    """
+    Evaluate Step 4 B1 Task B (Definition Duel) - 8 definitions with LLM
+
+    Request body:
+    {
+        "definitions": [
+            {
+                "term": "promotional",
+                "answer": "student's definition",
+                "example": ""
+            },
+            ...
+        ]
+    }
+
+    Returns:
+    {
+        "success": true,
+        "results": [
+            {"term": "promotional", "score": 1, "feedback": "..."},
+            ...
+        ],
+        "total_score": 6,
+        "max_score": 8
+    }
+    """
+    logger.info(f"=== Step 4 B1 Definition Evaluation - User {session.get('user_id')} ===")
+    try:
+        data = request.get_json()
+        logger.info(f"Received request data: {data}")
+        definitions = data.get('definitions', [])
+        logger.info(f"Processing {len(definitions)} definitions")
+
+        if not definitions:
+            return jsonify({
+                'success': False,
+                'error': 'No definitions provided'
+            }), 400
+
+        results = []
+        total_score = 0
+
+        # Use AI evaluation if available
+        if ai_service.client:
+            for defn in definitions:
+                term = defn.get('term', '')
+                student_answer = defn.get('answer', '').strip()
+
+                if not student_answer:
+                    results.append({
+                        'term': term,
+                        'score': 0,
+                        'feedback': 'Please provide a definition.'
+                    })
+                    continue
+
+                try:
+                    # Get example answer for this term
+                    examples = {
+                        'promotional': 'Promotional means to advertise or sell something, like the first video says ads are promotional to make people buy.',
+                        'persuasive': 'Persuasive means to convince people, and the video explains it uses feelings and logic.',
+                        'targeted': 'Targeted means the ad is for a specific group, for example students in our university.',
+                        'original': 'Original means a new idea that is not copied, as the video says good ads are original.',
+                        'creative': 'Creative means using imagination to make the ad interesting, like the video shows creative examples.',
+                        'consistent': 'Consistent means the message and style stay the same, which the video says is important for all ads.',
+                        'personalized': 'Personalized means the ad is made for one person or small group, like sending a special message.',
+                        'ethical': 'Ethical means the ad is honest and fair, and the video says we should not lie in advertising.'
+                    }
+
+                    example_answer = examples.get(term, '')
+
+                    system_prompt = f"""You are evaluating a B1 level English definition for the term '{term}' in advertising context.
+
+The student should provide:
+1) A clear definition of the term
+2) Complete sentences with B1-appropriate grammar
+3) Understanding of the term's meaning in advertising
+
+Example of a good B1 answer for '{term}':
+{example_answer}
+
+IMPORTANT - BE FLEXIBLE at B1 level:
+- Accept minor grammar mistakes if meaning is clear
+- Accept varied sentence structures
+- Focus on: Clear definition + Understanding of meaning
+- Compare to the example but accept different wording
+- Score 1 if the answer shows understanding and effort
+- Score 0 only if completely irrelevant or no effort shown
+
+Respond ONLY in JSON format:
+{{
+    "score": 0 or 1,
+    "feedback": "brief encouraging feedback (1-2 sentences)"
+}}"""
+
+                    user_prompt = f"""
+Term: {term}
+
+Student's answer: "{student_answer}"
+
+Evaluate and return ONLY valid JSON."""
+
+                    ai_response = ai_service.client.chat.completions.create(
+                        model=ai_service.model,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        max_tokens=150,
+                        temperature=0.3
+                    )
+
+                    response_text = ai_response.choices[0].message.content.strip()
+                    logger.info(f"AI response for term '{term}': {response_text}")
+
+                    # Parse JSON response
+                    evaluation = json.loads(response_text)
+                    score = evaluation.get('score', 0)
+                    feedback = evaluation.get('feedback', 'Good effort!')
+
+                    results.append({
+                        'term': term,
+                        'score': score,
+                        'feedback': feedback
+                    })
+                    total_score += score
+
+                except json.JSONDecodeError as je:
+                    logger.warning(f"JSON decode error for term '{term}': {je}")
+                    # Fallback: Basic length check
+                    if len(student_answer) >= 20:
+                        results.append({
+                            'term': term,
+                            'score': 1,
+                            'feedback': 'Good effort! Your definition shows understanding.'
+                        })
+                        total_score += 1
+                    else:
+                        results.append({
+                            'term': term,
+                            'score': 0,
+                            'feedback': 'Please write a more complete definition with an example.'
+                        })
+
+                except Exception as e:
+                    logger.error(f"Error evaluating term '{term}': {e}")
+                    results.append({
+                        'term': term,
+                        'score': 0,
+                        'feedback': 'Error evaluating this definition. Please try again.'
+                    })
+
+        else:
+            # Fallback if AI not available
+            logger.warning("AI service not available, using fallback evaluation")
+            for defn in definitions:
+                term = defn.get('term', '')
+                student_answer = defn.get('answer', '').strip()
+
+                if len(student_answer) >= 20:
+                    results.append({
+                        'term': term,
+                        'score': 1,
+                        'feedback': 'Good effort!'
+                    })
+                    total_score += 1
+                else:
+                    results.append({
+                        'term': term,
+                        'score': 0,
+                        'feedback': 'Please write a more complete definition.'
+                    })
+
+        logger.info(f"Step 4 B1 Evaluation complete. Total score: {total_score}/8")
+
+        return jsonify({
+            'success': True,
+            'results': results,
+            'total_score': total_score,
+            'max_score': 8
+        })
+
+    except Exception as e:
+        logger.error(f"Error in Step 4 B1 definition evaluation: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step4/remedial/b1/final-score', methods=['POST'])
+@login_required
+def calculate_step4_b1_final_score():
+    """
+    Calculate and log Phase 4 Step 4 Remedial B1 final score
+    Pass threshold: >= 32/38 (~84%)
+
+    Request body:
+    {
+        "task_a_score": 4,   # Negotiation Battle (max 4)
+        "task_b_score": 8,   # Definition Duel (max 8)
+        "task_c_score": 6,   # Quiz Game (max 6)
+        "task_d_score": 8,   # Flashcard Game (max 8)
+        "task_e_score": 6,   # Tense Time Travel (max 6)
+        "task_f_score": 6    # Grammar Kahoot (max 6)
+    }
+
+    Returns:
+    {
+        "success": true,
+        "data": {
+            "task_a": 4,
+            "task_b": 8,
+            "task_c": 6,
+            "task_d": 8,
+            "task_e": 6,
+            "task_f": 6,
+            "total": 38,
+            "max_score": 38,
+            "threshold": 32,
+            "passed": true
+        }
+    }
+    """
+    logger.info(f"=== Calculating Phase 4 Step 4 B1 Final Score - User {session.get('user_id')} ===")
+    try:
+        data = request.get_json()
+        task_a = data.get('task_a_score', 0)
+        task_b = data.get('task_b_score', 0)
+        task_c = data.get('task_c_score', 0)
+        task_d = data.get('task_d_score', 0)
+        task_e = data.get('task_e_score', 0)
+        task_f = data.get('task_f_score', 0)
+
+        total = task_a + task_b + task_c + task_d + task_e + task_f
+        max_score = 38
+        threshold = 32  # ~84%
+        passed = total >= threshold
+
+        logger.info(f"Step 4 B1 Scores - Task A: {task_a}/4, Task B: {task_b}/8, Task C: {task_c}/6")
+        logger.info(f"Task D: {task_d}/8, Task E: {task_e}/6, Task F: {task_f}/6")
+        logger.info(f"Total: {total}/{max_score}, Threshold: {threshold}, Passed: {passed}")
+
+        # Log to database
+        user_id = session.get('user_id')
+        if user_id:
+            try:
+                import sqlite3
+                db = sqlite3.connect('fardi.db')
+                cursor = db.cursor()
+
+                cursor.execute('''
+                    INSERT INTO remedial_scores (
+                        user_id, phase, step, level,
+                        task_a_score, task_b_score, task_c_score,
+                        task_d_score, task_e_score, task_f_score,
+                        total_score, max_score, passed, timestamp
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                ''', (
+                    user_id, 4, 4, 'B1',
+                    task_a, task_b, task_c,
+                    task_d, task_e, task_f,
+                    total, max_score, passed
+                ))
+
+                db.commit()
+                logger.info(f"Step 4 B1 final score logged to database for user {user_id}")
+
+            except Exception as db_error:
+                logger.error(f"Database error logging Step 4 B1 score: {db_error}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a': task_a,
+                'task_b': task_b,
+                'task_c': task_c,
+                'task_d': task_d,
+                'task_e': task_e,
+                'task_f': task_f,
+                'total': total,
+                'max_score': max_score,
+                'threshold': threshold,
+                'passed': passed
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 4 B1 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)

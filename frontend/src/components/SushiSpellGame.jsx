@@ -8,32 +8,21 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
  * Students click letters to spell advertising vocabulary words within 2 minutes
  */
 
-// Target words for advertising vocabulary
-const TARGET_WORDS = [
-  'persuasive',
-  'targeted',
-  'creative',
-  'dramatisation',
-  'goal',
-  'obstacles',
-  'friction'
-]
-
 // Generate letter grid with enough letters to spell ALL target words
 // Note: Letters can be REUSED (clicked multiple times), so we only need enough
 // for the longest occurrence of each letter in any single word
-const generateLetterGrid = () => {
+const generateLetterGrid = (targetWords) => {
   const neededLetters = []
 
   // For each unique letter, find the maximum times it appears in ANY SINGLE word
   const uniqueLetters = new Set()
-  TARGET_WORDS.forEach(word => {
+  targetWords.forEach(word => {
     word.toUpperCase().split('').forEach(letter => uniqueLetters.add(letter))
   })
 
   // Add enough of each letter to spell the word that uses it most
   uniqueLetters.forEach(letter => {
-    const maxOccurrences = Math.max(...TARGET_WORDS.map(word => {
+    const maxOccurrences = Math.max(...targetWords.map(word => {
       const matches = word.toUpperCase().match(new RegExp(letter, 'g'))
       return matches ? matches.length : 0
     }))
@@ -76,7 +65,18 @@ const COLORS = [
 // Points: +1 for each word found
 const POINTS_PER_WORD = 1
 
-export default function SushiSpellGame({ onComplete }) {
+// Default target words if none provided
+const DEFAULT_TARGET_WORDS = [
+  'persuasive',
+  'targeted',
+  'creative',
+  'dramatisation',
+  'goal',
+  'obstacles',
+  'friction'
+]
+
+export default function SushiSpellGame({ onComplete, targetWords = DEFAULT_TARGET_WORDS }) {
   const [timeLeft, setTimeLeft] = useState(120) // 2 minutes = 120 seconds
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentWord, setCurrentWord] = useState([])
@@ -106,7 +106,7 @@ export default function SushiSpellGame({ onComplete }) {
     setFoundWords([])
     setMessage('Spell the advertising words!')
     setGameOver(false)
-    setLetterGrid(generateLetterGrid())
+    setLetterGrid(generateLetterGrid(targetWords))
     setTotalPoints(0)
     setWordsCount(0)
   }
@@ -114,11 +114,11 @@ export default function SushiSpellGame({ onComplete }) {
   const endGame = () => {
     setIsPlaying(false)
     setGameOver(true)
-    setMessage(`Time's up! You found ${foundWords.length}/${TARGET_WORDS.length} words!`)
+    setMessage(`Time's up! You found ${foundWords.length}/${targetWords.length} words!`)
     if (onComplete) {
       onComplete({
         foundWords: foundWords,
-        totalWords: TARGET_WORDS.length,
+        totalWords: targetWords.length,
         score: foundWords.length
       })
     }
@@ -140,7 +140,7 @@ export default function SushiSpellGame({ onComplete }) {
     const word = currentWord.join('').toLowerCase()
 
     // Check if word is in target list
-    if (TARGET_WORDS.includes(word)) {
+    if (targetWords.includes(word)) {
       // Check if already found
       if (foundWords.includes(word)) {
         setMessage(`"${word}" already found!`)
@@ -347,7 +347,7 @@ export default function SushiSpellGame({ onComplete }) {
         <Paper elevation={1} sx={{ p: 2, mb: 2, backgroundColor: '#E8F5E9' }}>
           <Typography variant="subtitle1" fontWeight="bold" color="success.main" gutterBottom>
             <CheckCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-            Words Found ({foundWords.length}/{TARGET_WORDS.length}):
+            Words Found ({foundWords.length}/{targetWords.length}):
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             {foundWords.map((word, index) => (
@@ -370,7 +370,7 @@ export default function SushiSpellGame({ onComplete }) {
             🎉 Game Complete!
           </Typography>
           <Typography variant="h6" gutterBottom>
-            You found {foundWords.length} out of {TARGET_WORDS.length} words!
+            You found {foundWords.length} out of {targetWords.length} words!
           </Typography>
           <Box sx={{ mt: 2 }}>
             {foundWords.map((word, index) => (
