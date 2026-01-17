@@ -22,7 +22,8 @@
       "Bash(node:*)",
       "Bash(for file in frontend/src/pages/Phase4Step4/*.jsx)",
       "Bash(do echo \"=== $file ===\")",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

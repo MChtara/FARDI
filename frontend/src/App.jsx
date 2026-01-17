@@ -48,6 +48,11 @@ import Phase4Step4RemedialB2TaskB from './pages/Phase4Step4/RemedialB2/TaskB.jsx
 import Phase4Step4RemedialB2TaskC from './pages/Phase4Step4/RemedialB2/TaskC.jsx'
 import Phase4Step4RemedialB2TaskD from './pages/Phase4Step4/RemedialB2/TaskD.jsx'
 import Phase4Step4RemedialB2Results from './pages/Phase4Step4/RemedialB2/Results.jsx'
+import Phase4Step4RemedialC1TaskA from './pages/Phase4Step4/RemedialC1/TaskA.jsx'
+import Phase4Step4RemedialC1TaskB from './pages/Phase4Step4/RemedialC1/TaskB.jsx'
+import Phase4Step4RemedialC1TaskC from './pages/Phase4Step4/RemedialC1/TaskC.jsx'
+import Phase4Step4RemedialC1TaskD from './pages/Phase4Step4/RemedialC1/TaskD.jsx'
+import Phase4Step4RemedialC1Results from './pages/Phase4Step4/RemedialC1/Results.jsx'
 
 // Phase 4 Step 1 Remedial imports - organized inside Phase4Step1 folder
 import RemedialA1TaskA from './pages/Phase4Step1/RemedialA1/TaskA.jsx'
@@ -219,6 +224,18 @@ function App() {
           <Route path="/app/phase4/step/4/remedial/b2/taskD" element={<Phase4Step4RemedialB2TaskD />} />
           <Route path="/phase4/step/4/remedial/b2/results" element={<Phase4Step4RemedialB2Results />} />
           <Route path="/app/phase4/step/4/remedial/b2/results" element={<Phase4Step4RemedialB2Results />} />
+
+          {/* Phase 4 Step 4 Remedial C1 Routes */}
+          <Route path="/phase4/step/4/remedial/c1/taskA" element={<Phase4Step4RemedialC1TaskA />} />
+          <Route path="/app/phase4/step/4/remedial/c1/taskA" element={<Phase4Step4RemedialC1TaskA />} />
+          <Route path="/phase4/step/4/remedial/c1/taskB" element={<Phase4Step4RemedialC1TaskB />} />
+          <Route path="/app/phase4/step/4/remedial/c1/taskB" element={<Phase4Step4RemedialC1TaskB />} />
+          <Route path="/phase4/step/4/remedial/c1/taskC" element={<Phase4Step4RemedialC1TaskC />} />
+          <Route path="/app/phase4/step/4/remedial/c1/taskC" element={<Phase4Step4RemedialC1TaskC />} />
+          <Route path="/phase4/step/4/remedial/c1/taskD" element={<Phase4Step4RemedialC1TaskD />} />
+          <Route path="/app/phase4/step/4/remedial/c1/taskD" element={<Phase4Step4RemedialC1TaskD />} />
+          <Route path="/phase4/step/4/remedial/c1/results" element={<Phase4Step4RemedialC1Results />} />
+          <Route path="/app/phase4/step/4/remedial/c1/results" element={<Phase4Step4RemedialC1Results />} />
 
           {/* Phase 4 Remedial Routes */}
           <Route path="/phase4/remedial/a1/taskA" element={<RemedialA1TaskA />} />

@@ -169,8 +169,47 @@ export default function Phase4Step4Interaction3() {
   }
 
   const handleContinue = () => {
-    // Navigate to dashboard or next phase
-    navigate('/app/dashboard')
+    // Calculate total score from all 3 interactions
+    const interaction1Score = parseInt(sessionStorage.getItem('phase4_step4_interaction1_score') || '0')
+    const interaction2Score = parseInt(sessionStorage.getItem('phase4_step4_interaction2_score') || '0')
+    const interaction3Score = parseInt(sessionStorage.getItem('phase4_step4_interaction3_score') || '0')
+
+    const totalScore = interaction1Score + interaction2Score + interaction3Score
+
+    console.log('\n' + '='.repeat(60))
+    console.log('PHASE 4 STEP 4 - INTERACTION SUMMARY')
+    console.log('='.repeat(60))
+    console.log('Interaction 1 Score:', interaction1Score, '/5')
+    console.log('Interaction 2 Score:', interaction2Score, '/5')
+    console.log('Interaction 3 Score:', interaction3Score, '/5')
+    console.log('-'.repeat(60))
+    console.log('TOTAL SCORE:', totalScore, '/15')
+    console.log('='.repeat(60))
+
+    // Route based on total score:
+    // 0-3 pts → Remedial A1
+    // 4-6 pts → Remedial A2
+    // 7-9 pts → Remedial B1
+    // 10-12 pts → Remedial B2
+    // 13-15 pts → Remedial C1
+
+    if (totalScore <= 3) {
+      console.log('→ Routing to Remedial A1 (0-3 points)')
+      navigate('/app/phase4/step/4/remedial/a1/taskA')
+    } else if (totalScore <= 6) {
+      console.log('→ Routing to Remedial A2 (4-6 points)')
+      navigate('/app/phase4/step/4/remedial/a2/taskA')
+    } else if (totalScore <= 9) {
+      console.log('→ Routing to Remedial B1 (7-9 points)')
+      navigate('/app/phase4/step/4/remedial/b1/taskA')
+    } else if (totalScore <= 12) {
+      console.log('→ Routing to Remedial B2 (10-12 points)')
+      navigate('/app/phase4/step/4/remedial/b2/taskA')
+    } else {
+      console.log('→ Routing to Remedial C1 (13-15 points)')
+      navigate('/app/phase4/step/4/remedial/c1/taskA')
+    }
+    console.log('='.repeat(60) + '\n')
   }
 
   return (

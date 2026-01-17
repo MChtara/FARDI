@@ -8,7 +8,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
  * Phase 4 Step 4 - Remedial B1 - Results Page
  * Shows final scores and pass/fail status
  * All 6 tasks: A-F = 38 points total
- * Pass threshold: 32/38 (~84%)
+ * Pass threshold: 31/38 (80%)
  */
 
 export default function RemedialB1Results() {
@@ -49,7 +49,7 @@ export default function RemedialB1Results() {
     const taskFScore = parseInt(sessionStorage.getItem('remedial_step4_b1_taskF_score') || '0')
 
     const total = taskAScore + taskBScore + taskCScore + taskDScore + taskEScore + taskFScore
-    const passed = total >= 32 // 32/38 = ~84%
+    const passed = total >= 31 // 31/38 = 80%
 
     console.log('\n' + '='.repeat(60))
     console.log('PHASE 4 STEP 4 - REMEDIAL B1 - FINAL RESULTS')
@@ -62,7 +62,7 @@ export default function RemedialB1Results() {
     console.log('Task F (Grammar Kahoot):', taskFScore, '/6')
     console.log('-'.repeat(60))
     console.log('TOTAL SCORE:', total, '/38')
-    console.log('PASS THRESHOLD: 32/38 (~84%)')
+    console.log('PASS THRESHOLD: 31/38 (80%)')
     console.log('-'.repeat(60))
     if (passed) {
       console.log('✅ PASSED - Student will proceed to next phase')
@@ -191,7 +191,7 @@ export default function RemedialB1Results() {
             Total Points
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-            Pass Threshold: 32/38 (~84%)
+            Pass Threshold: 31/38 (80%)
           </Typography>
         </Paper>
 
