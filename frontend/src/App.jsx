@@ -29,6 +29,12 @@ import Phase4Step4Interaction1 from './pages/Phase4Step4/Interaction1.jsx'
 import Phase4Step4Interaction2 from './pages/Phase4Step4/Interaction2.jsx'
 import Phase4Step4Interaction3 from './pages/Phase4Step4/Interaction3.jsx'
 
+// Phase 4 Step 5 imports - organized in folder
+import Phase4Step5Intro from './pages/Phase4Step5/Intro.jsx'
+import Phase4Step5Interaction1 from './pages/Phase4Step5/Interaction1.jsx'
+import Phase4Step5Interaction2 from './pages/Phase4Step5/Interaction2.jsx'
+import Phase4Step5Interaction3 from './pages/Phase4Step5/Interaction3.jsx'
+
 // Phase 4 Step 4 Remedial imports
 import Phase4Step4RemedialA1TaskA from './pages/Phase4Step4/RemedialA1/TaskA.jsx'
 import Phase4Step4RemedialA1TaskB from './pages/Phase4Step4/RemedialA1/TaskB.jsx'
@@ -180,6 +186,16 @@ function App() {
           <Route path="/app/phase4/step/4/interaction/2" element={<Phase4Step4Interaction2 />} />
           <Route path="/phase4/step/4/interaction/3" element={<Phase4Step4Interaction3 />} />
           <Route path="/app/phase4/step/4/interaction/3" element={<Phase4Step4Interaction3 />} />
+
+          {/* Phase 4 Step 5 Routes */}
+          <Route path="/phase4/step/5" element={<Phase4Step5Intro />} />
+          <Route path="/app/phase4/step/5" element={<Phase4Step5Intro />} />
+          <Route path="/phase4/step/5/interaction/1" element={<Phase4Step5Interaction1 />} />
+          <Route path="/app/phase4/step/5/interaction/1" element={<Phase4Step5Interaction1 />} />
+          <Route path="/phase4/step/5/interaction/2" element={<Phase4Step5Interaction2 />} />
+          <Route path="/app/phase4/step/5/interaction/2" element={<Phase4Step5Interaction2 />} />
+          <Route path="/phase4/step/5/interaction/3" element={<Phase4Step5Interaction3 />} />
+          <Route path="/app/phase4/step/5/interaction/3" element={<Phase4Step5Interaction3 />} />
 
           {/* Phase 4 Step 4 Remedial A1 Routes */}
           <Route path="/phase4/step/4/remedial/a1/taskA" element={<Phase4Step4RemedialA1TaskA />} />
