@@ -4116,3 +4116,792 @@ def calculate_step4_b1_final_score():
             'success': False,
             'error': str(e)
         }), 500
+
+
+# ===================================
+# PHASE 4 STEP 5 - REMEDIAL EVALUATION ENDPOINTS
+# ===================================
+
+@phase4_bp.route('/step5/remedial/evaluate-expansion', methods=['POST'])
+@login_required
+def evaluate_step5_remedial_expansion():
+    """
+    Evaluate sentence correction for B2/C1 Task B (Analysis Odyssey)
+    Uses LLM to check if the corrected sentence meets level requirements
+    """
+    try:
+        data = request.json
+        level = data.get('level', 'B2')
+        faulty_sentence = data.get('faultySentence', '')
+        user_answer = data.get('userAnswer', '').strip()
+        sentence_index = data.get('sentenceIndex', 0)
+
+        if not user_answer:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Please provide your correction.'
+            })
+
+        # Use AI to evaluate the correction
+        if ai_service.client:
+            try:
+                if level == 'B2':
+                    system_prompt = """You are a CEFR B2-level language evaluator for sentence correction exercises.
+
+Evaluate if the student's corrected sentence meets B2 requirements:
+1. **Grammar**: Proper subject-verb agreement, verb forms, tenses
+2. **Articles**: Correct use of a/an/the
+3. **Vocabulary**: Upgraded vocabulary (good→effective, bad→poorly executed, ok→acceptable, nice→pleasant)
+4. **Connectors**: Proper use of although, even though, but
+5. **Coherence**: Logical flow and clear meaning
+6. **Spelling**: No spelling errors
+
+IMPORTANT: Be flexible. Accept variations if they demonstrate B2-level improvements.
+Do NOT require exact matches to expected answers.
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief encouraging feedback (1-2 sentences)"
+}"""
+                else:  # C1
+                    system_prompt = """You are a CEFR C1-level language evaluator for sentence correction exercises.
+
+Evaluate if the student's corrected sentence meets C1 requirements:
+1. **Grammar**: Perfect subject-verb agreement, precise verb forms, complex tenses
+2. **Vocabulary**: Sophisticated words (hinges, rooted, compelling, fosters, exemplifies, captivates, determines)
+3. **Syntax**: Complex structures with dashes (—), commas, subordinate clauses
+4. **Connectors**: Precise connectors (although, yet, rather than, regarding, ensuring, through)
+5. **Nuance**: Adds detail, context, and sophisticated meaning
+6. **Coherence**: Elegant, flowing sentences with clear logical relationships
+
+IMPORTANT: Be flexible with structure but require C1-level sophistication.
+Do NOT require exact matches to expected answers.
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief encouraging feedback (1-2 sentences)"
+}"""
+
+                user_prompt = f"""
+Faulty sentence: "{faulty_sentence}"
+Student's correction: "{user_answer}"
+
+Evaluate if this correction meets {level}-level requirements.
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=200,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                return jsonify({
+                    'correct': result.get('correct', False),
+                    'feedback': result.get('feedback', 'Keep practicing!')
+                })
+
+            except Exception as e:
+                logger.error(f"AI evaluation error: {str(e)}")
+
+        # Fallback: Accept if meaningful changes were made
+        if len(user_answer) >= len(faulty_sentence):
+            return jsonify({
+                'correct': True,
+                'feedback': 'Good correction! Keep up the good work.'
+            })
+        else:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Try to expand and improve the sentence more.'
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating expansion: {e}")
+        return jsonify({
+            'correct': True,
+            'feedback': 'Correction recorded.'
+        }), 200
+
+
+@phase4_bp.route('/step5/remedial/evaluate-question', methods=['POST'])
+@login_required
+def evaluate_step5_remedial_question():
+    """
+    Evaluate question answers for C1 Task C (Quizlet Live)
+    Uses LLM to check if the answer is detailed and sophisticated enough
+    """
+    try:
+        data = request.json
+        level = data.get('level', 'C1')
+        question = data.get('question', '')
+        user_answer = data.get('userAnswer', '').strip()
+        expected_answer = data.get('expectedAnswer', '')
+        keywords = data.get('keywords', [])
+
+        if not user_answer:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Please provide your answer.'
+            })
+
+        # Use AI to evaluate the answer
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR C1-level language evaluator for advanced comprehension questions.
+
+Evaluate if the student's answer meets C1 requirements:
+1. **Video References**: Mentions specific videos (video 1, video 2)
+2. **Key Concepts**: Includes relevant keywords from expected answer
+3. **Sophisticated Vocabulary**: Uses advanced words and precise expressions
+4. **Detail**: Provides complete explanations (minimum 30 characters)
+5. **Nuance**: Explains both advantages and drawbacks where applicable
+6. **Coherence**: Clear, flowing sentences with logical connections
+
+IMPORTANT: Be flexible. Accept answers that demonstrate understanding even if worded differently.
+Do NOT require exact matches to expected answers.
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief encouraging feedback (1-2 sentences)"
+}"""
+
+                user_prompt = f"""
+Question: "{question}"
+Expected answer: "{expected_answer}"
+Key concepts: {', '.join(keywords)}
+
+Student's answer: "{user_answer}"
+
+Evaluate if this answer meets C1-level requirements and demonstrates understanding.
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=200,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                return jsonify({
+                    'correct': result.get('correct', False),
+                    'feedback': result.get('feedback', 'Keep practicing!')
+                })
+
+            except Exception as e:
+                logger.error(f"AI evaluation error: {str(e)}")
+
+        # Fallback: Check for keywords
+        user_lower = user_answer.lower()
+        keyword_matches = sum(1 for kw in keywords if kw.lower() in user_lower)
+        keyword_threshold = len(keywords) * 0.6
+
+        if keyword_matches >= keyword_threshold and len(user_answer) >= 30:
+            return jsonify({
+                'correct': True,
+                'feedback': 'Good answer! You covered the key concepts.'
+            })
+        else:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Try to include more key concepts and details in your answer.'
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating question: {e}")
+        return jsonify({
+            'correct': True,
+            'feedback': 'Answer recorded.'
+        }), 200
+
+
+@phase4_bp.route('/step5/remedial/evaluate-tense', methods=['POST'])
+@login_required
+def evaluate_step5_remedial_tense():
+    """
+    Evaluate tense correction for C1 Task D (Tense Odyssey)
+    Uses LLM to check if the corrected sentence has proper tenses and structure
+    """
+    try:
+        data = request.json
+        level = data.get('level', 'C1')
+        faulty_sentence = data.get('faultySentence', '')
+        user_answer = data.get('userAnswer', '').strip()
+        expected_answer = data.get('expectedAnswer', '')
+        key_elements = data.get('keyElements', [])
+
+        if not user_answer:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Please provide your correction.'
+            })
+
+        # Use AI to evaluate the correction
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR C1-level language evaluator for mixed tense/grammar correction exercises.
+
+Evaluate if the student's corrected sentence meets C1 requirements:
+1. **Tense Accuracy**: Proper use of perfect tenses (has been used, have become, have proven), past perfect (had been, had it been)
+2. **Conditionals**: Complex conditionals (would be, would have been, would have felt, if it incorporated, had it been)
+3. **Subject-Verb Agreement**: Correct agreement (are→is, were→was, has→have, stand→stands)
+4. **Sophisticated Vocabulary**: Advanced words (employed, portrayed, illustrates, oversaturated, authentic)
+5. **Complex Syntax**: Uses commas, subordinate clauses, relative clauses (which, although, yet)
+6. **Video References**: Includes references like "as video 1 suggests", "in video 2"
+
+IMPORTANT: Be flexible with exact wording but require C1-level tense sophistication.
+Do NOT require exact matches - accept variations that demonstrate C1-level understanding.
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief encouraging feedback (1-2 sentences)"
+}"""
+
+                user_prompt = f"""
+Faulty sentence: "{faulty_sentence}"
+Expected correction: "{expected_answer}"
+Key elements needed: {', '.join(key_elements)}
+
+Student's correction: "{user_answer}"
+
+Evaluate if this correction meets C1-level requirements for tense, grammar, and structure.
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=200,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                return jsonify({
+                    'correct': result.get('correct', False),
+                    'feedback': result.get('feedback', 'Keep practicing!')
+                })
+
+            except Exception as e:
+                logger.error(f"AI evaluation error: {str(e)}")
+
+        # Fallback: Check for key elements
+        user_lower = user_answer.lower()
+        has_key_elements = all(elem.lower() in user_lower for elem in key_elements)
+        has_proper_length = len(user_answer) >= 80
+        has_punctuation = ',' in user_answer
+        is_not_faulty = user_answer.lower() != faulty_sentence.lower()
+
+        if has_key_elements and has_proper_length and has_punctuation and is_not_faulty:
+            return jsonify({
+                'correct': True,
+                'feedback': 'Good correction! You used the required tenses and structures.'
+            })
+        else:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Remember to use perfect tenses, conditionals, and complex structures.'
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating tense correction: {e}")
+        return jsonify({
+            'correct': True,
+            'feedback': 'Correction recorded.'
+        }), 200
+
+
+@phase4_bp.route('/step5/remedial/evaluate-clause', methods=['POST'])
+@login_required
+def evaluate_step5_remedial_clause():
+    """
+    Evaluate clause analysis for C1 Task E (Clause Conquest)
+    Uses LLM to check if student correctly identified that sentences are grammatically correct
+
+    Note: All sentences in this task are CORRECT. Students must recognize them as correct
+    by either writing "correct" or copying the sentence accurately.
+    """
+    try:
+        data = request.json
+        level = data.get('level', 'C1')
+        original_sentence = data.get('originalSentence', '')
+        user_answer = data.get('userAnswer', '').strip()
+        correct_answer = data.get('correctAnswer', '')
+
+        if not user_answer:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Please provide your answer.'
+            })
+
+        # Use AI to evaluate the answer
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR C1-level language evaluator for clause analysis exercises.
+
+IMPORTANT CONTEXT: All sentences in this task are grammatically CORRECT. The student's task is to analyze each sentence and recognize that it has proper structure.
+
+Evaluate if the student correctly identified the sentence as correct. Accept if they:
+1. Wrote "correct", "this is correct", "already correct", "no errors", or similar recognition
+2. Copied the entire sentence accurately (showing they recognized it's correct and preserved it)
+3. Made only minor typos while copying but clearly tried to preserve the correct sentence
+
+REJECT if they:
+- Wrote nonsense or random characters (e.g., "hhhhhhh", "asdfasdf")
+- Tried to "fix" a sentence that was already correct
+- Wrote incomplete fragments
+- Provided an answer that shows they misunderstood the task
+
+The original sentence has:
+- Proper relative clauses (which, by which)
+- Correct passive voice constructions
+- Accurate tense usage (present perfect, conditionals)
+- Complex subordination
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief feedback (1 sentence)"
+}"""
+
+                user_prompt = f"""
+Original sentence (which is CORRECT): "{original_sentence}"
+Student's answer: "{user_answer}"
+
+Did the student correctly recognize this sentence as grammatically correct?
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=150,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                return jsonify({
+                    'correct': result.get('correct', False),
+                    'feedback': result.get('feedback', 'Keep practicing!')
+                })
+
+            except Exception as e:
+                logger.error(f"AI evaluation error: {str(e)}")
+
+        # Fallback: Check for "correct" keyword or exact copy
+        user_lower = user_answer.lower().strip()
+        recognized_correct = user_lower in ['correct', 'this is correct', 'already correct', 'no errors', 'no error', 'sentence is correct']
+
+        # Check if they copied the sentence (at least 80% match)
+        correct_lower = correct_answer.lower().strip()
+        if len(user_answer) > 50:
+            # Simple substring match for long answers
+            copied_correctly = user_lower == correct_lower or correct_lower in user_lower
+        else:
+            copied_correctly = False
+
+        if recognized_correct or copied_correctly:
+            return jsonify({
+                'correct': True,
+                'feedback': 'Correct! You recognized the sentence has proper structure.'
+            })
+        else:
+            return jsonify({
+                'correct': False,
+                'feedback': 'This sentence is actually correct. Try to recognize proper C1-level structures.'
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating clause: {e}")
+        return jsonify({
+            'correct': False,
+            'feedback': 'Evaluation error occurred.'
+        }), 200
+
+
+@phase4_bp.route('/step5/remedial/evaluate-modal', methods=['POST'])
+@login_required
+def evaluate_step5_remedial_modal():
+    """
+    Evaluate modal/subjunctive analysis for C1 Task F (Debate Duel Advanced)
+    Uses LLM to check if student correctly identified subjunctive and modal usage
+
+    Note: All sentences in this task are CORRECT. Students must recognize proper
+    subjunctive and modal structures.
+    """
+    try:
+        data = request.json
+        level = data.get('level', 'C1')
+        original_sentence = data.get('originalSentence', '')
+        user_answer = data.get('userAnswer', '').strip()
+        correct_answer = data.get('correctAnswer', '')
+        grammar_type = data.get('grammarType', '')
+
+        if not user_answer:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Please provide your answer.'
+            })
+
+        # Use AI to evaluate the answer
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR C1-level language evaluator for subjunctive and modal analysis exercises.
+
+IMPORTANT CONTEXT: All sentences in this task are grammatically CORRECT. The student's task is to analyze each sentence and recognize that it uses subjunctive/modal structures correctly.
+
+Evaluate if the student correctly identified the sentence as correct. Accept if they:
+1. Wrote "correct", "this is correct", "already correct", "no errors", or similar recognition
+2. Copied the entire sentence accurately (showing they recognized it's correct and preserved it)
+3. Made only minor typos while copying but clearly tried to preserve the correct sentence
+
+REJECT if they:
+- Wrote nonsense or random characters (e.g., "hhhhhhh", "asdfasdf")
+- Tried to "fix" a sentence that was already correct with proper subjunctive/modal usage
+- Wrote incomplete fragments
+- Provided an answer that shows they misunderstood the task
+
+The original sentence has proper:
+- Present subjunctive (It is crucial/essential that X be...)
+- Modals (should, could, might, must)
+- Second conditional (If X were..., Y might/could...)
+- Advanced structures (lest, implied subjunctive)
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief feedback (1 sentence)"
+}"""
+
+                user_prompt = f"""
+Original sentence (which is CORRECT): "{original_sentence}"
+Grammar type: {grammar_type}
+Student's answer: "{user_answer}"
+
+Did the student correctly recognize this sentence has proper subjunctive/modal usage?
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=150,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                return jsonify({
+                    'correct': result.get('correct', False),
+                    'feedback': result.get('feedback', 'Keep practicing!')
+                })
+
+            except Exception as e:
+                logger.error(f"AI evaluation error: {str(e)}")
+
+        # Fallback: Check for "correct" keyword or exact copy
+        user_lower = user_answer.lower().strip()
+        recognized_correct = user_lower in ['correct', 'this is correct', 'already correct', 'no errors', 'no error', 'sentence is correct']
+
+        # Check if they copied the sentence
+        correct_lower = correct_answer.lower().strip()
+        if len(user_answer) > 50:
+            copied_correctly = user_lower == correct_lower or correct_lower in user_lower
+        else:
+            copied_correctly = False
+
+        if recognized_correct or copied_correctly:
+            return jsonify({
+                'correct': True,
+                'feedback': 'Correct! You recognized proper subjunctive/modal usage.'
+            })
+        else:
+            return jsonify({
+                'correct': False,
+                'feedback': 'This sentence is actually correct. Recognize C1-level subjunctive and modal structures.'
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating modal: {e}")
+        return jsonify({
+            'correct': False,
+            'feedback': 'Evaluation error occurred.'
+        }), 200
+
+
+@phase4_bp.route('/step5/remedial/evaluate-correction', methods=['POST'])
+@login_required
+def evaluate_step5_remedial_correction():
+    """
+    Evaluate comprehensive error correction for C1 Task G (Correction Crusade)
+    Uses LLM to check if student fixed ALL error types correctly
+    """
+    try:
+        data = request.json
+        level = data.get('level', 'C1')
+        faulty_sentence = data.get('faultySentence', '')
+        user_answer = data.get('userAnswer', '').strip()
+        correct_answer = data.get('correctAnswer', '')
+        errors = data.get('errors', [])
+
+        if not user_answer:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Please provide your correction.'
+            })
+
+        # Use AI to evaluate the correction
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR C1-level language evaluator for comprehensive error correction exercises.
+
+Evaluate if the student's corrected sentence fixes ALL the errors and meets C1 requirements:
+1. **Subject-Verb Agreement**: All subjects and verbs must agree
+2. **Relative Clauses**: Proper commas around non-restrictive clauses
+3. **Tenses**: Correct verb tenses throughout
+4. **Vocabulary**: C1-level word choices (employed, highly effective, etc.)
+5. **Connectors**: Sophisticated connectors (although, yet, etc.)
+6. **Completeness**: All necessary objects, articles, modals added
+7. **Punctuation**: Proper comma usage
+
+IMPORTANT: Be flexible with exact wording but ensure all major errors are fixed.
+Accept variations that demonstrate C1-level corrections even if worded differently.
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief encouraging feedback (1-2 sentences)"
+}"""
+
+                user_prompt = f"""
+Faulty sentence: "{faulty_sentence}"
+Errors to fix: {', '.join(errors)}
+Expected correction: "{correct_answer}"
+
+Student's correction: "{user_answer}"
+
+Did the student successfully fix all the errors at C1 level?
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=200,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                return jsonify({
+                    'correct': result.get('correct', False),
+                    'feedback': result.get('feedback', 'Keep practicing!')
+                })
+
+            except Exception as e:
+                logger.error(f"AI evaluation error: {str(e)}")
+
+        # Fallback: Basic error checking
+        user_lower = user_answer.lower().strip()
+
+        # Check if major errors are fixed
+        has_proper_agreement = 'are to sell' not in user_lower and 'which provide' not in user_lower
+        has_proper_tense = 'were used' not in user_lower or 'was employed' in user_lower
+        has_length = len(user_answer) >= len(correct_answer) * 0.75
+        is_not_faulty = user_lower != faulty_sentence.lower()
+
+        if has_proper_agreement and has_length and is_not_faulty:
+            return jsonify({
+                'correct': True,
+                'feedback': 'Good correction! You fixed the major errors.'
+            })
+        else:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Make sure to fix ALL errors: grammar, vocabulary, tenses, punctuation, and structure.'
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating correction: {e}")
+        return jsonify({
+            'correct': True,
+            'feedback': 'Correction recorded.'
+        }), 200
+
+
+@phase4_bp.route('/step5/remedial/evaluate-subjunctive', methods=['POST'])
+@login_required
+def evaluate_step5_remedial_subjunctive():
+    """
+    Evaluate subjunctive/modal corrections for C1 Task F (Debate Duel Advanced)
+    Uses LLM to check if student fixed subjunctive and modal errors correctly
+    """
+    try:
+        data = request.json
+        level = data.get('level', 'C1')
+        faulty_sentence = data.get('faultySentence', '')
+        user_answer = data.get('userAnswer', '').strip()
+        correct_answer = data.get('correctAnswer', '')
+        errors = data.get('errors', [])
+
+        if not user_answer:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Please provide your correction.'
+            })
+
+        # Use AI to evaluate the correction
+        if ai_service.client:
+            try:
+                system_prompt = """You are a CEFR C1-level language evaluator for subjunctive and modal correction exercises.
+
+Evaluate if the student's corrected sentence fixes the subjunctive/modal errors and meets C1 requirements:
+1. **Present Subjunctive**: Base form "be" after "it is crucial/essential that" (not "is" or "are")
+2. **Modals + Base Form**: Modal verbs (should, could, might, must) must be followed by BASE VERB (incorporate, not incorporates)
+3. **Second Conditional**: Use "were" (not "was") in if-clauses
+4. **Advanced Structures**: "lest" + base form, implied subjunctive
+
+IMPORTANT: The faulty sentence has specific subjunctive/modal errors. Check if the student fixed these errors.
+Be flexible with minor wording changes but ensure the core grammatical errors are corrected.
+
+Respond ONLY in JSON format:
+{
+    "correct": true or false,
+    "feedback": "Brief encouraging feedback (1-2 sentences)"
+}"""
+
+                user_prompt = f"""
+Faulty sentence: "{faulty_sentence}"
+Error to fix: {', '.join(errors)}
+Expected correction: "{correct_answer}"
+
+Student's correction: "{user_answer}"
+
+Did the student successfully fix the subjunctive/modal error at C1 level?
+Return ONLY valid JSON."""
+
+                ai_response = ai_service.client.chat.completions.create(
+                    model=ai_service.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    max_tokens=200,
+                    temperature=0.3
+                )
+
+                result_text = ai_response.choices[0].message.content.strip()
+
+                # Parse JSON
+                if '```json' in result_text:
+                    result_text = result_text.split('```json')[1].split('```')[0]
+                elif '```' in result_text:
+                    result_text = result_text.split('```')[1].split('```')[0]
+
+                result = json.loads(result_text.strip())
+
+                return jsonify({
+                    'correct': result.get('correct', False),
+                    'feedback': result.get('feedback', 'Keep practicing!')
+                })
+
+            except Exception as e:
+                logger.error(f"AI evaluation error: {str(e)}")
+
+        # Fallback: Check if main errors are fixed
+        user_lower = user_answer.lower().strip()
+
+        # Check specific error fixes
+        fixed_subjunctive = 'is balanced' not in user_lower and 'is prioritized' not in user_lower
+        fixed_modals = 'incorporates' not in user_lower and 'captivates' not in user_lower and 'remains' not in user_lower
+        fixed_conditional = 'was applied' not in user_lower
+        has_proper_length = len(user_answer) >= 50
+
+        if fixed_subjunctive and fixed_modals and fixed_conditional and has_proper_length:
+            return jsonify({
+                'correct': True,
+                'feedback': 'Good correction! You fixed the subjunctive/modal errors.'
+            })
+        else:
+            return jsonify({
+                'correct': False,
+                'feedback': 'Make sure to fix the subjunctive/modal errors: use base forms after modals and "that" clauses.'
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating subjunctive: {e}")
+        return jsonify({
+            'correct': True,
+            'feedback': 'Correction recorded.'
+        }), 200

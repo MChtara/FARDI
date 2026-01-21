@@ -20,7 +20,21 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
  * Phase 4 Step 5 - Interaction 3: Coherence & Vocabulary Enhancement
  * Students improve structure/cohesion and vocabulary in grammar-corrected texts
  * Scoring: A1=1pt, A2=2pts, B1=3pts, B2=4pts, C1=5pts
- * Final interaction - routes to dashboard
+ *
+ * Total Possible Scores (varies by student level):
+ * - Max for C1 student: 7 (spelling) + 6 (grammar) + 5 (enhancement) = 18 points
+ * - Max for B2 student: 5 (spelling) + 5 (grammar) + 4 (enhancement) = 14 points
+ * - Max for B1 student: 5 (spelling) + 4 (grammar) + 3 (enhancement) = 12 points
+ * - Max for A2 student: 5 (spelling) + 3 (grammar) + 2 (enhancement) = 10 points
+ * - Max for A1 student: 4 (spelling) + 2 (grammar) + 1 (enhancement) = 7 points
+ *
+ * Remedial Routing:
+ * - Score ≤7: Remedial A1
+ * - Score ≤10: Remedial A2
+ * - Score ≤12: Remedial B1
+ * - Score ≤14: Remedial B2
+ * - Score ≤18: Remedial C1
+ * - Score >18: Dashboard (shouldn't happen, max is 18)
  */
 
 export default function Phase4Step5Interaction3() {
@@ -180,11 +194,24 @@ export default function Phase4Step5Interaction3() {
     console.log('\n' + '='.repeat(60))
     console.log('PHASE 4 STEP 5 - FINAL RESULTS')
     console.log('='.repeat(60))
-    console.log('Interaction 1 (Spelling):', interaction1Score, '/5')
-    console.log('Interaction 2 (Grammar):', interaction2Score, '/5')
-    console.log('Interaction 3 (Enhancement):', interaction3Score, '/5')
+    console.log('Interaction 1 (Spelling):', interaction1Score)
+    console.log('Interaction 2 (Grammar):', interaction2Score)
+    console.log('Interaction 3 (Enhancement):', interaction3Score)
     console.log('-'.repeat(60))
-    console.log('TOTAL SCORE:', total, '/15')
+    console.log('TOTAL SCORE:', total)
+    console.log('Max possible: 18 (for C1: 7+6+5)')
+    console.log('-'.repeat(60))
+
+    // Determine remedial level
+    let remedialLevel = ''
+    if (total <= 7) remedialLevel = 'A1'
+    else if (total <= 10) remedialLevel = 'A2'
+    else if (total <= 12) remedialLevel = 'B1'
+    else if (total <= 14) remedialLevel = 'B2'
+    else if (total <= 18) remedialLevel = 'C1'
+    else remedialLevel = 'Dashboard (Excellent!)'
+
+    console.log('Routing to: Remedial', remedialLevel)
     console.log('='.repeat(60) + '\n')
 
     setFinalScore({
@@ -196,14 +223,36 @@ export default function Phase4Step5Interaction3() {
   }
 
   const handleContinue = () => {
-    // Clear Step 5 scores
+    // Determine remedial level based on total score
+    const total = finalScore.total
+
+    // Clear Step 5 interaction scores
     sessionStorage.removeItem('phase4_step5_interaction1_score')
     sessionStorage.removeItem('phase4_step5_interaction2_score')
     sessionStorage.removeItem('phase4_step5_interaction3_score')
     sessionStorage.removeItem('phase4_step5_spelling_corrected')
     sessionStorage.removeItem('phase4_step5_grammar_corrected')
 
-    navigate('/app/dashboard')
+    // Route to appropriate remedial level based on score
+    if (total <= 7) {
+      // Score 0-7: Remedial A1
+      navigate('/app/phase4/step/5/remedial/a1/taskA')
+    } else if (total <= 10) {
+      // Score 8-10: Remedial A2
+      navigate('/app/phase4/step/5/remedial/a2/taskA')
+    } else if (total <= 12) {
+      // Score 11-12: Remedial B1
+      navigate('/app/phase4/step/5/remedial/b1/taskA')
+    } else if (total <= 14) {
+      // Score 13-14: Remedial B2
+      navigate('/app/phase4/step/5/remedial/b2/taskA')
+    } else if (total <= 18) {
+      // Score 15-18: Remedial C1 (max possible is 15, but keeping for safety)
+      navigate('/app/phase4/step/5/remedial/c1/taskA')
+    } else {
+      // Score 19+: This shouldn't happen with max 15, but go to dashboard as fallback
+      navigate('/app/dashboard')
+    }
   }
 
   return (
@@ -236,7 +285,7 @@ export default function Phase4Step5Interaction3() {
             ✓ Your Grammar-Corrected Version
           </Typography>
           <Paper sx={{ p: 2, backgroundColor: '#fff', border: '1px solid #4caf50' }}>
-            <Typography variant="body1" sx={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
+            <Typography variant="body1" sx={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap', color: '#000' }}>
               {grammarCorrected}
             </Typography>
           </Paper>
@@ -361,25 +410,28 @@ export default function Phase4Step5Interaction3() {
 
             <Paper elevation={4} sx={{ p: 3, backgroundColor: 'white', maxWidth: 500, mx: 'auto', my: 3 }}>
               <Typography variant="h2" fontWeight="bold" sx={{ color: '#8e44ad' }}>
-                {finalScore.total} / 15
+                {finalScore.total}
               </Typography>
               <Typography variant="h6" color="text.secondary">
                 Total Points
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                (Max possible: 18 for C1 level)
               </Typography>
             </Paper>
 
             <Stack spacing={2} sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 1 }}>
                 <Typography variant="body1">Interaction 1: Spelling Correction</Typography>
-                <Chip label={`${finalScore.interaction1}/5`} sx={{ backgroundColor: 'white', color: '#8e44ad', fontWeight: 'bold' }} />
+                <Chip label={`${finalScore.interaction1} pts`} sx={{ backgroundColor: 'white', color: '#8e44ad', fontWeight: 'bold' }} />
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 1 }}>
                 <Typography variant="body1">Interaction 2: Grammar Correction</Typography>
-                <Chip label={`${finalScore.interaction2}/5`} sx={{ backgroundColor: 'white', color: '#8e44ad', fontWeight: 'bold' }} />
+                <Chip label={`${finalScore.interaction2} pts`} sx={{ backgroundColor: 'white', color: '#8e44ad', fontWeight: 'bold' }} />
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 1 }}>
                 <Typography variant="body1">Interaction 3: Coherence & Vocabulary</Typography>
-                <Chip label={`${finalScore.interaction3}/5`} sx={{ backgroundColor: 'white', color: '#8e44ad', fontWeight: 'bold' }} />
+                <Chip label={`${finalScore.interaction3} pts`} sx={{ backgroundColor: 'white', color: '#8e44ad', fontWeight: 'bold' }} />
               </Box>
             </Stack>
 
@@ -387,6 +439,16 @@ export default function Phase4Step5Interaction3() {
               You've successfully completed Phase 4 Step 5!<br />
               You've built autonomous writing skills through progressive error correction.
             </Typography>
+
+            {finalScore.total > 18 ? (
+              <Typography variant="body1" sx={{ mb: 3 }}>
+                Excellent performance! You will proceed to the dashboard.
+              </Typography>
+            ) : (
+              <Typography variant="body1" sx={{ mb: 3 }}>
+                You'll now complete remedial activities to strengthen your skills based on your performance.
+              </Typography>
+            )}
 
             <Button
               variant="contained"
@@ -401,7 +463,7 @@ export default function Phase4Step5Interaction3() {
                 }
               }}
             >
-              Return to Dashboard
+              {finalScore.total > 18 ? 'Return to Dashboard' : 'Continue to Remedial Activities'}
             </Button>
           </Paper>
         </>
