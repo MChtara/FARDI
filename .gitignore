@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.claude
 # Flask session data
 flask_session/
 
@@ -14,6 +15,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+note.txt
 
 # IDE specific files
 .idea/

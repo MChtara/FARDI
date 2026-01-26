@@ -62,9 +62,12 @@ app.register_blueprint(phase5_bp)
 from routes.evaluation_routes import evaluation_bp
 app.register_blueprint(evaluation_bp, url_prefix='/api')
 
-# Register admin routes
-from routes.admin_routes import admin_bp
-app.register_blueprint(admin_bp)
+# Register Phase 4 routes
+from routes.phase4_routes import phase4_bp
+app.register_blueprint(phase4_bp)
+
+# Import Phase 4 loader
+from models.phase4_loader import get_phase4_step
 
 
 @app.route('/')
@@ -376,12 +379,21 @@ def clear_session():
 @app.route('/app', strict_slashes=False)
 @app.route('/app/<path:path>')
 def serve_react(path=None):
+    import mimetypes
     build_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')
     index_path = os.path.join(build_dir, 'index.html')
     if os.path.exists(index_path):
         # Serve static assets or index.html for SPA routes
         if path and os.path.exists(os.path.join(build_dir, path)):
-            return send_from_directory(build_dir, path)
+            # Get the mimetype and ensure .js files are served correctly
+            mimetype, _ = mimetypes.guess_type(path)
+            if path.endswith('.js'):
+                mimetype = 'application/javascript'
+            elif path.endswith('.mjs'):
+                mimetype = 'application/javascript'
+            elif path.endswith('.css'):
+                mimetype = 'text/css'
+            return send_from_directory(build_dir, path, mimetype=mimetype)
         return send_from_directory(build_dir, 'index.html')
     # If no build yet, show a friendly message
     return ("React build not found. Run 'npm run build' in frontend/ to enable /app.", 404)
@@ -668,6 +680,18 @@ def change_password():
 def delete_account():
     """Redirect to React delete account page"""
     return redirect('/app/profile/delete-account')
+
+@app.route('/phase4/step/1')
+@login_required
+def phase4_step1():
+    """Phase 4 Step 1 - Marketing & Promotion Engage"""
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('Please log in to access Phase 4', 'error')
+        return redirect('/auth/login')
+    
+    # Redirect to React SPA
+    return redirect('/app/phase4/step/1')
 
 @app.route('/admin')
 @login_required

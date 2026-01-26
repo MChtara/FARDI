@@ -4,6 +4,7 @@ import { Avatar as MuiAvatar, Box, Typography } from '@mui/material'
 const AVATAR_MAPPING = {
   'Ms. Mabrouki': 'mabrouki.svg',
   'SKANDER': 'skander.svg',
+  'Skander': 'skander.svg',
   'Emna': 'emna.svg',
   'Ryan': 'ryan.svg',
   'Lilia': 'lilia.svg',
@@ -13,6 +14,7 @@ const AVATAR_MAPPING = {
 const CHARACTER_ROLES = {
   'Ms. Mabrouki': 'Event Coordinator',
   'SKANDER': 'Student Council President',
+  'Skander': 'Student Council President',
   'Emna': 'Committee Member',
   'Ryan': 'Committee Member',
   'Lilia': 'Committee Member',

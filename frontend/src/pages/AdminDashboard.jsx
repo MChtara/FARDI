@@ -711,48 +711,33 @@ export default function AdminDashboard() {
               </TableHead>
               <TableBody>
                 {recentUsers.slice(0, 10).map((user) => (
-                  <TableRow key={user.user_id || user.id}>
+                  <TableRow key={user.id}>
                     <TableCell>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
-                          {(user.first_name?.[0] || user.username?.[0] || '?').toUpperCase()}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="subtitle2">
-                            {user.first_name} {user.last_name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            @{user.username}
-                          </Typography>
-                        </Box>
-                      </Stack>
+                      <Typography variant="subtitle2">
+                        {user.first_name} {user.last_name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        @{user.username}
+                      </Typography>
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       <Chip
-                        label={user.phase1_level || user.best_level || 'N/A'}
+                        label={user.best_level || 'N/A'}
                         size="small"
                         color="primary"
                         variant="outlined"
                       />
                     </TableCell>
-                    <TableCell>
-                      <Stack spacing={0.5}>
-                        <Typography variant="body2">Phase 2: {user.phase2_percentage}%</Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {user.total_remedial_activities || 0} remedial activities
-                        </Typography>
-                      </Stack>
-                    </TableCell>
+                    <TableCell>{user.total_assessments || 0}</TableCell>
                     <TableCell>
                       {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                     </TableCell>
                     <TableCell>
                       <IconButton
                         component={RouterLink}
-                        to={`/admin/student/${user.user_id || user.id}`}
+                        to={`/admin/users/${user.id}`}
                         size="small"
-                        color="primary"
                       >
                         <VisibilityIcon />
                       </IconButton>

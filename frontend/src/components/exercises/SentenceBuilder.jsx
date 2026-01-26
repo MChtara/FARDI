@@ -168,9 +168,9 @@ export default function SentenceBuilder({ exercise, onComplete, onProgress }) {
         const allCorrect = correctCount === gapCount && gapCount > 0;
 
         if (allCorrect) {
-            const points = 15;
+            const points = 1; // Changed from 15 to 1 point per sentence
             setScore(prev => prev + points);
-            setFeedback({ type: 'success', message: `Perfect! +${points} points` });
+            setFeedback({ type: 'success', message: `Perfect! +${points} point${points !== 1 ? 's' : ''}` });
             setCompletedSentences(prev => [...prev, currentIndex]);
 
             setTimeout(() => {
@@ -181,11 +181,20 @@ export default function SentenceBuilder({ exercise, onComplete, onProgress }) {
                 }
             }, 1500);
         } else {
+            // Auto-advance to next sentence without retry (0 points for incorrect)
             setFeedback({
                 type: 'error',
-                message: `${correctCount}/${gapCount} correct. Try again!`,
+                message: `Incorrect. Moving to next sentence...`,
                 correctWords: getTargetWords
             });
+
+            setTimeout(() => {
+                if (currentIndex < templates.length - 1) {
+                    setCurrentIndex(prev => prev + 1);
+                } else {
+                    handleComplete();
+                }
+            }, 2000);
         }
 
         if (onProgress) {

@@ -366,6 +366,28 @@ class DatabaseManager:
                 )
             ''')
 
+            # Remedial scores table - tracks Phase 4 Step 4 remedial activity scores
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS remedial_scores (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    phase INTEGER NOT NULL,
+                    step INTEGER NOT NULL,
+                    level TEXT NOT NULL,
+                    task_a_score INTEGER DEFAULT 0,
+                    task_b_score INTEGER DEFAULT 0,
+                    task_c_score INTEGER DEFAULT 0,
+                    task_d_score INTEGER DEFAULT 0,
+                    task_e_score INTEGER DEFAULT 0,
+                    task_f_score INTEGER DEFAULT 0,
+                    total_score INTEGER DEFAULT 0,
+                    max_score INTEGER DEFAULT 0,
+                    passed BOOLEAN DEFAULT 0,
+                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+                )
+            ''')
+
             # Database migrations - Add missing columns to existing tables
             try:
                 # Check if role and is_admin columns exist, add them if not
@@ -1355,7 +1377,12 @@ def login_required(f):
     """Decorator to require login for routes"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        from flask import request, jsonify
+
         if 'user_id' not in session:
+            # Check if this is an API request
+            if request.path.startswith('/api/') or request.headers.get('Content-Type') == 'application/json':
+                return jsonify({'success': False, 'error': 'Authentication required. Please log in.'}), 401
             flash('Please log in to access this page.', 'warning')
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)

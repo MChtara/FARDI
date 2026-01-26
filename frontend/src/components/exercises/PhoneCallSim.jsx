@@ -197,6 +197,21 @@ export default function PhoneCallSim({ exercise, onComplete, onProgress }) {
             const newAnswers = { ...answers, [lineKey]: newWords }
             setAnswers(newAnswers)
 
+            // Calculate current score based on CORRECT words
+            let totalCorrectWords = 0
+            userInputLines.forEach((line) => {
+                const key = `line_${line.originalIndex}`
+                const filled = newAnswers[key] || []
+                const correctAnswers = line.correct_answers || []
+
+                // Count only correct words at correct positions
+                filled.forEach((word, idx) => {
+                    if (correctAnswers[idx] && word === correctAnswers[idx]) {
+                        totalCorrectWords++
+                    }
+                })
+            })
+
             if (newWords.length === blankCount) {
                 setCompletedLines(prev => new Set([...prev, currentLineIndex]))
 
@@ -208,7 +223,11 @@ export default function PhoneCallSim({ exercise, onComplete, onProgress }) {
                 }, 600)
             }
 
-            onProgress?.({ answers: newAnswers })
+            // Report progress with correct word count
+            onProgress?.({
+                answers: newAnswers,
+                correctCount: totalCorrectWords
+            })
         }
     }
 
@@ -248,15 +267,63 @@ export default function PhoneCallSim({ exercise, onComplete, onProgress }) {
         }
     }
 
+    // Calculate total CORRECT words filled (validate against correct_answers)
+    const getTotalCorrectWords = () => {
+        let correctCount = 0
+        userInputLines.forEach((line) => {
+            const lineKey = `line_${line.originalIndex}`
+            const filledWords = answers[lineKey] || []
+            const correctAnswers = line.correct_answers || []
+
+            // Check each filled word against the correct answer at that position
+            filledWords.forEach((word, index) => {
+                if (correctAnswers[index] && word === correctAnswers[index]) {
+                    correctCount++
+                }
+            })
+        })
+        return correctCount
+    }
+
+    // Calculate total blanks available
+    const getTotalBlanksAvailable = () => {
+        let total = 0
+        userInputLines.forEach((line) => {
+            const blankCount = (line.template?.match(/_{3,}/g) || []).length
+            total += blankCount
+        })
+        return total
+    }
+
     // Check completion
     const isComplete = completedLines.size === userInputLines.length && userInputLines.length > 0
 
     useEffect(() => {
         if (isComplete && onComplete) {
+            const totalCorrectWords = getTotalCorrectWords()
+            const totalBlanksAvailable = getTotalBlanksAvailable()
+
+            console.log('=== PhoneCallSim - Scoring ===')
+            console.log('Total CORRECT words:', totalCorrectWords, '/', totalBlanksAvailable)
+            console.log('Each CORRECT word = +1 point')
+
+            // Log details per line
+            userInputLines.forEach((line) => {
+                const lineKey = `line_${line.originalIndex}`
+                const filledWords = answers[lineKey] || []
+                const correctAnswers = line.correct_answers || []
+                console.log(`Line ${line.originalIndex}:`, filledWords)
+                console.log(`Correct answers:`, correctAnswers)
+                filledWords.forEach((word, index) => {
+                    const isCorrect = correctAnswers[index] && word === correctAnswers[index]
+                    console.log(`  [${index}] "${word}" vs "${correctAnswers[index]}": ${isCorrect ? '✅ +1' : '❌ +0'}`)
+                })
+            })
+
             onComplete({
-                isPerfect: true,
-                correctCount: completedLines.size,
-                totalCount: userInputLines.length
+                isPerfect: totalCorrectWords === totalBlanksAvailable,
+                correctCount: totalCorrectWords, // Count only CORRECT words
+                totalCount: totalBlanksAvailable
             })
         }
     }, [isComplete, onComplete, completedLines.size, userInputLines.length])
