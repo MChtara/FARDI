@@ -1,0 +1,35 @@
+Use a Framework for Developing Your Feedback Process
+Incorporating a structured framework into your feedback process can significantly enhance its effectiveness and clarity. Different models cater to varied contexts and needs. Let's explore some popular frameworks:
+1. The COIN Framework
+COIN stands for Context, Observation, Impact, Next steps.
+Example: In yesterday's meeting (Context), I noticed you interrupted several times (Observation). This seemed to disrupt the flow and others appeared hesitant to contribute (Impact). For future meetings, let's work on allowing everyone to finish their points (Next steps).
+2. SBI (Situation-Behavior-Impact)
+Focuses on specific Situation, observed Behavior, and its Impact.
+Example: During the team workshop (Situation), you effectively resolved the technical issue (Behavior). This helped us stay on schedule and impressed the client (Impact).
+3. STAR (Situation-Task-Action-Result)
+Emphasizes the context of a Situation, as well as the Task, Action taken, and the Result achieved.
+Example: In the quarterly sales meeting (Situation), your task was to present the new strategy (Task). Your thorough preparation and clear presentation (Action) led to the team's enthusiastic support and a clear action plan (Result).
+4. Pendleton Model
+Encourages self-assessment first, followed by positive feedback and suggestions for improvement.
+Example: How do you think your presentation went? I believe you engaged the audience effectively (Positive feedback), but perhaps more data could be included next time (Suggestion).
+5. BOOST (Balanced, Observed, Objective, Specific, Timely)
+Ensures feedback is Balanced, based on Observed behavior, Objective, Specific, and Timely.
+Example: I observed (Observed) in the last few project meetings (Timely) that your insights (Specific) are well-researched (Objective). Balancing this with more team interaction (Balanced) would be even more beneficial.
+6. 360-Degree Feedback
+Comprehensive feedback gathered from various sources like peers, subordinates, and supervisors.
+Example: Your peers appreciate your teamwork, your juniors admire your leadership, and as your supervisor, I value your commitment. This 360-degree feedback indicates your strong team-building skills.
+7. Stop-Start-Continue
+A simple method stating what behaviors an employee should Stop, Start, and Continue.
+Example: You should stop postponing the weekly reports, start contributing more in team discussions, and continue with your excellent client follow-ups.
+Positive sandwich feedback (also called the feedback sandwich) is a method where you deliver constructive criticism between two layers of genuine positive feedback. The goal is to correct behavior while keeping motivation and trust high.
+Structure
+1. Positive observation - what works well
+2. Constructive feedback - what needs improvement, clearly and specifically
+3. Positive reinforcement - encouragement or confidence in progress
+Real examples
+Example 1 - Workplace performance
+"You consistently meet deadlines and your reports are well structured. I noticed, however, that some data sources were not cited clearly. That said, your attention to detail is strong, and tightening citations will make your work excellent."
+Key rule (important)
+The praise must be specific and sincere. If the positives feel generic or fake, the sandwich loses credibility and the feedback won't land.
+
+
