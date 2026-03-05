@@ -9,7 +9,7 @@ import DragDropMatchingGame from '../../../components/DragDropMatchingGame.jsx'
  * Timed drag-and-drop game for basic promotion vocabulary
  */
 
-const BASE_URL = import.meta.env.BASE_URL || '/app/'
+const BASE_URL = import.meta.env.BASE_URL || '/'
 
 const VOCABULARY_PAIRS = [
   {
@@ -100,7 +100,7 @@ export default function RemedialA1TaskA() {
 
   const handleContinue = () => {
     // Navigate to Task B
-    navigate('/app/phase4/remedial/a1/taskB')
+    navigate('/phase4/remedial/a1/taskB')
   }
 
   return (

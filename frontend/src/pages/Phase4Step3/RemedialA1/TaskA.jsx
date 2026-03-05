@@ -10,7 +10,7 @@ import DragDropMatchingGame from '../../../components/DragDropMatchingGame.jsx'
  * Score: +1 for each correct match (8 total)
  */
 
-const BASE_URL = import.meta.env.BASE_URL || '/app/'
+const BASE_URL = import.meta.env.BASE_URL || '/'
 
 const TERM_PAIRS = [
   {
@@ -102,7 +102,7 @@ export default function RemedialA1TaskA() {
 
   const handleContinue = () => {
     // Navigate to Task B
-    navigate('/app/phase4/step3/remedial/a1/taskB')
+    navigate('/phase4/step3/remedial/a1/taskB')
   }
 
   return (

@@ -202,7 +202,7 @@ export default function Phase4Step5RemedialC1TaskC() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/c1/taskD')
+    navigate('/phase4/step/5/remedial/c1/taskD')
   }
 
   const progress = ((currentQuestion + 1) / QUESTIONS.length) * 100

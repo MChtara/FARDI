@@ -349,7 +349,7 @@ export default function Phase4Step5RemedialB2TaskD() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/b2/taskE')
+    navigate('/phase4/step/5/remedial/b2/taskE')
   }
 
   const formatTime = (seconds) => {

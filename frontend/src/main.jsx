@@ -13,7 +13,7 @@ const root = createRoot(document.getElementById('root'))
 root.render(
   <StrictMode>
     <AppTheme>
-      <BrowserRouter basename="/app">
+      <BrowserRouter basename="/">
         <App />
       </BrowserRouter>
     </AppTheme>

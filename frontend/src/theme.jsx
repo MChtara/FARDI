@@ -231,63 +231,30 @@ function getDesignTokens(mode) {
         },
       },
       MuiButton: {
-        defaultProps: { 
+        defaultProps: {
           variant: 'contained',
-          disableElevation: false
+          disableElevation: true
         },
-        styleOverrides: { 
-          root: { 
+        styleOverrides: {
+          root: {
             textTransform: 'none',
             borderRadius: 12,
-            padding: '14px 28px',
-            fontSize: '0.95rem',
             fontWeight: 600,
-            letterSpacing: '0.025em',
-            position: 'relative',
-            overflow: 'hidden',
-            boxShadow: isDark 
-              ? '0 4px 16px 0 rgba(0, 0, 0, 0.4), 0 1px 3px 0 rgba(0, 0, 0, 0.2)' 
-              : '0 4px 16px 0 rgba(30, 64, 175, 0.2), 0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-            transition: 'all 250ms cubic-bezier(0.4, 0, 0.2, 1)',
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: '-100%',
-              width: '100%',
-              height: '100%',
-              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-              transition: 'left 0.5s',
-            },
-            '&:hover': {
-              transform: 'translateY(-2px)',
-              boxShadow: isDark 
-                ? '0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 4px 16px 0 rgba(0, 0, 0, 0.3)' 
-                : '0 8px 32px 0 rgba(30, 64, 175, 0.3), 0 4px 16px 0 rgba(0, 0, 0, 0.15)',
-              '&:before': {
-                left: '100%',
-              }
-            },
-            '&:active': {
-              transform: 'translateY(-1px) scale(0.98)',
-            }
+            transition: 'all 200ms ease',
           },
           outlined: {
-            borderWidth: 2,
-            borderColor: isDark ? 'rgba(96, 165, 250, 0.5)' : 'rgba(30, 58, 138, 0.3)',
-            backdropFilter: 'blur(10px)',
+            borderWidth: 1,
             '&:hover': {
-              borderWidth: 2,
-              borderColor: isDark ? 'rgba(96, 165, 250, 0.8)' : 'rgba(30, 58, 138, 0.6)',
+              borderWidth: 1,
             }
           },
           sizeLarge: {
-            padding: '16px 32px',
-            fontSize: '1.1rem',
+            padding: '14px 28px',
+            fontSize: '1rem',
             borderRadius: 14
           },
           sizeSmall: {
-            padding: '10px 20px',
+            padding: '8px 16px',
             fontSize: '0.85rem',
             borderRadius: 10
           }
@@ -366,9 +333,7 @@ function getDesignTokens(mode) {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backdropFilter: 'blur(20px)',
-            backgroundColor: isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(248, 250, 252, 0.8)',
-            borderBottom: isDark ? '1px solid rgba(203, 213, 225, 0.1)' : '1px solid rgba(30, 41, 59, 0.08)',
+            boxShadow: 'none',
           }
         }
       }
@@ -384,21 +349,19 @@ export default function AppTheme({ children }) {
   const [mode, setMode] = useState('light')
 
   useEffect(() => {
-    const saved = localStorage.getItem('fardi-color-mode')
+    // v2 key — ignores old 'fardi-color-mode' dark preference
+    const saved = localStorage.getItem('fardi-theme-v2')
     if (saved === 'light' || saved === 'dark') {
       setMode(saved)
-    } else {
-      // Respect system preference by default
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      setMode(prefersDark ? 'dark' : 'light')
     }
+    // Default stays 'light' (from useState init)
   }, [])
 
   const colorMode = useMemo(() => ({
     mode,
     toggle: () => setMode(prev => {
       const next = prev === 'light' ? 'dark' : 'light'
-      localStorage.setItem('fardi-color-mode', next)
+      localStorage.setItem('fardi-theme-v2', next)
       return next
     })
   }), [mode])

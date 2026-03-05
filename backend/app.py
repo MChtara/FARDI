@@ -70,53 +70,29 @@ app.register_blueprint(phase3_bp)
 from routes.phase4_routes import phase4_bp
 app.register_blueprint(phase4_bp)
 
+# Register Phase 6 routes
+from routes.phase6_routes import phase6_bp
+app.register_blueprint(phase6_bp)
+
 # Import Phase 4 loader
 from models.phase4_loader import get_phase4_step
 
-
-@app.route('/')
-def root():
-    """Root route - redirects based on authentication status"""
-    if 'user_id' in session:
-        return redirect(url_for('index'))
-    else:
-        return redirect(url_for('welcome'))
 
 @app.route('/welcome')
 def welcome():
     """Public welcome page for unauthenticated users"""
     if 'user_id' in session:
-        return redirect(url_for('index'))
-    return redirect('/app')
+        return redirect('/')
+    return redirect('/')
 
 @app.route('/home')
 @login_required
 def index():
     """Home page route with game introduction - requires login"""
     # Use the SPA home for a consistent React experience
-    return redirect('/app')
+    return redirect('/')
 
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    """Redirect to admin dashboard if admin, otherwise React dashboard"""
-    user_id = session.get('user_id')
-    
-    # Check if user is admin
-    try:
-        conn = db_manager.get_connection()
-        admin_check = conn.execute(
-            'SELECT is_admin FROM users WHERE id = ?', (user_id,)
-        ).fetchone()
-        conn.close()
-        
-        if admin_check and admin_check['is_admin']:
-            return redirect(url_for('admin_main_dashboard'))
-    except Exception as e:
-        logger.error(f"Error checking admin status: {e}")
-    
-    # Regular user dashboard
-    return redirect('/app/dashboard')
+# /dashboard is handled by the React SPA catch-all route
 
 @app.route('/admin/dashboard')
 @login_required
@@ -133,7 +109,7 @@ def admin_dashboard():
         
         if not admin_check or not admin_check['is_admin']:
             flash('Access denied. Admin privileges required.', 'error')
-            return redirect(url_for('dashboard'))
+            return redirect('/dashboard')
         
         # Get admin statistics
         stats = get_admin_statistics()
@@ -164,7 +140,7 @@ def admin_dashboard():
     except Exception as e:
         logger.error(f"Error in admin dashboard: {e}")
         flash('Error loading admin dashboard', 'error')
-        return redirect(url_for('dashboard'))
+        return redirect('/dashboard')
 
 @app.route('/start-game', methods=['GET', 'POST'])
 @login_required
@@ -185,13 +161,9 @@ def start_game():
     session['achievements'] = []
     session['game_user_id'] = user_id
 
-    return redirect(url_for('game'))
+    return redirect('/game')
 
-@app.route('/game')
-@login_required
-def game():
-    """Redirect to React SPA game to keep a single source of UI"""
-    return redirect('/app/game')
+# /game is handled by the React SPA catch-all route
 
 @app.route('/results')
 @login_required
@@ -270,14 +242,14 @@ def results():
     session.modified = True
     
     # Redirect to React results page with session ID
-    return redirect(f'/app/results?session_id={assessment_session_id}')
+    return redirect(f'/results?session_id={assessment_session_id}')
 
 @app.route('/certificate')
 @login_required
 def certificate():
     """Redirect to React certificate"""
     session_id = request.args.get('session_id', '')
-    return redirect(f'/app/certificate?session_id={session_id}')
+    return redirect(f'/certificate?session_id={session_id}')
 
 @app.route('/submit-response', methods=['POST'])
 @login_required
@@ -292,7 +264,7 @@ def submit_response():
     # If AI is detected with high score, reject submission
     if is_ai and ai_score > 0.5:
         flash(f"❌ AI content detected ({ai_score:.0%}). Please provide your own authentic response.", "error")
-        return redirect(url_for('game'))
+        return redirect('/game')
     
     if current_step < len(DIALOGUE_QUESTIONS):
         question_data = DIALOGUE_QUESTIONS[current_step]
@@ -338,7 +310,7 @@ def submit_response():
         session['xp'] = session.get('xp', 0) + xp_earned
         session['current_step'] = current_step + 1
     
-    return redirect(url_for('game'))
+    return redirect('/game')
 
 # Import API routes
 from routes.api_routes import api_bp
@@ -379,28 +351,29 @@ def clear_session():
     flash('Session cleared successfully.', 'info')
     return redirect(url_for('welcome'))
 
-# Optional: Serve React build (if present) under /app without affecting existing pages
+# Backward compatibility: redirect /app to root
 @app.route('/app', strict_slashes=False)
 @app.route('/app/<path:path>')
-def serve_react(path=None):
-    import mimetypes
-    build_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')
-    index_path = os.path.join(build_dir, 'index.html')
-    if os.path.exists(index_path):
-        # Serve static assets or index.html for SPA routes
-        if path and os.path.exists(os.path.join(build_dir, path)):
-            # Get the mimetype and ensure .js files are served correctly
+def redirect_app_to_root(path=None):
+    """Redirect /app routes to root for backward compatibility"""
+    # Handle asset requests from old build (e.g., /app/assets/...)
+    if path and path.startswith('assets/'):
+        # Serve the asset directly without redirect (browsers can't follow redirects for assets)
+        import mimetypes
+        build_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')
+        asset_path = os.path.join(build_dir, path)
+        if os.path.exists(asset_path) and os.path.isfile(asset_path):
             mimetype, _ = mimetypes.guess_type(path)
             if path.endswith('.js'):
-                mimetype = 'application/javascript'
-            elif path.endswith('.mjs'):
                 mimetype = 'application/javascript'
             elif path.endswith('.css'):
                 mimetype = 'text/css'
             return send_from_directory(build_dir, path, mimetype=mimetype)
-        return send_from_directory(build_dir, 'index.html')
-    # If no build yet, show a friendly message
-    return ("React build not found. Run 'npm run build' in frontend/ to enable /app.", 404)
+    
+    # For non-asset paths, redirect to root
+    if path:
+        return redirect(f'/{path}')
+    return redirect('/')
 
 @app.route('/phase2')
 @login_required
@@ -425,7 +398,7 @@ def phase2_intro():
     if phase2_progress and phase2_progress.get('current_step') and not phase2_progress.get('completed'):
         # User has an in-progress step, redirect to it
         current_step = phase2_progress.get('current_step')
-        return redirect(f'/app/phase2/step/{current_step}')
+        return redirect(f'/phase2/step/{current_step}')
     
     # Initialize Phase 2 session data following the .docx specifications
     session['phase2_player_name'] = player_name
@@ -438,7 +411,7 @@ def phase2_intro():
     session['phase2_total_points'] = 0
     
     # Redirect to SPA intro after initializing session data
-    return redirect('/app/phase2')
+    return redirect('/phase2/intro')
 
 @app.route('/phase2/step/<step_id>')
 @login_required
@@ -470,7 +443,7 @@ def phase2_step(step_id):
     
     # Check if step is completed
     if current_action_item >= total_items:
-        return redirect(url_for('phase2_step_results', step_id=step_id))
+        return redirect(f'/phase2/step/{step_id}/results')
     
     action_item = current_step['action_items'][current_action_item]
     
@@ -488,7 +461,7 @@ def phase2_step(step_id):
     assessment_history.save_phase2_progress(user_id, session_id, step_id, progress_data)
     
     # Redirect to SPA step view, preserving DB progress above
-    return redirect(f'/app/phase2/step/{step_id}')
+    return redirect(f'/phase2/step/{step_id}')
 
 @app.route('/phase2/submit-response', methods=['POST'])
 @login_required
@@ -553,11 +526,7 @@ def phase2_submit_response():
     
     return redirect(url_for('phase2_step', step_id=step_id))
 
-@app.route('/phase2/step/<step_id>/results')
-@login_required
-def phase2_step_results(step_id):
-    """Redirect to SPA step results view"""
-    return redirect(f'/app/phase2/step/{step_id}/results')
+# /phase2/step/<step_id>/results is handled by the React SPA catch-all route
     
 @app.route('/phase2/remedial/<step_id>/<level>')
 @login_required
@@ -610,13 +579,13 @@ def phase2_remedial(step_id, level):
         return redirect(url_for('phase2_step', step_id=step_id))
     
     # Redirect to React remedial page with parameters
-    return redirect(f'/app/phase2/remedial/{step_id}/{level}?activity={current_activity}')
+    return redirect(f'/phase2/remedial/{step_id}/{level}?activity={current_activity}')
 
 # Fix double remedial URL issue    
 @app.route('/app/phase2/remedial/remedial/<path:remainder>')
 def fix_double_remedial(remainder):
     """Fix double remedial URLs by redirecting to correct path"""
-    return redirect(f'/app/phase2/remedial/{remainder}')
+    return redirect(f'/phase2/remedial/{remainder}')
     
 # Helper functions
 def get_next_phase2_step(current_step):
@@ -641,61 +610,12 @@ def determine_phase2_level(score):
     else:
         return 'A1'  # 5-9 points → Remedial A1
     
-@app.route('/phase2/complete')
-@login_required
-def phase2_complete():
-    """Phase 2 completion page with results"""
-    player_name = session.get('player_name', 'Player')
+# /phase2/complete is handled by the React SPA catch-all route
     
-    # Get Phase 2 assessment data
-    from routes.api_routes import get_phase2_overall_assessment
-    phase2_assessment = get_phase2_overall_assessment()
-    
-    if not phase2_assessment:
-        flash('Phase 2 data not found. Please restart Phase 2.', 'warning')
-        return redirect(url_for('phase2_intro'))
-    
-    # Mark Phase 2 as completed
-    session['phase2_completed'] = True
-    session.modified = True
-    
-    return redirect('/app/phase2/complete')
-    
-@app.route('/profile')
-@login_required
-def profile():
-    """Redirect to React profile page"""
-    return redirect('/app/profile')
+# /profile, /profile/edit, /profile/change-password, /profile/delete-account
+# are all handled by the React SPA catch-all route
 
-@app.route('/profile/edit')
-@login_required  
-def edit_profile():
-    """Redirect to React edit profile page"""
-    return redirect('/app/profile/edit')
-
-@app.route('/profile/change-password')
-@login_required
-def change_password():
-    """Redirect to React change password page"""
-    return redirect('/app/profile/change-password')
-
-@app.route('/profile/delete-account')
-@login_required
-def delete_account():
-    """Redirect to React delete account page"""
-    return redirect('/app/profile/delete-account')
-
-@app.route('/phase4/step/1')
-@login_required
-def phase4_step1():
-    """Phase 4 Step 1 - Marketing & Promotion Engage"""
-    user_id = session.get('user_id')
-    if not user_id:
-        flash('Please log in to access Phase 4', 'error')
-        return redirect('/auth/login')
-    
-    # Redirect to React SPA
-    return redirect('/app/phase4/step/1')
+# /phase4/step/1 is handled by the React SPA catch-all route
 
 @app.route('/admin')
 @login_required
@@ -715,7 +635,7 @@ def admin_main_dashboard():
         if not current_user or not current_user['is_admin']:
             flash('Access denied. Admin privileges required.', 'error')
             return redirect('/app/dashboard')
-        
+
         # Redirect to React admin dashboard
         return redirect('/app/admin')
                              
@@ -776,7 +696,7 @@ def admin_toggle_user(user_id):
 @admin_required
 def admin_view_user_data(user_id):
     """Redirect to React admin user viewer"""
-    return redirect(f'/app/admin/users/{user_id}')
+    return redirect(f'/admin/users/{user_id}')
 
 @app.route('/admin/export-data')
 @admin_required
@@ -1198,17 +1118,25 @@ def api_admin_analytics():
         ''').fetchall()
         
         phase_completion = conn.execute('''
-            SELECT 
+            SELECT
                 COUNT(DISTINCT u.id) as total_users,
                 COUNT(DISTINCT ar.user_id) as phase1_completed,
                 COUNT(DISTINCT p2.user_id) as phase2_started,
-                COUNT(DISTINCT CASE WHEN p2.steps_completed >= 4 THEN p2.user_id END) as phase2_completed
+                COUNT(DISTINCT CASE WHEN p2.steps_completed >= 4 THEN p2.user_id END) as phase2_completed,
+                COUNT(DISTINCT pc3.user_id) as phase3_completed,
+                COUNT(DISTINCT pc4.user_id) as phase4_completed,
+                COUNT(DISTINCT pc5.user_id) as phase5_completed,
+                COUNT(DISTINCT pc6.user_id) as phase6_completed
             FROM users u
             LEFT JOIN assessment_results ar ON u.id = ar.user_id
             LEFT JOIN (
                 SELECT user_id, COUNT(DISTINCT CASE WHEN step_completed = 1 THEN step_id END) as steps_completed
                 FROM phase2_progress GROUP BY user_id
             ) p2 ON u.id = p2.user_id
+            LEFT JOIN (SELECT user_id FROM user_phase_completion WHERE phase_number = 3 AND completed = 1) pc3 ON u.id = pc3.user_id
+            LEFT JOIN (SELECT user_id FROM user_phase_completion WHERE phase_number = 4 AND completed = 1) pc4 ON u.id = pc4.user_id
+            LEFT JOIN (SELECT user_id FROM user_phase_completion WHERE phase_number = 5 AND completed = 1) pc5 ON u.id = pc5.user_id
+            LEFT JOIN (SELECT user_id FROM user_phase_completion WHERE phase_number = 6 AND completed = 1) pc6 ON u.id = pc6.user_id
             WHERE u.is_admin = 0
         ''').fetchone()
         
@@ -1235,9 +1163,15 @@ def api_admin_analytics():
                 UNION
                 SELECT user_id, last_activity as activity_date FROM phase2_progress
                 WHERE last_activity >= datetime('now', '-7 days')
+                UNION
+                SELECT user_id, updated_at as activity_date FROM phase5_progress
+                WHERE updated_at >= datetime('now', '-7 days')
+                UNION
+                SELECT user_id, updated_at as activity_date FROM phase6_progress
+                WHERE updated_at >= datetime('now', '-7 days')
             )
         ''').fetchone()
-        
+
         active_users_30d = conn.execute('''
             SELECT COUNT(DISTINCT user_id) as count
             FROM (
@@ -1246,9 +1180,15 @@ def api_admin_analytics():
                 UNION
                 SELECT user_id, last_activity as activity_date FROM phase2_progress
                 WHERE last_activity >= datetime('now', '-30 days')
+                UNION
+                SELECT user_id, updated_at as activity_date FROM phase5_progress
+                WHERE updated_at >= datetime('now', '-30 days')
+                UNION
+                SELECT user_id, updated_at as activity_date FROM phase6_progress
+                WHERE updated_at >= datetime('now', '-30 days')
             )
         ''').fetchone()
-        
+
         daily_activity = conn.execute('''
             SELECT DATE(activity_date) as date, COUNT(DISTINCT user_id) as active_users
             FROM (
@@ -1257,6 +1197,12 @@ def api_admin_analytics():
                 UNION
                 SELECT user_id, last_activity as activity_date FROM phase2_progress
                 WHERE last_activity >= datetime('now', '-30 days')
+                UNION
+                SELECT user_id, updated_at as activity_date FROM phase5_progress
+                WHERE updated_at >= datetime('now', '-30 days')
+                UNION
+                SELECT user_id, updated_at as activity_date FROM phase6_progress
+                WHERE updated_at >= datetime('now', '-30 days')
             )
             GROUP BY DATE(activity_date)
             ORDER BY date DESC
@@ -1315,29 +1261,31 @@ def api_admin_analytics():
         
         # 4. Risk Identification
         at_risk_students = conn.execute('''
-            SELECT 
+            SELECT
                 u.id, u.username, u.first_name, u.last_name,
-                MAX(COALESCE(ar.completed_at, p2.last_activity, u.created_at)) as last_activity,
+                MAX(COALESCE(ar.completed_at, p2.last_activity, p5.updated_at, p6.updated_at, u.created_at)) as last_activity,
                 COUNT(DISTINCT ar.id) as assessments_completed,
                 COUNT(DISTINCT p2.step_id) as phase2_steps_attempted
             FROM users u
             LEFT JOIN assessment_results ar ON u.id = ar.user_id
             LEFT JOIN phase2_progress p2 ON u.id = p2.user_id
+            LEFT JOIN phase5_progress p5 ON u.id = p5.user_id
+            LEFT JOIN phase6_progress p6 ON u.id = p6.user_id
             WHERE u.is_admin = 0
             GROUP BY u.id, u.username, u.first_name, u.last_name
             HAVING last_activity < datetime('now', '-7 days') OR assessments_completed = 0
             ORDER BY last_activity ASC
             LIMIT 10
         ''').fetchall()
-        
+
         stuck_students = conn.execute('''
-            SELECT 
+            SELECT
                 u.id, u.username, u.first_name, u.last_name, p2.step_id,
                 p2.started_at, p2.last_activity,
                 CAST((julianday('now') - julianday(p2.last_activity)) AS INTEGER) as days_stuck
             FROM users u
             INNER JOIN phase2_progress p2 ON u.id = p2.user_id
-            WHERE p2.step_completed = 0 
+            WHERE p2.step_completed = 0
               AND p2.last_activity < datetime('now', '-3 days')
               AND u.is_admin = 0
             ORDER BY days_stuck DESC
@@ -1458,22 +1406,40 @@ def api_admin_user_details(user_id):
             WHERE user_id = ?
             ORDER BY started_at DESC
         ''', (user_id,)).fetchall()
-        
+
         # Check if Phase 2 is completed (all 4 steps completed)
         completed_steps = [p['step_id'] for p in phase2_progress if p['step_completed']]
         expected_steps = ['step_1', 'step_2', 'step_3', 'final_writing']
         phase2_completed = all(step in completed_steps for step in expected_steps)
-        
+
+        # Get phase completion for phases 3-6
+        phase_completion_rows = conn.execute('''
+            SELECT phase_number, completed, completion_date, final_level
+            FROM user_phase_completion
+            WHERE user_id = ?
+            ORDER BY phase_number
+        ''', (user_id,)).fetchall()
+        phase_completion = {row['phase_number']: dict(row) for row in phase_completion_rows}
+
         user_progress = {
             'phase2_steps': [dict(p) for p in phase2_progress],
-            'phase2_completed': phase2_completed
+            'phase2_completed': phase2_completed,
+            'phase3_completed': bool(phase_completion.get(3, {}).get('completed')),
+            'phase4_completed': bool(phase_completion.get(4, {}).get('completed')),
+            'phase5_completed': bool(phase_completion.get(5, {}).get('completed')),
+            'phase6_completed': bool(phase_completion.get(6, {}).get('completed')),
+            'phase_completion': [dict(row) for row in phase_completion_rows],
         }
-        
+
         conn.close()
-        
-        # Add phase2_completed to user data
+
+        # Add phase completion to user data
         user_dict = dict(user)
         user_dict['phase2_completed'] = phase2_completed
+        user_dict['phase3_completed'] = user_progress['phase3_completed']
+        user_dict['phase4_completed'] = user_progress['phase4_completed']
+        user_dict['phase5_completed'] = user_progress['phase5_completed']
+        user_dict['phase6_completed'] = user_progress['phase6_completed']
         
         return jsonify({
             'success': True,
@@ -1487,15 +1453,254 @@ def api_admin_user_details(user_id):
     except Exception as e:
         logger.error(f"Error getting user details: {e}")
         return jsonify({'error': 'Error loading user details'}), 500
+
+# Serve React SPA at root - MUST be last route (catch-all)
+# This route must come AFTER all other routes so Flask matches specific routes first
+@app.route('/', defaults={'path': ''}, strict_slashes=False)
+@app.route('/<path:path>')
+def serve_react(path=''):
+    """Serve React SPA at root - handles all routes not matched by backend"""
+    import mimetypes
+    
+    # Exclude backend routes - these should be handled by Flask before reaching here
+    backend_prefixes = ['api/', 'auth/', 'admin/', 'static/', 'sessions/']
+    if any(path.startswith(prefix) for prefix in backend_prefixes):
+        from flask import abort
+        abort(404)
+    
+    build_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'dist')
+    index_path = os.path.join(build_dir, 'index.html')
+    
+    if not os.path.exists(index_path):
+        return ("React build not found. Run 'npm run build' in frontend/ to enable SPA.", 404)
+    
+    # Handle /app/assets/ paths (from old build) - redirect to /assets/
+    if path.startswith('app/assets/'):
+        actual_path = path.replace('app/', '', 1)
+        asset_path = os.path.join(build_dir, actual_path)
+        if os.path.exists(asset_path):
+            mimetype, _ = mimetypes.guess_type(actual_path)
+            if actual_path.endswith('.js'):
+                mimetype = 'application/javascript'
+            elif actual_path.endswith('.css'):
+                mimetype = 'text/css'
+            return send_from_directory(build_dir, actual_path, mimetype=mimetype)
+    
+    # If path is empty, serve index.html
+    if not path:
+        return send_from_directory(build_dir, 'index.html')
+    
+    # Check if it's a static asset (JS, CSS, images, etc.)
+    asset_path = os.path.join(build_dir, path)
+    if os.path.exists(asset_path) and os.path.isfile(asset_path):
+        mimetype, _ = mimetypes.guess_type(path)
+        if path.endswith('.js'):
+            mimetype = 'application/javascript'
+        elif path.endswith('.mjs'):
+            mimetype = 'application/javascript'
+        elif path.endswith('.css'):
+            mimetype = 'text/css'
+        elif path.endswith('.json'):
+            mimetype = 'application/json'
+        elif path.endswith('.png'):
+            mimetype = 'image/png'
+        elif path.endswith('.jpg') or path.endswith('.jpeg'):
+            mimetype = 'image/jpeg'
+        elif path.endswith('.svg'):
+            mimetype = 'image/svg+xml'
+        elif path.endswith('.woff') or path.endswith('.woff2'):
+            mimetype = 'font/woff2'
+        return send_from_directory(build_dir, path, mimetype=mimetype)
+    
+    # For all other paths (SPA routes), serve index.html
+    return send_from_directory(build_dir, 'index.html')
         
+## ─── Chat System ───────────────────────────────────────────────
+
+def init_chat_tables():
+    """Create chat tables if they don't exist"""
+    conn = db_manager.get_connection()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS chat_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sender_id INTEGER NOT NULL,
+            receiver_id INTEGER NOT NULL,
+            message TEXT NOT NULL,
+            is_read INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sender_id) REFERENCES users(id),
+            FOREIGN KEY (receiver_id) REFERENCES users(id)
+        )
+    ''')
+    conn.commit()
+
+@app.route('/api/chat/conversations', methods=['GET'])
+@login_required
+def chat_conversations():
+    """Get all conversations for the current user (admin sees all students, student sees admin)"""
+    try:
+        user_id = session.get('user_id')
+        is_admin = session.get('is_admin')
+        conn = db_manager.get_connection()
+
+        if is_admin:
+            # Admin sees all students they have conversations with, plus all students for starting new convos
+            conversations = conn.execute('''
+                SELECT
+                    u.id as user_id,
+                    u.username,
+                    u.first_name,
+                    u.last_name,
+                    (SELECT message FROM chat_messages
+                     WHERE (sender_id = u.id AND receiver_id = ?) OR (sender_id = ? AND receiver_id = u.id)
+                     ORDER BY created_at DESC LIMIT 1) as last_message,
+                    (SELECT created_at FROM chat_messages
+                     WHERE (sender_id = u.id AND receiver_id = ?) OR (sender_id = ? AND receiver_id = u.id)
+                     ORDER BY created_at DESC LIMIT 1) as last_message_at,
+                    (SELECT COUNT(*) FROM chat_messages
+                     WHERE sender_id = u.id AND receiver_id = ? AND is_read = 0) as unread_count
+                FROM users u
+                WHERE u.is_admin = 0
+                ORDER BY last_message_at DESC NULLS LAST, u.first_name ASC
+            ''', (user_id, user_id, user_id, user_id, user_id)).fetchall()
+        else:
+            # Student sees only admin conversations
+            conversations = conn.execute('''
+                SELECT
+                    u.id as user_id,
+                    u.username,
+                    u.first_name,
+                    u.last_name,
+                    (SELECT message FROM chat_messages
+                     WHERE (sender_id = u.id AND receiver_id = ?) OR (sender_id = ? AND receiver_id = u.id)
+                     ORDER BY created_at DESC LIMIT 1) as last_message,
+                    (SELECT created_at FROM chat_messages
+                     WHERE (sender_id = u.id AND receiver_id = ?) OR (sender_id = ? AND receiver_id = u.id)
+                     ORDER BY created_at DESC LIMIT 1) as last_message_at,
+                    (SELECT COUNT(*) FROM chat_messages
+                     WHERE sender_id = u.id AND receiver_id = ? AND is_read = 0) as unread_count
+                FROM users u
+                WHERE u.is_admin = 1
+                ORDER BY last_message_at DESC NULLS LAST
+            ''', (user_id, user_id, user_id, user_id, user_id)).fetchall()
+
+        return jsonify({
+            'success': True,
+            'data': [{
+                'user_id': c['user_id'],
+                'username': c['username'],
+                'first_name': c['first_name'],
+                'last_name': c['last_name'],
+                'last_message': c['last_message'],
+                'last_message_at': c['last_message_at'],
+                'unread_count': c['unread_count'] or 0,
+            } for c in conversations]
+        })
+    except Exception as e:
+        logger.error(f"Error getting conversations: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/chat/messages/<int:other_user_id>', methods=['GET'])
+@login_required
+def chat_get_messages(other_user_id):
+    """Get messages between current user and another user"""
+    try:
+        user_id = session.get('user_id')
+        conn = db_manager.get_connection()
+
+        messages = conn.execute('''
+            SELECT id, sender_id, receiver_id, message, is_read, created_at
+            FROM chat_messages
+            WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
+            ORDER BY created_at ASC
+        ''', (user_id, other_user_id, other_user_id, user_id)).fetchall()
+
+        # Mark messages from the other user as read
+        conn.execute('''
+            UPDATE chat_messages SET is_read = 1
+            WHERE sender_id = ? AND receiver_id = ? AND is_read = 0
+        ''', (other_user_id, user_id))
+        conn.commit()
+
+        return jsonify({
+            'success': True,
+            'data': [{
+                'id': m['id'],
+                'sender_id': m['sender_id'],
+                'receiver_id': m['receiver_id'],
+                'message': m['message'],
+                'is_read': bool(m['is_read']),
+                'created_at': m['created_at'],
+                'is_mine': m['sender_id'] == user_id,
+            } for m in messages]
+        })
+    except Exception as e:
+        logger.error(f"Error getting messages: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/chat/send', methods=['POST'])
+@login_required
+def chat_send_message():
+    """Send a message to another user"""
+    try:
+        user_id = session.get('user_id')
+        data = request.get_json()
+        receiver_id = data.get('receiver_id')
+        message = data.get('message', '').strip()
+
+        if not receiver_id or not message:
+            return jsonify({'error': 'receiver_id and message are required'}), 400
+
+        if len(message) > 2000:
+            return jsonify({'error': 'Message too long (max 2000 characters)'}), 400
+
+        conn = db_manager.get_connection()
+
+        # Verify receiver exists
+        receiver = conn.execute('SELECT id, is_admin FROM users WHERE id = ?', (receiver_id,)).fetchone()
+        if not receiver:
+            return jsonify({'error': 'User not found'}), 404
+
+        conn.execute('''
+            INSERT INTO chat_messages (sender_id, receiver_id, message)
+            VALUES (?, ?, ?)
+        ''', (user_id, receiver_id, message))
+        conn.commit()
+
+        return jsonify({'success': True})
+    except Exception as e:
+        logger.error(f"Error sending message: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/chat/unread-count', methods=['GET'])
+@login_required
+def chat_unread_count():
+    """Get total unread message count for current user"""
+    try:
+        user_id = session.get('user_id')
+        conn = db_manager.get_connection()
+        result = conn.execute(
+            'SELECT COUNT(*) as count FROM chat_messages WHERE receiver_id = ? AND is_read = 0',
+            (user_id,)
+        ).fetchone()
+        return jsonify({'success': True, 'count': result['count'] or 0})
+    except Exception as e:
+        logger.error(f"Error getting unread count: {e}")
+        return jsonify({'error': str(e)}), 500
+
+## ─── End Chat System ────────────────────────────────────────────
+
 if __name__ == '__main__':
     # Create necessary directories
     os.makedirs('static/images/avatars', exist_ok=True)
-    
+
     # Initialize audio files
     audio_service.initialize_audio_files()
-    
+
     # Initialize database
     db_manager.init_database()
-    
+
+    # Initialize chat tables
+    init_chat_tables()
+
     app.run(debug=True, port=5010)

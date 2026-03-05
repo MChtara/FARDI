@@ -127,7 +127,7 @@ export default function Phase4Step5RemedialC1TaskF() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/c1/taskG')
+    navigate('/phase4/step/5/remedial/c1/taskG')
   }
 
   const allFilled = DEBATE_SENTENCES.every(s =>

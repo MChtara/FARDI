@@ -118,7 +118,7 @@ export default function Phase4Step5RemedialB2TaskF() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/b2/results')
+    navigate('/phase4/step/5/remedial/b2/results')
   }
 
   const allFilled = PASSIVE_SENTENCES.every(s => answers[s.id] && answers[s.id].trim())

@@ -60,6 +60,28 @@ export default function Phase2Complete() {
       </Paper>
 
       <Stack direction={{ xs:'column', sm:'row' }} spacing={2} sx={{ mt: 2 }}>
+        <Button
+          variant="contained"
+          color="warning"
+          size="large"
+          onClick={() => {
+            // Mark Phase 2 as complete in DB
+            fetch('/api/phase/complete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({
+                phase_number: 2,
+                overall_score: total_score || 0,
+                final_level: overall_level || ''
+              })
+            }).catch(() => {})
+            navigate('/phase4/step/1')
+          }}
+          sx={{ fontWeight: 600 }}
+        >
+          Continue to Phase 4: Marketing & Promotion
+        </Button>
         <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
         <Button variant="outlined" href="/certificate">View Certificate</Button>
       </Stack>

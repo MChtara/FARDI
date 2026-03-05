@@ -208,7 +208,7 @@ export default function Phase4Step4RemedialA2TaskA() {
           <Typography variant="body1" sx={{ mt: 2 }}>Adventure Progress: {((score / 7) * 100).toFixed(0)}% Complete</Typography>
         </Paper>
         <Box sx={{ textAlign: 'center' }}>
-          <Button variant="contained" size="large" onClick={() => navigate('/app/phase4/step/4/remedial/a2/taskB')} sx={{ py: 2, px: 6, fontSize: '1.1rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #27ae60 0%, #229954 100%)', '&:hover': { background: 'linear-gradient(135deg, #229954 0%, #1e8449 100%)' } }}>
+          <Button variant="contained" size="large" onClick={() => navigate('/phase4/step/4/remedial/a2/taskB')} sx={{ py: 2, px: 6, fontSize: '1.1rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #27ae60 0%, #229954 100%)', '&:hover': { background: 'linear-gradient(135deg, #229954 0%, #1e8449 100%)' } }}>
             Continue to Task B: Expand Empire →
           </Button>
         </Box>

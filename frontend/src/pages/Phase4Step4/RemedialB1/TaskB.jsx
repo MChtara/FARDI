@@ -252,7 +252,7 @@ export default function RemedialB1TaskB() {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => navigate('/app/phase4/step/4/remedial/b1/taskC')}
+                onClick={() => navigate('/phase4/step/4/remedial/b1/taskC')}
                 size="large"
               >
                 Continue to Task C →

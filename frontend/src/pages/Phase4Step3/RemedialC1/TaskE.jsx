@@ -206,7 +206,7 @@ export default function RemedialC1TaskE() {
   }
 
   const handleContinue = () => {
-    navigate('/app/dashboard')
+    navigate('/dashboard')
   }
 
   const formatTime = (seconds) => {

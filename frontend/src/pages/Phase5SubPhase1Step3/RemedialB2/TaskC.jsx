@@ -1,0 +1,61 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Box, Paper, Typography, Button, Stack } from '@mui/material'
+import { CharacterMessage } from '../../../components/Avatar.jsx'
+import DragDropMatchingGame from '../../../components/DragDropMatchingGame.jsx'
+import { phase5API } from '../../../lib/phase5_api.jsx'
+
+const MATCHING_PAIRS = [
+  { word: 'emergency', definition: 'Critical situation' },
+  { word: 'contingency', definition: 'Pre-planned alternative' },
+  { word: 'backup', definition: 'Reserve resource' },
+  { word: 'announce', definition: 'Public notification' },
+  { word: 'update', definition: 'Progress report' },
+  { word: 'communicate', definition: 'Clear exchange' },
+  { word: 'resolve', definition: 'Solve problem' },
+  { word: 'transparent', definition: 'Open and honest' }
+]
+
+export default function Phase5Step3RemedialB2TaskC() {
+  const navigate = useNavigate()
+  const [gameCompleted, setGameCompleted] = useState(false)
+  const [gameResult, setGameResult] = useState(null)
+
+  const handleGameComplete = async (result) => {
+    setGameCompleted(true)
+    setGameResult(result)
+    const score = result.score || 0
+    sessionStorage.setItem('phase5_step3_remedial_b2_taskC_score', score.toString())
+    try {
+      await phase5API.logRemedialActivity(3, 'B2', 'C', score, 8, result.timeTaken || 0)
+    } catch (error) {
+      console.error('Failed to log task completion:', error)
+    }
+  }
+
+  const handleContinue = () => {
+    navigate('/phase5/subphase/1/step/3/remedial/b2/task/d')
+  }
+
+  return (
+    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
+      <Paper elevation={0} sx={{ p: 3, mb: 3, background: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)', color: 'white' }}>
+        <Typography variant="h4" gutterBottom fontWeight="bold">Phase 5: Execution & Problem-Solving</Typography>
+        <Typography variant="h5" gutterBottom>Step 3: Remedial Practice - Level B2</Typography>
+        <Typography variant="h6" gutterBottom>Task C: Kahoot Match</Typography>
+        <Typography variant="body1">Match 8 terms to advanced definitions</Typography>
+      </Paper>
+      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+        <CharacterMessage speaker="Ms. Mabrouki" message="Welcome to Kahoot Match! Match each term to its advanced definition. Drag and drop to make the matches!" />
+      </Paper>
+      <Box>
+        <DragDropMatchingGame pairs={MATCHING_PAIRS} duration={120} onComplete={handleGameComplete} />
+        {gameCompleted && (
+          <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 4 }}>
+            <Button variant="contained" color="success" onClick={handleContinue} size="large">Next: Task D →</Button>
+          </Stack>
+        )}
+      </Box>
+    </Box>
+  )
+}

@@ -9,7 +9,7 @@ import DragDropMatchingGame from '../../../components/DragDropMatchingGame.jsx'
  * Match 8 terms to definitions for writing practice, gamified as "Term Treasure Hunt"
  */
 
-const BASE_URL = import.meta.env.BASE_URL || '/app/'
+const BASE_URL = import.meta.env.BASE_URL || '/'
 
 const VOCABULARY_PAIRS = [
   {
@@ -100,7 +100,7 @@ export default function Phase4Step4RemedialA1TaskA() {
 
   const handleContinue = () => {
     // Navigate to Task B
-    navigate('/app/phase4/step/4/remedial/a1/taskB')
+    navigate('/phase4/step/4/remedial/a1/taskB')
   }
 
   return (

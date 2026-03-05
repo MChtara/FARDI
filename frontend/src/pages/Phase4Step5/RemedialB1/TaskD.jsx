@@ -120,7 +120,7 @@ export default function Phase4Step5RemedialB1TaskD() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/b1/taskE')
+    navigate('/phase4/step/5/remedial/b1/taskE')
   }
 
   const allMatched = matchedPairs.length === FLASHCARD_PAIRS.length

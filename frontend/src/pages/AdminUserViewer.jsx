@@ -19,7 +19,7 @@ export default function AdminUserViewer() {
     const loadUserData = async () => {
       setLoading(true)
       setError('')
-      
+
       try {
         const userRes = await fetch(`/api/admin/users/${userId}/details`, { credentials: 'include' })
 
@@ -28,17 +28,19 @@ export default function AdminUserViewer() {
         }
 
         const userData = await userRes.json()
-        
+
         if (userData.success) {
           setUserData({
             ...userData.data.user,
-            // Add assessment stats to user data
             total_assessments: userData.data.stats.total_assessments,
             total_xp: userData.data.stats.total_xp,
             latest_level: userData.data.stats.latest_level,
-            current_level: userData.data.stats.latest_level
+            current_level: userData.data.stats.latest_level,
+            phase3_completed: userData.data.progress?.phase3_completed,
+            phase4_completed: userData.data.progress?.phase4_completed,
+            phase5_completed: userData.data.progress?.phase5_completed,
+            phase6_completed: userData.data.progress?.phase6_completed,
           })
-          // Set assessments from API response
           setAssessments(userData.data.stats.assessments || [])
         } else {
           throw new Error(userData.error || 'Failed to load user data')
@@ -227,19 +229,36 @@ export default function AdminUserViewer() {
               </Card>
             </Grid>
             
-            <Grid item xs={6} md={3}>
-              <Card>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4" color="info.main">
-                    {userData.phase2_completed ? 'Yes' : 'No'}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Phase 2 Done
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
           </Grid>
+
+          {/* Phase Progress */}
+          <Card sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>Phase Progress</Typography>
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                {[
+                  { n: 1, label: 'Foundation', done: (userData.total_assessments || 0) > 0, color: '#6366f1' },
+                  { n: 2, label: 'Cultural Planning', done: userData.phase2_completed, color: '#0ea5e9' },
+                  { n: 3, label: 'Vendors & Budget', done: userData.phase3_completed, color: '#10b981' },
+                  { n: 4, label: 'Marketing', done: userData.phase4_completed, color: '#f97316' },
+                  { n: 5, label: 'Execution', done: userData.phase5_completed, color: '#ef4444' },
+                  { n: 6, label: 'Reflection', done: userData.phase6_completed, color: '#8b5cf6' },
+                ].map(({ n, label, done, color }) => (
+                  <Chip
+                    key={n}
+                    label={`Phase ${n}: ${label}`}
+                    size="small"
+                    sx={{
+                      bgcolor: done ? color : '#f1f5f9',
+                      color: done ? 'white' : '#94a3b8',
+                      fontWeight: 600,
+                      border: `1px solid ${done ? color : '#e2e8f0'}`,
+                    }}
+                  />
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
 
           {/* Assessment History */}
           <Paper>

@@ -185,7 +185,7 @@ export default function RemedialC1TaskC() {
   }
 
   const handleContinue = () => {
-    navigate('/app/dashboard')
+    navigate('/dashboard')
   }
 
   if (!gameStarted) {

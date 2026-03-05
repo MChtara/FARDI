@@ -161,11 +161,11 @@ export default function Phase4Step5RemedialA1TaskC() {
       sessionStorage.removeItem('phase4_step5_remedial_a1_taskC_score')
 
       if (passed) {
-        // Navigate to dashboard or next phase
-        navigate('/app/dashboard')
+        // Navigate to phase4 complete
+        navigate('/phase4/complete')
       } else {
         // Restart from Task A
-        navigate('/app/phase4/step/5/remedial/a1/taskA')
+        navigate('/phase4/step/5/remedial/a1/taskA')
       }
     }, 5000) // 5 second delay
   }

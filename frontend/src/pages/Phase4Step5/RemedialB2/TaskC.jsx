@@ -120,7 +120,7 @@ export default function Phase4Step5RemedialB2TaskC() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/b2/taskD')
+    navigate('/phase4/step/5/remedial/b2/taskD')
   }
 
   const allMatched = matchedPairs.length === MATCHING_PAIRS.length

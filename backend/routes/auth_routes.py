@@ -56,7 +56,7 @@ def login():
     """User login page and handler"""
     # Redirect browser GETs to the SPA login
     if request.method == 'GET':
-        return redirect('/app/login')
+        return redirect('/login')
     if request.method == 'POST':
         username_or_email = request.form.get('username_or_email', '').strip()
         password = request.form.get('password', '')
@@ -98,7 +98,7 @@ def login():
                 return redirect(url_for('admin_main_dashboard'))
             else:
                 flash(f'Welcome back, {user["first_name"] or user["username"]}!', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect('/dashboard')
         else:
             flash('Invalid username/email or password. Please try again.', 'danger')
     
@@ -110,7 +110,7 @@ def signup():
     """User registration page and handler"""
     # Redirect browser GETs to the SPA signup
     if request.method == 'GET':
-        return redirect('/app/signup')
+        return redirect('/signup')
     if request.method == 'POST':
         # Get form data
         username = request.form.get('username', '').strip()
@@ -176,7 +176,7 @@ def signup():
             session['last_name'] = user_data['last_name']
             
             flash(f'Welcome to FARDI, {first_name or username}! Your account has been created successfully.', 'success')
-            return redirect(url_for('dashboard'))
+            return redirect('/dashboard')
         else:
             flash(error, 'danger')
     
@@ -230,7 +230,7 @@ def profile():
     except Exception as e:
         logger.error(f"Error in profile route: {str(e)}")
         flash('An error occurred loading your profile. Please try again.', 'danger')
-        return redirect(url_for('dashboard'))
+        return redirect('/dashboard')
 
 @auth_bp.route('/profile/edit', methods=['GET', 'POST'])
 @login_required

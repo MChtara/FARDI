@@ -355,7 +355,7 @@ export default function RemedialB1TaskD() {
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => navigate('/app/phase4/step3/remedial/b1/taskE')}
+                onClick={() => navigate('/phase4/step3/remedial/b1/taskE')}
                 sx={{
                   py: 2,
                   px: 6,

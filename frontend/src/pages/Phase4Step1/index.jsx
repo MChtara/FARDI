@@ -15,7 +15,7 @@ export default function Phase4Step1Intro() {
   const navigate = useNavigate()
 
   const handleStartActivities = () => {
-    navigate('/app/phase4/step/1/interaction/1')
+    navigate('/phase4/step/1/interaction/1')
   }
 
   return (

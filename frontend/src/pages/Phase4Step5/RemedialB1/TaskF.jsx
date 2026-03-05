@@ -182,7 +182,7 @@ export default function Phase4Step5RemedialB1TaskF() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/b1/results')
+    navigate('/phase4/step/5/remedial/b1/results')
   }
 
   // Start screen

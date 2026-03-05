@@ -10,7 +10,7 @@ import DragDropMatchingGame from '../../../components/DragDropMatchingGame.jsx'
  * Gamified as "Spelling Rescue" - Rescue words by matching before "errors explode"
  */
 
-const BASE_URL = import.meta.env.BASE_URL || '/app/'
+const BASE_URL = import.meta.env.BASE_URL || '/'
 
 const SPELLING_PAIRS = [
   {
@@ -101,7 +101,7 @@ export default function Phase4Step5RemedialA1TaskA() {
 
   const handleContinue = () => {
     // Navigate to Task B
-    navigate('/app/phase4/step/5/remedial/a1/taskB')
+    navigate('/phase4/step/5/remedial/a1/taskB')
   }
 
   return (

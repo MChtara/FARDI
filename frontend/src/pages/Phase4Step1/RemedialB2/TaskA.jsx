@@ -69,7 +69,7 @@ export default function RemedialB2TaskA() {
 
     // Navigate directly to Task B
     setTimeout(() => {
-      navigate('/app/phase4/remedial/b2/taskB')
+      navigate('/phase4/remedial/b2/taskB')
     }, 1500)
   }
 

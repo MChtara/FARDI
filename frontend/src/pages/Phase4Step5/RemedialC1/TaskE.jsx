@@ -173,7 +173,7 @@ export default function Phase4Step5RemedialC1TaskE() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/c1/taskF')
+    navigate('/phase4/step/5/remedial/c1/taskF')
   }
 
   const allFilled = COMPLEX_SENTENCES.every(s => answers[s.id] && answers[s.id].trim())

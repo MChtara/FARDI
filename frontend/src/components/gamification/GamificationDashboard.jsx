@@ -118,7 +118,7 @@ const GamificationDashboard = () => {
 
         <button
           className="view-all-button"
-          onClick={() => window.location.href = '/app/achievements'}
+          onClick={() => window.location.href = '/achievements'}
         >
           View All Achievements
         </button>

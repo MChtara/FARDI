@@ -136,7 +136,7 @@ export default function RemedialC1TaskB() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/4/remedial/c1/taskC')
+    navigate('/phase4/step/4/remedial/c1/taskC')
   }
 
   const allFilled = answers.every(a => a.trim().length > 0)

@@ -179,7 +179,7 @@ export default function RemedialB1TaskF() {
 
   const handleContinue = () => {
     // Navigate to results page or next task
-    navigate('/app/phase4/step3/remedial/b1/results')
+    navigate('/phase4/step3/remedial/b1/results')
   }
 
   const handleAnswerClick = (answer) => {

@@ -60,10 +60,13 @@ export default function Phase4Step1Interaction3() {
                 console.log('Backend scoring response:', data.data)
                 console.log('Total Score:', data.data.total.score, '/', data.data.total.max_score)
                 console.log('Remedial Level:', data.data.total.remedial_level)
+                console.log('Should Proceed:', data.data.total.should_proceed)
 
-                // Store remedial level for navigation
+                // Store remedial level and proceed flag for navigation
                 const remedialLevel = data.data.total.remedial_level
+                const shouldProceed = data.data.total.should_proceed
                 sessionStorage.setItem('phase4_remedial_level', remedialLevel)
+                sessionStorage.setItem('phase4_step1_should_proceed', shouldProceed ? 'true' : 'false')
 
                 // Clear interaction scores after successful calculation
                 sessionStorage.removeItem('phase4_step1_interaction1_score')
@@ -84,37 +87,24 @@ export default function Phase4Step1Interaction3() {
     }
 
     const handleContinue = () => {
-        // Check remedial level and redirect accordingly
-        const remedialLevel = sessionStorage.getItem('phase4_remedial_level')
+        const shouldProceed = sessionStorage.getItem('phase4_step1_should_proceed') === 'true'
 
-        console.log('=== NAVIGATION DEBUG ===')
-        console.log('Remedial Level from sessionStorage:', remedialLevel)
-
-        if (!remedialLevel) {
-            console.error('ERROR: Remedial level not found in sessionStorage!')
-            console.log('Available sessionStorage keys:', Object.keys(sessionStorage))
-            alert('Error: Remedial level not calculated. Please try again.')
-            return
-        }
-
-        if (remedialLevel === 'Remedial A1') {
-            console.log('Navigating to: /app/phase4/remedial/a1/taskA')
-            navigate('/app/phase4/remedial/a1/taskA')
-        } else if (remedialLevel === 'Remedial A2') {
-            console.log('Navigating to: /app/phase4/remedial/a2/taskA')
-            navigate('/app/phase4/remedial/a2/taskA')
-        } else if (remedialLevel === 'Remedial B1') {
-            console.log('Navigating to: /app/phase4/remedial/b1/taskA')
-            navigate('/app/phase4/remedial/b1/taskA')
-        } else if (remedialLevel === 'Remedial B2') {
-            console.log('Navigating to: /app/phase4/remedial/b2/taskA')
-            navigate('/app/phase4/remedial/b2/taskA')
-        } else if (remedialLevel === 'Remedial C1') {
-            console.log('Navigating to: /app/phase4/remedial/c1/taskA')
-            navigate('/app/phase4/remedial/c1/taskA')
+        if (shouldProceed) {
+            navigate('/phase4/step/3')
         } else {
-            console.log('Unknown remedial level:', remedialLevel)
-            navigate('/app/dashboard')
+            const remedialLevel = sessionStorage.getItem('phase4_remedial_level')
+            if (!remedialLevel) {
+                alert('Error: Remedial level not calculated. Please try again.')
+                return
+            }
+            const levelMap = {
+                'Remedial A1': '/phase4/remedial/a1/taskA',
+                'Remedial A2': '/phase4/remedial/a2/taskA',
+                'Remedial B1': '/phase4/remedial/b1/taskA',
+                'Remedial B2': '/phase4/remedial/b2/taskA',
+                'Remedial C1': '/phase4/remedial/c1/taskA'
+            }
+            navigate(levelMap[remedialLevel] || '/dashboard')
         }
     }
 

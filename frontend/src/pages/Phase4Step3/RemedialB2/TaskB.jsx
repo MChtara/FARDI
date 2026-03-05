@@ -159,7 +159,7 @@ export default function RemedialB2TaskB() {
 
   const handleContinue = () => {
     // Navigate to Task C (Kahoot Match)
-    navigate('/app/phase4/step3/remedial/b2/taskC')
+    navigate('/phase4/step3/remedial/b2/taskC')
   }
 
   const allAnswered = QUESTIONS.every(q => answers[q.id] && answers[q.id].trim().length >= 10)

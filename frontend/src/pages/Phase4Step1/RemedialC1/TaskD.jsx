@@ -139,7 +139,7 @@ export default function RemedialC1TaskD() {
 
       if (passed) {
         // Navigate to Phase 4 Step 2 intro
-        navigate('/app/phase4/step/2')
+        navigate('/phase4/step/2')
       } else {
         // Restart from Task A
         navigate('/phase4/remedial/c1/taskA')

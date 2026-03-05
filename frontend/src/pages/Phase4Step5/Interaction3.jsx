@@ -225,6 +225,7 @@ export default function Phase4Step5Interaction3() {
   const handleContinue = () => {
     // Determine remedial level based on total score
     const total = finalScore.total
+    const interaction3Score = finalScore.interaction3
 
     // Clear Step 5 interaction scores
     sessionStorage.removeItem('phase4_step5_interaction1_score')
@@ -233,25 +234,33 @@ export default function Phase4Step5Interaction3() {
     sessionStorage.removeItem('phase4_step5_spelling_corrected')
     sessionStorage.removeItem('phase4_step5_grammar_corrected')
 
+    // Check if student should proceed: I3 (sentence production) score >= 3 means B1+ level
+    const shouldProceed = interaction3Score >= 3
+    if (shouldProceed) {
+      console.log(`[Phase 4 Step 5] I3 score ${interaction3Score}/5 >= 3 (B1+). Proceeding to Phase 4 Complete.`)
+      navigate('/phase4/complete')
+      return
+    }
+
     // Route to appropriate remedial level based on score
     if (total <= 7) {
       // Score 0-7: Remedial A1
-      navigate('/app/phase4/step/5/remedial/a1/taskA')
+      navigate('/phase4/step/5/remedial/a1/taskA')
     } else if (total <= 10) {
       // Score 8-10: Remedial A2
-      navigate('/app/phase4/step/5/remedial/a2/taskA')
+      navigate('/phase4/step/5/remedial/a2/taskA')
     } else if (total <= 12) {
       // Score 11-12: Remedial B1
-      navigate('/app/phase4/step/5/remedial/b1/taskA')
+      navigate('/phase4/step/5/remedial/b1/taskA')
     } else if (total <= 14) {
       // Score 13-14: Remedial B2
-      navigate('/app/phase4/step/5/remedial/b2/taskA')
+      navigate('/phase4/step/5/remedial/b2/taskA')
     } else if (total <= 18) {
       // Score 15-18: Remedial C1 (max possible is 15, but keeping for safety)
-      navigate('/app/phase4/step/5/remedial/c1/taskA')
+      navigate('/phase4/step/5/remedial/c1/taskA')
     } else {
-      // Score 19+: This shouldn't happen with max 15, but go to dashboard as fallback
-      navigate('/app/dashboard')
+      // Score 19+: This shouldn't happen with max 15, but go to phase4 complete as fallback
+      navigate('/phase4/complete')
     }
   }
 
@@ -440,9 +449,9 @@ export default function Phase4Step5Interaction3() {
               You've built autonomous writing skills through progressive error correction.
             </Typography>
 
-            {finalScore.total > 18 ? (
+            {finalScore.interaction3 >= 3 ? (
               <Typography variant="body1" sx={{ mb: 3 }}>
-                Excellent performance! You will proceed to the dashboard.
+                Great job! Your sentence production score qualifies you to move on.
               </Typography>
             ) : (
               <Typography variant="body1" sx={{ mb: 3 }}>
@@ -463,7 +472,7 @@ export default function Phase4Step5Interaction3() {
                 }
               }}
             >
-              {finalScore.total > 18 ? 'Return to Dashboard' : 'Continue to Remedial Activities'}
+              {finalScore.interaction3 >= 3 ? 'Complete Phase 4' : 'Continue to Remedial Activities'}
             </Button>
           </Paper>
         </>

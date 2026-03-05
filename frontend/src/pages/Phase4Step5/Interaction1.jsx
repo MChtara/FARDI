@@ -194,7 +194,7 @@ export default function Phase4Step5Interaction1() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/interaction/2')
+    navigate('/phase4/step/5/interaction/2')
   }
 
   if (loadingLevel) {

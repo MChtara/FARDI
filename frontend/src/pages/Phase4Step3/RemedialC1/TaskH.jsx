@@ -423,12 +423,12 @@ export default function RemedialC1TaskH() {
                 if (percentage >= 80) {
                   console.log('✅ Remedial C1 passed! Going to dashboard')
                   sessionStorage.removeItem('phase4_remedial_level') // Clear remedial level
-                  navigate('/app/dashboard')
+                  navigate('/dashboard')
                 } else {
                   console.log('⚠️ Score too low. Repeating Remedial C1 from Task A')
                   alert(`Your score: ${totalScore}/${maxScore} (${percentage.toFixed(1)}%). You need 80% to pass. Please try the Remedial C1 exercises again!`)
                   // Repeat Remedial C1 from the beginning
-                  navigate('/app/phase4/step3/remedial/c1/taskA')
+                  navigate('/phase4/step3/remedial/c1/taskA')
                 }
               }}
               variant="contained"

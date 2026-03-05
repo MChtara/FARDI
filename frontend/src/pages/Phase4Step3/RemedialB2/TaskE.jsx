@@ -180,7 +180,7 @@ export default function RemedialB2TaskE() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step3/remedial/b2/taskF')
+    navigate('/phase4/step3/remedial/b2/taskF')
   }
 
   const formatTime = (seconds) => {

@@ -166,7 +166,7 @@ export default function RemedialB2TaskA() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/4/remedial/b2/taskB')
+    navigate('/phase4/step/4/remedial/b2/taskB')
   }
 
   const allFilled = responses.every(r => r.trim().length > 0)

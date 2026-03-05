@@ -168,7 +168,7 @@ export default function RemedialC1TaskB() {
 
   const handleContinue = () => {
     // Navigate to dashboard or next task
-    navigate('/app/dashboard')
+    navigate('/dashboard')
   }
 
   const allAnswered = QUESTIONS.every(q => answers[q.id] && answers[q.id].trim().length >= 20)

@@ -14,7 +14,7 @@ export default function Phase4Step3Intro() {
 
   const handleStartActivities = () => {
     // Start with vocabulary warm-up before interactions
-    navigate('/app/phase4/step/3/vocabulary')
+    navigate('/phase4/step/3/vocabulary')
   }
 
   return (

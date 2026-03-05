@@ -103,7 +103,7 @@ export default function RemedialB1TaskA() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step3/remedial/b1/taskB')
+    navigate('/phase4/step3/remedial/b1/taskB')
   }
 
   // Check if all 5 blanks are filled

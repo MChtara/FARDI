@@ -119,9 +119,9 @@ export default function RemedialB1Results() {
     sessionStorage.removeItem('remedial_step4_b1_taskF_score')
 
     if (scores.passed) {
-      navigate('/app/dashboard')
+      navigate('/dashboard')
     } else {
-      navigate('/app/phase4/step/4/remedial/b1/taskA')
+      navigate('/phase4/step/4/remedial/b1/taskA')
     }
   }
 

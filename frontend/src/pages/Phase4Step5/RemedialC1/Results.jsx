@@ -46,7 +46,7 @@ const Results = () => {
         if (prev <= 1) {
           clearInterval(timer)
           if (passed) {
-            navigate('/app/dashboard')
+            navigate('/phase4/complete')
           } else {
             // Restart from Task A
             sessionStorage.removeItem('phase4_step5_remedial_c1_taskA_score')
@@ -56,7 +56,7 @@ const Results = () => {
             sessionStorage.removeItem('phase4_step5_remedial_c1_taskE_score')
             sessionStorage.removeItem('phase4_step5_remedial_c1_taskF_score')
             sessionStorage.removeItem('phase4_step5_remedial_c1_taskG_score')
-            navigate('/app/phase4/step/5/remedial/c1/taskA')
+            navigate('/phase4/step/5/remedial/c1/taskA')
           }
           return 0
         }
@@ -69,7 +69,7 @@ const Results = () => {
 
   const handleContinue = () => {
     if (passed) {
-      navigate('/app/dashboard')
+      navigate('/phase4/complete')
     } else {
       sessionStorage.removeItem('phase4_step5_remedial_c1_taskA_score')
       sessionStorage.removeItem('phase4_step5_remedial_c1_taskB_score')
@@ -78,7 +78,7 @@ const Results = () => {
       sessionStorage.removeItem('phase4_step5_remedial_c1_taskE_score')
       sessionStorage.removeItem('phase4_step5_remedial_c1_taskF_score')
       sessionStorage.removeItem('phase4_step5_remedial_c1_taskG_score')
-      navigate('/app/phase4/step/5/remedial/c1/taskA')
+      navigate('/phase4/step/5/remedial/c1/taskA')
     }
   }
 

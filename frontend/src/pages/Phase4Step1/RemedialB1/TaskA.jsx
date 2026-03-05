@@ -69,7 +69,7 @@ export default function RemedialB1TaskA() {
 
     // Auto-navigate to Task B after 2 seconds
     setTimeout(() => {
-      navigate('/app/phase4/remedial/b1/taskB')
+      navigate('/phase4/remedial/b1/taskB')
     }, 2000)
   }
 
@@ -101,7 +101,7 @@ export default function RemedialB1TaskA() {
 
   const handleContinue = () => {
     // Navigate to Task B
-    navigate('/app/phase4/remedial/b1/taskB')
+    navigate('/phase4/remedial/b1/taskB')
   }
 
   return (

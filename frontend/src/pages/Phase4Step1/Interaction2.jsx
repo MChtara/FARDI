@@ -40,7 +40,7 @@ export default function Phase4Step1Interaction2() {
   const handleCompleteStep = () => {
     // Go to Interaction 3: slogan sentence production
     // Use /app prefix to be compatible with deployed base path
-    navigate('/app/phase4/step/1/interaction/3')
+    navigate('/phase4/step/1/interaction/3')
   }
 
   return (

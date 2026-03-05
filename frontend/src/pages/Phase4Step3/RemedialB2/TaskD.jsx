@@ -319,7 +319,7 @@ export default function RemedialB2TaskD() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step3/remedial/b2/taskE')
+    navigate('/phase4/step3/remedial/b2/taskE')
   }
 
   const formatTime = (seconds) => {

@@ -183,7 +183,7 @@ export default function RemedialC1TaskA() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/4/remedial/c1/taskB')
+    navigate('/phase4/step/4/remedial/c1/taskB')
   }
 
   const allFilled = essayBoxes.every(box => box !== null)

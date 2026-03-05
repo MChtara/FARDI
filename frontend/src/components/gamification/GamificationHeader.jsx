@@ -153,7 +153,7 @@ const GamificationHeader = ({ compact = false }) => {
                     </div>
                     <button
                         className="view-dashboard-btn"
-                        onClick={() => window.location.href = '/app/gamification'}
+                        onClick={() => window.location.href = '/gamification'}
                     >
                         View Full Dashboard
                     </button>

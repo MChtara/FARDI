@@ -248,7 +248,7 @@ export default function RemedialC1TaskD() {
   }
 
   const handleContinue = () => {
-    navigate('/app/dashboard')
+    navigate('/dashboard')
   }
 
   const getTotalScore = () => {

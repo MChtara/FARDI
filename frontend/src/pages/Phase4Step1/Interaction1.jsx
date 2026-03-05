@@ -10,7 +10,7 @@ import MatchingGame from '../../components/MatchingGame.jsx'
  */
 // Vocabulary matching pairs from phase4.json
 // Each pair has a word, definition, and image to match
-const BASE_URL = import.meta.env.BASE_URL || '/app/'
+const BASE_URL = import.meta.env.BASE_URL || '/'
 
 const VOCABULARY_PAIRS = [
   {
@@ -144,7 +144,7 @@ export default function Phase4Step1Interaction1() {
     console.log('handleNext called - navigating to Interaction 2')
     // Navigate to Interaction 2 (Wordshake game)
     // Use /app prefix to match Flask deployment base path
-    navigate('/app/phase4/step/1/interaction/2')
+    navigate('/phase4/step/1/interaction/2')
   }
 
   if (loading) {

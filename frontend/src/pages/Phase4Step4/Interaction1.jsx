@@ -170,7 +170,7 @@ export default function Phase4Step4Interaction1() {
 
   const handleContinue = () => {
     // TODO: Navigate to next interaction when created
-    navigate('/app/phase4/step/4/interaction/2')
+    navigate('/phase4/step/4/interaction/2')
   }
 
   return (

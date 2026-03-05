@@ -40,7 +40,7 @@ def get_results():
     """Finalize current session results and return JSON mirroring the classic results page"""
     try:
         # Gather from session
-        player_name = session.get('player_name', 'Player')
+        player_name = session.get('player_name') or session.get('first_name') or session.get('username', 'Player')
         assessments = session.get('assessments', [])
         responses = session.get('responses', [])
         start_time_str = session.get('start_time')
@@ -2071,17 +2071,98 @@ def get_dashboard_data():
     """Return JSON data for the dashboard view"""
     try:
         from flask import session
+        import sqlite3
         user_id = session.get('user_id')
         user = user_manager.get_user_by_id(user_id) or {}
         user_stats = assessment_history.get_user_stats(user_id) or {}
         recent_assessments = assessment_history.get_user_assessments(user_id, limit=5) or []
         phase2_progress = assessment_history.get_phase2_progress(user_id) or {}
+
+        # Get Phase 5 progress from DB
+        phase5_progress = {'subphase1': {}, 'subphase2': {}}
+        try:
+            conn = assessment_history.db.get_connection()
+            # SubPhase 1 steps
+            rows = conn.execute('''
+                SELECT step_id, total_score, completed, remedial_level
+                FROM phase5_progress
+                WHERE user_id = ? AND subphase = 1
+                ORDER BY step_id
+            ''', (user_id,)).fetchall()
+            for row in rows:
+                r = dict(row)
+                phase5_progress['subphase1'][str(r['step_id'])] = r
+
+            # SubPhase 2 steps
+            rows = conn.execute('''
+                SELECT step_id, total_score, completed, remedial_level
+                FROM phase5_progress
+                WHERE user_id = ? AND subphase = 2
+                ORDER BY step_id
+            ''', (user_id,)).fetchall()
+            for row in rows:
+                r = dict(row)
+                phase5_progress['subphase2'][str(r['step_id'])] = r
+            conn.close()
+        except Exception as e:
+            logger.error(f"Error getting Phase 5 progress: {e}")
+
+        # Get Phase 6 progress from DB
+        phase6_progress = {'subphase1': {}, 'subphase2': {}}
+        try:
+            conn6 = assessment_history.db.get_connection()
+            for sp in [1, 2]:
+                rows6 = conn6.execute('''
+                    SELECT step_id, total_score, completed, remedial_level
+                    FROM phase6_progress
+                    WHERE user_id = ? AND subphase = ?
+                    ORDER BY step_id
+                ''', (user_id, sp)).fetchall()
+                key = f'subphase{sp}'
+                for row in rows6:
+                    r = dict(row)
+                    phase6_progress[key][str(r['step_id'])] = r
+            conn6.close()
+        except Exception as e:
+            logger.error(f"Error getting Phase 6 progress: {e}")
+
         return jsonify({
             'user': user,
             'user_stats': user_stats,
             'recent_assessments': recent_assessments,
-            'phase2_progress': phase2_progress
+            'phase2_progress': phase2_progress,
+            'phase5_progress': phase5_progress,
+            'phase6_progress': phase6_progress
         })
     except Exception as e:
         logger.error(f"Error building dashboard data: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@api_bp.route('/phase/complete', methods=['POST'])
+@login_required
+def mark_phase_complete():
+    """Mark a phase as completed"""
+    try:
+        from flask import session
+        user_id = session.get('user_id')
+        data = request.get_json()
+        phase_number = data.get('phase_number')
+        overall_score = data.get('overall_score', 0)
+        final_level = data.get('final_level', '')
+
+        if not phase_number or phase_number not in [1, 2, 4, 5]:
+            return jsonify({"error": "Invalid phase number"}), 400
+
+        assessment_history.update_phase_completion(user_id, phase_number, {
+            'completed': True,
+            'completion_date': datetime.now().isoformat(),
+            'overall_score': overall_score,
+            'final_level': final_level,
+            'time_spent': data.get('time_spent', 0)
+        })
+
+        return jsonify({"success": True, "message": f"Phase {phase_number} marked as complete"})
+    except Exception as e:
+        logger.error(f"Error marking phase complete: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500

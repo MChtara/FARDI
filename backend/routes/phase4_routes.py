@@ -167,19 +167,12 @@ def calculate_step1_score():
         # Calculate total score
         total_score = interaction1_score + interaction2_score + interaction3_score
 
-        # Determine remedial CEFR level based on total score
-        if total_score <= 3:
-            remedial_level = 'Remedial A1'
-        elif total_score <= 8:
-            remedial_level = 'Remedial A2'
-        elif total_score <= 13:
-            remedial_level = 'Remedial B1'
-        elif total_score <= 18:
-            remedial_level = 'Remedial B2'
-        elif total_score <= 21:
-            remedial_level = 'Remedial C1'
-        else:
-            remedial_level = 'Unknown'
+        # Determine remedial CEFR level based on Interaction 3 (sentence CEFR score)
+        remedial_map = {1: 'Remedial A1', 2: 'Remedial A2', 3: 'Remedial B1', 4: 'Remedial B2', 5: 'Remedial C1'}
+        remedial_level = remedial_map.get(interaction3_score, 'Remedial A1')
+
+        # Determine if should proceed (I3 CEFR >= B1 = 3 points)
+        should_proceed = interaction3_score >= 3
 
         # TERMINAL OUTPUT - Detailed logging for professor
         print("\n" + "="*60)
@@ -198,6 +191,7 @@ def calculate_step1_score():
         print(f"\n" + "-"*60)
         print(f"TOTAL SCORE: {total_score}/21 points")
         print(f"REMEDIAL LEVEL: {remedial_level}")
+        print(f"PROCEED TO NEXT: {'✅ YES' if should_proceed else '❌ NO - Remedial Required'}")
         print("="*60 + "\n")
 
         logger.info(f"Phase 4 Step 1 scoring - User {user_id}: I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}, Total={total_score}, Level={remedial_level}")
@@ -223,7 +217,8 @@ def calculate_step1_score():
                 'total': {
                     'score': total_score,
                     'max_score': 21,
-                    'remedial_level': remedial_level
+                    'remedial_level': remedial_level,
+                    'should_proceed': should_proceed
                 }
             }
         })

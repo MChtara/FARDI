@@ -201,6 +201,111 @@ class DatabaseManager:
                 )
             ''')
             
+            # Phase 5 progress tracking
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS phase5_progress (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    subphase INTEGER DEFAULT 1, -- 1 = SubPhase 1 (5.1), 2 = SubPhase 2 (5.2)
+                    step_id INTEGER NOT NULL,
+                    interaction_scores TEXT, -- JSON: {interaction1: 1, interaction2: 3, interaction3: 1}
+                    total_score INTEGER DEFAULT 0,
+                    completed BOOLEAN DEFAULT 0,
+                    remedial_level TEXT,
+                    should_proceed BOOLEAN DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+                    UNIQUE(user_id, subphase, step_id)
+                )
+            ''')
+            
+            # Phase 5 remedial progress tracking
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS phase5_remedial (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    subphase INTEGER DEFAULT 1, -- 1 = SubPhase 1 (5.1), 2 = SubPhase 2 (5.2)
+                    step_id INTEGER NOT NULL,
+                    level TEXT NOT NULL, -- A1, A2, B1, B2, C1
+                    task_scores TEXT, -- JSON: {taskA: 8, taskB: 7, ...}
+                    total_score INTEGER DEFAULT 0,
+                    max_score INTEGER DEFAULT 0,
+                    passed BOOLEAN DEFAULT 0,
+                    attempts INTEGER DEFAULT 1,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+                )
+            ''')
+            
+            # Migrate existing data: add subphase = 1 to existing records (must happen before index creation)
+            try:
+                conn.execute('ALTER TABLE phase5_progress ADD COLUMN subphase INTEGER DEFAULT 1')
+            except sqlite3.OperationalError:
+                pass  # Column already exists
+            
+            try:
+                conn.execute('ALTER TABLE phase5_remedial ADD COLUMN subphase INTEGER DEFAULT 1')
+            except sqlite3.OperationalError:
+                pass  # Column already exists
+            
+            # Update existing records to have subphase = 1
+            conn.execute('UPDATE phase5_progress SET subphase = 1 WHERE subphase IS NULL')
+            conn.execute('UPDATE phase5_remedial SET subphase = 1 WHERE subphase IS NULL')
+            
+            # Create indexes for Phase 5 (after ensuring columns exist)
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase5_progress_user ON phase5_progress(user_id)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase5_progress_subphase ON phase5_progress(user_id, subphase, step_id)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase5_remedial_user ON phase5_remedial(user_id)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase5_remedial_step ON phase5_remedial(step_id, level)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase5_remedial_subphase ON phase5_remedial(user_id, subphase, step_id, level)')
+            
+            # Phase 6 progress tracking
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS phase6_progress (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    subphase INTEGER DEFAULT 1, -- 1 = SubPhase 1 (6.1), 2 = SubPhase 2 (6.2)
+                    step_id INTEGER NOT NULL,
+                    interaction_scores TEXT, -- JSON: {interaction1: 1, interaction2: 3, interaction3: 1}
+                    total_score INTEGER DEFAULT 0,
+                    completed BOOLEAN DEFAULT 0,
+                    remedial_level TEXT,
+                    should_proceed BOOLEAN DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+                    UNIQUE(user_id, subphase, step_id)
+                )
+            ''')
+
+            # Phase 6 remedial progress tracking
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS phase6_remedial (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    subphase INTEGER DEFAULT 1, -- 1 = SubPhase 1 (6.1), 2 = SubPhase 2 (6.2)
+                    step_id INTEGER NOT NULL,
+                    level TEXT NOT NULL, -- A2, B1, B2, C1
+                    task_scores TEXT, -- JSON: {taskA: 8, taskB: 7, ...}
+                    total_score INTEGER DEFAULT 0,
+                    max_score INTEGER DEFAULT 0,
+                    passed BOOLEAN DEFAULT 0,
+                    attempts INTEGER DEFAULT 1,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+                )
+            ''')
+
+            # Create indexes for Phase 6
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase6_progress_user ON phase6_progress(user_id)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase6_progress_subphase ON phase6_progress(user_id, subphase, step_id)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase6_remedial_user ON phase6_remedial(user_id)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase6_remedial_step ON phase6_remedial(step_id, level)')
+            conn.execute('CREATE INDEX IF NOT EXISTS idx_phase6_remedial_subphase ON phase6_remedial(user_id, subphase, step_id, level)')
+
             # Exercise Builder System Tables
             
             # Workflows table - stores workflow definitions
@@ -1393,7 +1498,7 @@ def guest_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' in session:
-            return redirect(url_for('dashboard'))
+            return redirect('/app/dashboard')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -1425,7 +1530,7 @@ def admin_required(f):
                 if request.path.startswith('/api/') or request.headers.get('Content-Type') == 'application/json':
                     return jsonify({'error': 'Admin privileges required'}), 403
                 flash('Access denied. Admin privileges required.', 'error')
-                return redirect(url_for('dashboard'))
+                return redirect('/dashboard')
             
             # Update session with admin status
             session['is_admin'] = True

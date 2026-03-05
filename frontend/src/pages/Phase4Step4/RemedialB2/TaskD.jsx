@@ -174,7 +174,7 @@ export default function RemedialB2TaskD() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/4/remedial/b2/results')
+    navigate('/phase4/step/4/remedial/b2/results')
   }
 
   const allFilled = corrections[currentIndex].every(c => c.trim().length > 0)

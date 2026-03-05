@@ -40,6 +40,10 @@ def get_all_users():
             phase2_score = phase2_progress.get('overall_score', 0)
             phase2_total = phase2_progress.get('max_score', 100)
 
+            # Get phase completion for all phases
+            user_stats = assessment_history.get_user_stats(user_id)
+            phase_completion = {pc['phase_number']: pc['completed'] for pc in user_stats.get('phase_completion', [])}
+
             users_with_stats.append({
                 'user_id': user_id,
                 'username': user.get('username'),
@@ -54,7 +58,11 @@ def get_all_users():
                 'phase2_score': phase2_score,
                 'phase2_percentage': round((phase2_score / phase2_total * 100) if phase2_total > 0 else 0, 1),
                 'phase2_steps_completed': len(phase2_progress.get('steps_completed', [])),
-                'total_remedial_activities': len(phase2_progress.get('remedial_activities', []))
+                'total_remedial_activities': len(phase2_progress.get('remedial_activities', [])),
+                'phase3_completed': bool(phase_completion.get(3)),
+                'phase4_completed': bool(phase_completion.get(4)),
+                'phase5_completed': bool(phase_completion.get(5)),
+                'phase6_completed': bool(phase_completion.get(6)),
             })
 
         return jsonify({

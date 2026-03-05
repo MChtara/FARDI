@@ -175,7 +175,7 @@ export default function Phase4Step4Interaction2() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/4/interaction/3')
+    navigate('/phase4/step/4/interaction/3')
   }
 
   return (

@@ -66,7 +66,7 @@ export default function RemedialB1TaskB() {
 
   const handleContinue = () => {
     // Navigate to Task C
-    navigate('/app/phase4/remedial/b1/taskC')
+    navigate('/phase4/remedial/b1/taskC')
   }
 
   return (

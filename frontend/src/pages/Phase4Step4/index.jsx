@@ -15,7 +15,7 @@ export default function Phase4Step4Intro() {
 
   const handleStartActivities = () => {
     // Start with Interaction 1 - Poster Description
-    navigate('/app/phase4/step/4/interaction/1')
+    navigate('/phase4/step/4/interaction/1')
   }
 
   return (

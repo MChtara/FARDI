@@ -109,7 +109,7 @@ export default function Phase4Step5RemedialB1TaskE() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/b1/taskF')
+    navigate('/phase4/step/5/remedial/b1/taskF')
   }
 
   const allFilled = SENTENCES.every(s => answers[s.id] && answers[s.id].trim().length > 0)

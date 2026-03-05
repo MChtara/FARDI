@@ -156,7 +156,7 @@ export default function Phase4Step5RemedialC1TaskD() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/5/remedial/c1/taskE')
+    navigate('/phase4/step/5/remedial/c1/taskE')
   }
 
   const allFilled = MIXED_ERROR_SENTENCES.every(s => answers[s.id] && answers[s.id].trim())

@@ -218,7 +218,7 @@ export default function RemedialA2TaskB() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step3/remedial/a2/taskC')
+    navigate('/phase4/step3/remedial/a2/taskC')
   }
 
   const progress = ((currentIndex + 1) / SENTENCE_PROMPTS.length) * 100

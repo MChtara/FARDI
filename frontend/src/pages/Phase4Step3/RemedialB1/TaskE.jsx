@@ -131,7 +131,7 @@ export default function RemedialB1TaskE() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step3/remedial/b1/taskF')
+    navigate('/phase4/step3/remedial/b1/taskF')
   }
 
   const allAnswered = SENTENCES.every(s => answers[s.id] && answers[s.id].trim().length > 0)

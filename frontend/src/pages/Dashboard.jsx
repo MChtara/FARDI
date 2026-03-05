@@ -1,1350 +1,557 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  Box, Grid, Paper, Typography, Stack, Button, Chip, LinearProgress, Divider, Card, CardContent, Avatar, Alert, Container, IconButton, Tooltip, useTheme, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemIcon, ListItemText, Stepper, Step, StepLabel
+  Box, Typography, Stack, Button, Chip, LinearProgress, Container, Avatar
 } from '@mui/material'
-import StarIcon from '@mui/icons-material/Star'
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
-import HistoryIcon from '@mui/icons-material/History'
+import { motion } from 'framer-motion'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import LockIcon from '@mui/icons-material/Lock'
-import GroupIcon from '@mui/icons-material/Group'
 import SchoolIcon from '@mui/icons-material/School'
-import EventIcon from '@mui/icons-material/Event'
+import GroupIcon from '@mui/icons-material/Group'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CampaignIcon from '@mui/icons-material/Campaign'
+import BuildIcon from '@mui/icons-material/Build'
+import MapIcon from '@mui/icons-material/Map'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
-import InfoIcon from '@mui/icons-material/Info'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import AssessmentIcon from '@mui/icons-material/Assessment'
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
-import LanguageIcon from '@mui/icons-material/Language'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import TrendingFlatIcon from '@mui/icons-material/TrendingFlat'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import RefreshIcon from '@mui/icons-material/Refresh'
-import LaunchIcon from '@mui/icons-material/Launch'
+import StarIcon from '@mui/icons-material/Star'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } })
+}
+
+const PHASE_CONFIG = [
+  { id: 1, title: 'Foundation', subtitle: 'Language Assessment', icon: SchoolIcon, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)' },
+  { id: 2, title: 'Cultural Planning', subtitle: 'Event Organization', icon: GroupIcon, color: '#0ea5e9', gradient: 'linear-gradient(135deg, #0ea5e9, #06b6d4)' },
+  { id: 4, title: 'Marketing', subtitle: 'Promotion & Outreach', icon: CampaignIcon, color: '#f97316', gradient: 'linear-gradient(135deg, #f97316, #fb923c)' },
+  { id: 5, title: 'Execution', subtitle: 'Problem-Solving', icon: BuildIcon, color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444, #f87171)' },
+  { id: 6, title: 'Reflection', subtitle: 'Report & Peer Feedback', icon: StarIcon, color: '#8e44ad', gradient: 'linear-gradient(135deg, #8e44ad, #6c3483)' },
+]
 
 export default function Dashboard() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [showOnboarding, setShowOnboarding] = useState(false)
-  const theme = useTheme()
 
   useEffect(() => {
     fetch('/api/dashboard', { credentials: 'include' })
       .then(async r => { if (!r.ok) throw new Error('Failed to load dashboard'); return r.json() })
-      .then(data => {
-        setData(data)
-        // Only show onboarding if user explicitly hasn't seen it (could add a flag later)
-        // For now, disable automatic popup to reduce modal fatigue
-        // const totalAssessments = data.user_stats?.total_assessments || 0
-        // if (totalAssessments === 0) {
-        //   setShowOnboarding(true)
-        // }
-      })
+      .then(setData)
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <Box sx={{ p: 3 }}><LinearProgress /></Box>
-  if (error) return <Box sx={{ p: 3, color: 'error.main' }}>Error: {error}</Box>
+  if (loading) return (
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'white' }}>
+      <Box sx={{ width: 200 }}><LinearProgress sx={{ borderRadius: 4, height: 4, bgcolor: '#f1f5f9', '& .MuiLinearProgress-bar': { background: 'linear-gradient(90deg, #6366f1, #0ea5e9)' } }} /></Box>
+    </Box>
+  )
+  if (error) return <Box sx={{ p: 6, textAlign: 'center' }}><Typography color="error">Error: {error}</Typography></Box>
   if (!data) return null
 
-  const { user, user_stats, recent_assessments, phase2_progress } = data
+  const { user, user_stats, recent_assessments, phase2_progress, phase5_progress, phase6_progress } = data
   const name = user?.first_name || user?.username || 'User'
   const totalAssessments = user_stats?.total_assessments || 0
   const bestLevel = user_stats?.best_level || 'A1'
   const totalXp = user_stats?.total_xp || 0
-  const avgXp = Math.round(user_stats?.avg_xp || 0)
   const p2Completed = user_stats?.phase2_completed_steps || 0
   const currentProgress = user_stats?.current_progress || null
+
+  const phaseCompletion = user_stats?.phase_completion || []
+  const isPhaseComplete = (num) => phaseCompletion.some(pc => pc.phase_number === num && pc.completed)
   const hasCompletedPhase1 = totalAssessments > 0
-  const hasIncompleteAssessment = recent_assessments?.some(a => !a.completed_at)
+  const hasCompletedPhase2 = isPhaseComplete(2) || p2Completed >= 9
+  const hasCompletedPhase4 = isPhaseComplete(4)
+  const hasCompletedPhase5 = isPhaseComplete(5)
+
+  const p5Sub1Steps = Object.keys(phase5_progress?.subphase1 || {}).length
+  const p5Sub2Steps = Object.keys(phase5_progress?.subphase2 || {}).length
+  const p5TotalSteps = p5Sub1Steps + p5Sub2Steps
+
+  const p6Sub1Steps = Object.keys(phase6_progress?.subphase1 || {}).length
+  const p6Sub2Steps = Object.keys(phase6_progress?.subphase2 || {}).length
+  const p6TotalSteps = p6Sub1Steps + p6Sub2Steps
+  const hasCompletedPhase6 = isPhaseComplete(6)
+
   const hasPhase2Progress = phase2_progress?.responses?.length > 0 || phase2_progress?.steps?.length > 0 || phase2_progress?.remedial_activities?.length > 0
-  
-  // Find the current/next Phase 2 step to continue from
+
   const getCurrentPhase2Step = () => {
-    // Check if user has active remedial activities
     if (phase2_progress?.remedial_activities?.length > 0) {
       const lastRemedial = phase2_progress.remedial_activities[phase2_progress.remedial_activities.length - 1]
       if (!lastRemedial.completed) {
-        // Return special marker for remedial activity - let backend determine activity index
-        return {
-          type: 'remedial',
-          url: `/phase2/remedial/${lastRemedial.step_id}/${lastRemedial.level}`
-        }
+        return { type: 'remedial', url: `/phase2/remedial/${lastRemedial.step_id}/${lastRemedial.level}` }
       }
     }
-    
     if (!phase2_progress?.steps?.length) return null
-    
-    // Find the most recent incomplete step, or return the last step if all complete
     const incompleteStep = phase2_progress.steps.find(step => !step.completed_at)
     if (incompleteStep) return { type: 'step', stepId: incompleteStep.step_id }
-    
-    // If all steps are complete, check if there's a next step available
     const lastStep = phase2_progress.steps[phase2_progress.steps.length - 1]
     return lastStep ? { type: 'step', stepId: lastStep.step_id } : null
   }
-  
   const currentPhase2Step = getCurrentPhase2Step()
 
+  const getPhaseState = (phaseId) => {
+    switch (phaseId) {
+      case 1: return { unlocked: true, completed: hasCompletedPhase1, inProgress: currentProgress != null }
+      case 2: return { unlocked: hasCompletedPhase1, completed: hasCompletedPhase2, inProgress: hasPhase2Progress && !hasCompletedPhase2 }
+      case 4: return { unlocked: hasCompletedPhase2, completed: hasCompletedPhase4, inProgress: hasCompletedPhase2 && !hasCompletedPhase4 }
+      case 5: return { unlocked: hasCompletedPhase4, completed: hasCompletedPhase5, inProgress: p5TotalSteps > 0 && !hasCompletedPhase5 }
+      case 6: return { unlocked: hasCompletedPhase5, completed: hasCompletedPhase6, inProgress: p6TotalSteps > 0 && !hasCompletedPhase6 }
+      default: return { unlocked: false, completed: false, inProgress: false }
+    }
+  }
+
+  const getPhaseHref = (phase) => {
+    if (phase.id === 1) return '/game'
+    if (phase.id === 2) {
+      if (hasPhase2Progress && currentPhase2Step) {
+        return currentPhase2Step.type === 'remedial' ? currentPhase2Step.url : `/phase2/step/${currentPhase2Step.stepId}`
+      }
+      return '/phase2/intro'
+    }
+    if (phase.id === 6) return '/phase6/subphase/1/step/1'
+    return phase.path
+  }
+
+  const getPhaseProgress = (phaseId) => {
+    switch (phaseId) {
+      case 1: return currentProgress ? ((currentProgress.current_step + 1) / currentProgress.total_steps) * 100 : (hasCompletedPhase1 ? 100 : 0)
+      case 2: return (p2Completed / 9) * 100
+      case 5: return (p5TotalSteps / 10) * 100
+      case 6: return (p6TotalSteps / 10) * 100
+      default: return getPhaseState(phaseId).completed ? 100 : 0
+    }
+  }
+
+  const completedPhases = [hasCompletedPhase1, hasCompletedPhase2, hasCompletedPhase4, hasCompletedPhase5, hasCompletedPhase6].filter(Boolean).length
+  const overallProgress = (completedPhases / 5) * 100
+
+  const stats = [
+    { label: 'CEFR Level', value: bestLevel, icon: <WorkspacePremiumIcon />, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)' },
+    { label: 'Total XP', value: totalXp.toLocaleString(), icon: <AutoAwesomeIcon />, color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #fbbf24)' },
+    { label: 'Assessments', value: totalAssessments, icon: <AssessmentIcon />, color: '#0ea5e9', gradient: 'linear-gradient(135deg, #0ea5e9, #06b6d4)' },
+    { label: 'Avg XP', value: Math.round(user_stats?.avg_xp || 0), icon: <TrendingUpIcon />, color: '#22c55e', gradient: 'linear-gradient(135deg, #22c55e, #16a34a)' },
+  ]
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
-      {/* Modern Hero Section */}
-      <Box 
-        sx={{
-          background: 'linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%)',
-          color: 'white',
-          py: 6,
-          mb: 4,
-          position: 'relative',
-          overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '50%',
-            height: '100%',
-            background: 'radial-gradient(circle at center, rgba(96, 165, 250, 0.1) 0%, transparent 70%)',
-            pointerEvents: 'none'
-          }
-        }}
-      >
-        <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={8}>
-              <Stack spacing={3}>
-                <Box>
-                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
-                    Welcome back, {name}! 👋
+    <Box sx={{ minHeight: '100vh', bgcolor: 'white' }}>
+
+      {/* ── HEADER WITH GRADIENT ACCENT ── */}
+      <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+        {/* Decorative blobs */}
+        <Box sx={{ position: 'absolute', top: -80, right: -60, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+        <Box sx={{ position: 'absolute', bottom: -40, left: -80, width: 350, height: 350, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.06) 0%, transparent 70%)', filter: 'blur(30px)', pointerEvents: 'none' }} />
+
+        <Container maxWidth="lg" sx={{ pt: { xs: 4, md: 5 }, pb: { xs: 3, md: 4 }, position: 'relative' }}>
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} spacing={2}>
+              <Box>
+                <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 0.5 }}>
+                  <Typography sx={{ fontSize: { xs: '1.8rem', md: '2.2rem' }, fontWeight: 800, color: '#0f172a', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                    Welcome back, {name}
                   </Typography>
-                  <Typography variant="h6" sx={{ opacity: 0.9, maxWidth: 600 }}>
-                    Continue your personalized English learning journey with AI-powered assessments and real-world scenarios.
-                  </Typography>
-                </Box>
-                
-                <Stack direction="row" spacing={2} flexWrap="wrap">
-                  <Chip 
-                    icon={<WorkspacePremiumIcon />}
-                    label={`CEFR Level: ${bestLevel}`}
-                    sx={{ 
-                      bgcolor: 'rgba(255,255,255,0.15)', 
-                      color: 'white',
-                      fontWeight: 600,
-                      '& .MuiChip-icon': { color: 'white' }
-                    }}
-                  />
-                  <Chip 
-                    icon={<AutoAwesomeIcon />}
-                    label={`${totalXp} XP Earned`}
-                    sx={{ 
-                      bgcolor: 'rgba(255,255,255,0.15)', 
-                      color: 'white',
-                      fontWeight: 600,
-                      '& .MuiChip-icon': { color: 'white' }
-                    }}
-                  />
-                  <Chip 
-                    icon={<AssessmentIcon />}
-                    label={`${totalAssessments} Completed`}
-                    sx={{ 
-                      bgcolor: 'rgba(255,255,255,0.15)', 
-                      color: 'white',
-                      fontWeight: 600,
-                      '& .MuiChip-icon': { color: 'white' }
-                    }}
-                  />
+                  {completedPhases === 5 && (
+                    <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 1, delay: 0.8 }}>
+                      <EmojiEventsIcon sx={{ fontSize: 28, color: '#f59e0b' }} />
+                    </motion.div>
+                  )}
                 </Stack>
-              </Stack>
-            </Grid>
-            
-            <Grid item xs={12} md={4}>
-              <Card 
-                sx={{ 
-                  bgcolor: 'rgba(255,255,255,0.1)', 
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  color: 'white'
+                <Typography sx={{ color: '#64748b', fontSize: '0.95rem' }}>
+                  {completedPhases === 5 ? 'All phases completed — amazing work!' : completedPhases > 0 ? `${completedPhases} of 5 phases completed` : 'Start your learning journey today'}
+                </Typography>
+              </Box>
+              <Button
+                href="/phase-journey"
+                startIcon={<MapIcon />}
+                endIcon={<ArrowForwardIcon sx={{ fontSize: '16px !important' }} />}
+                sx={{
+                  px: 2.5, py: 1,
+                  borderRadius: 3,
+                  border: '1px solid #e2e8f0',
+                  color: '#475569',
+                  fontWeight: 600,
+                  bgcolor: 'white',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                  '&:hover': { borderColor: '#cbd5e1', bgcolor: '#fafafa', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }
                 }}
               >
-                <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                  <Avatar 
-                    sx={{ 
-                      width: 80, 
-                      height: 80, 
-                      bgcolor: 'white', 
-                      color: 'primary.main',
-                      mx: 'auto',
-                      mb: 2
-                    }}
-                  >
-                    <SchoolIcon sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                    Your Learning Progress
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.9, mb: 2 }}>
-                    Track your journey through CEFR levels with personalized assessments
-                  </Typography>
-                  <Stack direction="row" justifyContent="center" spacing={1}>
-                    <Chip size="small" label="A1" variant={bestLevel === 'A1' ? 'filled' : 'outlined'} sx={{ color: 'white', borderColor: 'white' }} />
-                    <Chip size="small" label="A2" variant={bestLevel === 'A2' ? 'filled' : 'outlined'} sx={{ color: 'white', borderColor: 'white' }} />
-                    <Chip size="small" label="B1" variant={bestLevel === 'B1' ? 'filled' : 'outlined'} sx={{ color: 'white', borderColor: 'white' }} />
-                    <Chip size="small" label="B2" variant={bestLevel === 'B2' ? 'filled' : 'outlined'} sx={{ color: 'white', borderColor: 'white' }} />
-                    <Chip size="small" label="C1" variant={bestLevel === 'C1' ? 'filled' : 'outlined'} sx={{ color: 'white', borderColor: 'white' }} />
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+                Learning Journey
+              </Button>
+            </Stack>
+          </motion.div>
+
+          {/* Overall progress bar */}
+          {completedPhases > 0 && completedPhases < 4 && (
+            <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={1}>
+              <Box sx={{ mt: 3, p: 2.5, borderRadius: 3, bgcolor: '#fafafa', border: '1px solid #f1f5f9' }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                  <Typography sx={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>Overall Progress</Typography>
+                  <Typography sx={{ fontSize: '0.82rem', color: '#6366f1', fontWeight: 700 }}>{completedPhases}/5 phases</Typography>
+                </Stack>
+                <Box sx={{ height: 6, borderRadius: 3, bgcolor: '#e2e8f0', overflow: 'hidden' }}>
+                  <motion.div
+                    initial={{ width: '0%' }}
+                    animate={{ width: `${overallProgress}%` }}
+                    transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
+                    style={{ height: '100%', borderRadius: 6, background: 'linear-gradient(90deg, #6366f1, #0ea5e9)' }}
+                  />
+                </Box>
+              </Box>
+            </motion.div>
+          )}
         </Container>
+        <Box sx={{ height: 1, background: 'linear-gradient(90deg, transparent, #e2e8f0 20%, #e2e8f0 80%, transparent)' }} />
       </Box>
 
-      <Container maxWidth="lg">
-        {/* First-time User Banner (non-modal) */}
-        {totalAssessments === 0 && (
-          <Alert 
-            severity="info" 
-            sx={{ 
-              mb: 4, 
-              borderRadius: 2,
-              border: '1px solid',
-              borderColor: 'info.main',
-              '& .MuiAlert-message': {
-                width: '100%'
-              }
-            }}
-            action={
-              <Button 
-                color="info" 
-                size="small" 
-                variant="contained"
-                href="/game"
-              >
-                Start Assessment
-              </Button>
-            }
-          >
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-              🎯 Ready to discover your CEFR level?
-            </Typography>
-            <Typography variant="body2">
-              Take your first professional assessment in 15 minutes. Get A1-C2 level results with detailed feedback.
-            </Typography>
-          </Alert>
-        )}
+      <Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 } }}>
 
-        {/* Quick Actions Bar */}
-        <Box sx={{ mb: 4 }}>
-          <Paper sx={{ p: 3, borderRadius: 3 }}>
-            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center" justifyContent="space-between">
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
-                  Quick Actions
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Continue your assessment or explore new features
-                </Typography>
-              </Box>
-              
-              <Stack direction="row" spacing={2}>
-                {hasIncompleteAssessment ? (
-                  <Button 
-                    variant="contained" 
-                    startIcon={<PlayArrowIcon />}
-                    href="/game"
-                    sx={{ borderRadius: 2, px: 3 }}
-                  >
-                    Continue Phase 1 Assessment
-                  </Button>
-                ) : hasPhase2Progress && hasCompletedPhase1 ? (
-                  <Button 
-                    variant="contained" 
-                    startIcon={<PlayArrowIcon />}
-                    href={currentPhase2Step ? (currentPhase2Step.type === 'remedial' ? currentPhase2Step.url : `/phase2/step/${currentPhase2Step.stepId}`) : "/phase2"}
-                    sx={{ borderRadius: 2, px: 3 }}
-                  >
-                    Continue Phase 2
-                  </Button>
-                ) : hasCompletedPhase1 ? (
-                  <Button 
-                    variant="contained" 
-                    startIcon={<PlayArrowIcon />}
-                    href="/phase2"
-                    sx={{ borderRadius: 2, px: 3 }}
-                  >
-                    Start Phase 2
-                  </Button>
-                ) : (
-                  <Button 
-                    variant="contained" 
-                    startIcon={<PlayArrowIcon />}
-                    href="/game"
-                    sx={{ borderRadius: 2, px: 3 }}
-                  >
-                    Start Phase 1 Assessment
-                  </Button>
-                )}
-                <Button 
-                  variant="outlined" 
-                  startIcon={<AssessmentIcon />}
-                  href="/results"
-                  sx={{ borderRadius: 2, px: 3 }}
-                >
-                  View Results
-                </Button>
-              </Stack>
-            </Stack>
-          </Paper>
-        </Box>
-
-        {/* Assessment Phases */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: 'text.primary' }}>
-            Assessment Phases
-          </Typography>
-          
-          <Grid container spacing={{ xs: 2, sm: 3 }}>
-            {/* Phase 1 Card */}
-            <Grid item xs={12} md={6}>
-              <Card 
-                sx={{ 
-                  height: '100%',
-                  background: theme.palette.mode === 'dark' 
-                    ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.8) 100%)'
-                    : 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-                  border: theme.palette.mode === 'dark'
-                    ? '1px solid rgba(99, 102, 241, 0.3)'
-                    : '1px solid rgba(148, 163, 184, 0.2)',
-                  borderRadius: 3,
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '4px',
-                    background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)',
-                  },
-                  '&:hover': { 
-                    transform: 'translateY(-6px)',
-                    boxShadow: theme.palette.mode === 'dark'
-                      ? '0 20px 40px rgba(99, 102, 241, 0.25)'
-                      : '0 20px 40px rgba(99, 102, 241, 0.15)',
-                    border: '1px solid rgba(99, 102, 241, 0.4)',
-                  }
-                }}
-              >
-                <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2, sm: 3 }} alignItems={{ xs: 'center', sm: 'flex-start' }} sx={{ mb: 3 }}>
-                    <Avatar 
-                      sx={{ 
-                        width: { xs: 56, sm: 64 }, 
-                        height: { xs: 56, sm: 64 }, 
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
-                        border: '3px solid rgba(255, 255, 255, 0.9)',
-                      }}
-                    >
-                      <EmojiEventsIcon sx={{ fontSize: { xs: 26, sm: 30 }, color: 'white' }} />
+        {/* ── STATS GRID ── */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={2}>
+          <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
+            gap: 2.5,
+            mb: 4,
+          }}>
+            {stats.map((stat, i) => (
+              <motion.div key={stat.label} whileHover={{ y: -4, transition: { duration: 0.2 } }}>
+                <Box sx={{
+                  p: 3,
+                  borderRadius: 4,
+                  bgcolor: 'white',
+                  border: '1px solid #f1f5f9',
+                  transition: 'all 0.3s',
+                  cursor: 'default',
+                  '&:hover': { borderColor: `${stat.color}30`, boxShadow: `0 12px 32px ${stat.color}12` },
+                }}>
+                  <Stack spacing={1.5}>
+                    <Avatar sx={{
+                      width: 44, height: 44,
+                      background: stat.gradient,
+                      boxShadow: `0 4px 14px ${stat.color}30`,
+                    }}>
+                      {React.cloneElement(stat.icon, { sx: { fontSize: 22, color: 'white' } })}
                     </Avatar>
-                    <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}>
-                      <Typography variant={{ xs: 'h6', sm: 'h5' }} sx={{ fontWeight: 700, mb: 1 }}>
-                        Phase 1: Foundation
+                    <Box>
+                      <Typography sx={{ fontWeight: 800, fontSize: '1.5rem', color: '#0f172a', lineHeight: 1.1, letterSpacing: '-0.01em' }}>
+                        {stat.value}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                        Comprehensive English proficiency assessment to establish your CEFR baseline level
+                      <Typography sx={{ color: '#94a3b8', fontSize: '0.78rem', fontWeight: 500, mt: 0.3 }}>
+                        {stat.label}
                       </Typography>
-                      
-                      <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
-                        <Chip 
-                          size="small" 
-                          label="9 Core Questions" 
-                          variant="outlined" 
-                          color="secondary"
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
-                        />
-                        <Chip 
-                          size="small" 
-                          label="CEFR Aligned" 
-                          variant="outlined" 
-                          color="secondary"
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
-                        />
-                        <Chip 
-                          size="small" 
-                          label="AI Powered" 
-                          variant="outlined" 
-                          color="secondary"
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
-                        />
-                      </Stack>
                     </Box>
                   </Stack>
-                  
-                  <Box sx={{ 
-                    mb: 3, 
-                    p: { xs: 2, sm: 2.5 }, 
-                    background: theme.palette.mode === 'dark'
-                      ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)'
-                      : 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%)',
-                    borderRadius: 2,
-                    border: theme.palette.mode === 'dark'
-                      ? '1px solid rgba(99, 102, 241, 0.2)'
-                      : '1px solid rgba(99, 102, 241, 0.1)'
-                  }}>
-                    <Stack 
-                      direction={{ xs: 'column', sm: 'row' }} 
-                      spacing={{ xs: 2, sm: 3 }} 
-                      alignItems="center"
-                      divider={<Divider 
-                        orientation={{ xs: 'horizontal', sm: 'vertical' }} 
-                        flexItem 
-                        sx={{ 
-                          borderColor: theme.palette.mode === 'dark'
-                            ? 'rgba(99, 102, 241, 0.25)'
-                            : 'rgba(99, 102, 241, 0.15)' 
-                        }}
-                      />}
-                    >
-                      <Box sx={{ flex: 1, textAlign: 'center' }}>
-                        <Typography 
-                          variant={{ xs: 'h5', sm: 'h4' }} 
-                          sx={{ 
-                            fontWeight: 800, 
-                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 0.5
-                          }}
-                        >
-                          {totalAssessments}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          fontWeight: 500,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>
-                          Assessments
-                        </Typography>
-                      </Box>
-                      <Box sx={{ flex: 1, textAlign: 'center' }}>
-                        <Typography 
-                          variant={{ xs: 'h5', sm: 'h4' }} 
-                          sx={{ 
-                            fontWeight: 800, 
-                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 0.5
-                          }}
-                        >
-                          {bestLevel}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          fontWeight: 500,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>
-                          CEFR Level
-                        </Typography>
-                      </Box>
-                      <Box sx={{ flex: 1, textAlign: 'center' }}>
-                        <Typography 
-                          variant={{ xs: 'h5', sm: 'h4' }} 
-                          sx={{ 
-                            fontWeight: 800, 
-                            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 0.5
-                          }}
-                        >
-                          {totalXp}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          fontWeight: 500,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>
-                          Total XP
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </Box>
-                  
-                  {currentProgress && (
-                    <Box sx={{ mb: 3 }}>
-                      <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Current Progress
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Step {currentProgress.current_step + 1} of {currentProgress.total_steps}
-                        </Typography>
-                      </Stack>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={((currentProgress.current_step + 1) / currentProgress.total_steps) * 100} 
-                        sx={{ height: 8, borderRadius: 4 }}
-                      />
-                    </Box>
-                  )}
-                  
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                    <Button 
-                      variant="contained"
-                      startIcon={<PlayArrowIcon />}
-                      href="/game"
-                      sx={{ 
-                        flex: 1, 
-                        borderRadius: 2, 
-                        py: 1.5,
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
-                        fontWeight: 600,
-                        textTransform: 'none',
-                        fontSize: '1rem',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #5856eb 0%, #7c3aed 100%)',
-                          boxShadow: '0 6px 20px rgba(99, 102, 241, 0.6)',
-                          transform: 'translateY(-1px)'
-                        }
-                      }}
-                    >
-                      {currentProgress ? 'Continue Assessment' : 'Start Phase 1'}
-                    </Button>
-                    <Button 
-                      variant="outlined"
-                      startIcon={<LaunchIcon />}
-                      href="/results"
-                      sx={{ 
-                        borderRadius: 2, 
-                        py: 1.5,
-                        borderColor: theme.palette.mode === 'dark' 
-                          ? 'rgba(99, 102, 241, 0.4)' 
-                          : 'rgba(99, 102, 241, 0.3)',
-                        color: theme.palette.mode === 'dark' 
-                          ? '#a78bfa' 
-                          : '#6366f1',
-                        fontWeight: 600,
-                        textTransform: 'none',
-                        fontSize: '1rem',
-                        '&:hover': {
-                          borderColor: theme.palette.mode === 'dark' 
-                            ? '#a78bfa' 
-                            : '#6366f1',
-                          backgroundColor: theme.palette.mode === 'dark' 
-                            ? 'rgba(167, 139, 250, 0.1)' 
-                            : 'rgba(99, 102, 241, 0.05)',
-                          transform: 'translateY(-1px)'
-                        }
-                      }}
-                    >
-                      View Results
-                    </Button>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Phase 2 Card */}
-            <Grid item xs={12} md={6}>
-              <Card 
-                sx={{ 
-                  height: '100%',
-                  position: 'relative',
-                  background: theme.palette.mode === 'dark'
-                    ? (hasCompletedPhase1 
-                        ? 'linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.8) 100%)'
-                        : 'linear-gradient(145deg, rgba(51, 65, 85, 0.6) 0%, rgba(71, 85, 105, 0.5) 100%)')
-                    : (hasCompletedPhase1 
-                        ? 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)'
-                        : 'linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%)'),
-                  border: theme.palette.mode === 'dark'
-                    ? (hasCompletedPhase1 
-                        ? '1px solid rgba(30, 58, 138, 0.4)'
-                        : '1px solid rgba(148, 163, 184, 0.3)')
-                    : (hasCompletedPhase1 
-                        ? '1px solid rgba(30, 58, 138, 0.2)'
-                        : '1px solid rgba(148, 163, 184, 0.3)'),
-                  borderRadius: 3,
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  opacity: hasCompletedPhase1 ? 1 : 0.8,
-                  overflow: 'hidden',
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '4px',
-                    background: hasCompletedPhase1 
-                      ? 'linear-gradient(90deg, #1e40af 0%, #3b82f6 100%)'
-                      : 'linear-gradient(90deg, #94a3b8 0%, #cbd5e1 100%)',
-                  },
-                  '&:hover': hasCompletedPhase1 ? { 
-                    transform: 'translateY(-6px)',
-                    boxShadow: theme.palette.mode === 'dark'
-                      ? '0 20px 40px rgba(30, 58, 138, 0.25)'
-                      : '0 20px 40px rgba(30, 58, 138, 0.15)',
-                    border: theme.palette.mode === 'dark'
-                      ? '1px solid rgba(30, 58, 138, 0.5)'
-                      : '1px solid rgba(30, 58, 138, 0.3)',
-                  } : {
-                    transform: 'translateY(-2px)',
-                    boxShadow: theme.palette.mode === 'dark'
-                      ? '0 8px 20px rgba(148, 163, 184, 0.3)'
-                      : '0 8px 20px rgba(148, 163, 184, 0.2)',
-                  }
-                }}
-              >
-                {!hasCompletedPhase1 && (
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: 16,
-                      right: 16,
-                      zIndex: 1
-                    }}
-                  >
-                    <Chip 
-                      icon={<LockIcon />}
-                      label="Complete Phase 1 First"
-                      size="small"
-                      color="warning"
-                      variant="filled"
-                    />
-                  </Box>
-                )}
-                
-                <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2, sm: 3 }} alignItems={{ xs: 'center', sm: 'flex-start' }} sx={{ mb: 3 }}>
-                    <Avatar 
-                      sx={{ 
-                        width: { xs: 56, sm: 64 }, 
-                        height: { xs: 56, sm: 64 }, 
-                        background: hasCompletedPhase1 
-                          ? 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)'
-                          : 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%)',
-                        boxShadow: hasCompletedPhase1 
-                          ? '0 8px 24px rgba(30, 58, 138, 0.4)'
-                          : '0 4px 12px rgba(148, 163, 184, 0.3)',
-                        border: '3px solid rgba(255, 255, 255, 0.9)',
-                      }}
-                    >
-                      <EventIcon sx={{ 
-                        fontSize: { xs: 26, sm: 30 }, 
-                        color: hasCompletedPhase1 ? 'white' : '#64748b'
-                      }} />
-                    </Avatar>
-                    <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}>
-                      <Typography variant={{ xs: 'h6', sm: 'h5' }} sx={{ fontWeight: 700, mb: 1 }}>
-                        Phase 2: Cultural Events
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
-                        Interactive committee simulation planning Tunisian cultural events with real team dynamics
-                      </Typography>
-                      
-                      <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
-                        <Chip 
-                          size="small" 
-                          label="9 Interactive Steps" 
-                          variant="outlined" 
-                          color={hasCompletedPhase1 ? "primary" : "default"}
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
-                        />
-                        <Chip 
-                          size="small" 
-                          label="Cultural Context" 
-                          variant="outlined" 
-                          color={hasCompletedPhase1 ? "primary" : "default"}
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
-                        />
-                        <Chip 
-                          size="small" 
-                          label="Team Simulation" 
-                          variant="outlined" 
-                          color={hasCompletedPhase1 ? "primary" : "default"}
-                          sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
-                        />
-                      </Stack>
-                    </Box>
-                  </Stack>
-                  
-                  <Box sx={{ 
-                    mb: 3, 
-                    p: { xs: 2, sm: 2.5 }, 
-                    background: theme.palette.mode === 'dark'
-                      ? (hasCompletedPhase1 
-                          ? 'linear-gradient(135deg, rgba(30, 64, 175, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)'
-                          : 'linear-gradient(135deg, rgba(148, 163, 184, 0.1) 0%, rgba(203, 213, 225, 0.1) 100%)')
-                      : (hasCompletedPhase1 
-                          ? 'linear-gradient(135deg, rgba(30, 64, 175, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)'
-                          : 'linear-gradient(135deg, rgba(148, 163, 184, 0.05) 0%, rgba(203, 213, 225, 0.05) 100%)'),
-                    borderRadius: 2,
-                    border: theme.palette.mode === 'dark'
-                      ? (hasCompletedPhase1 
-                          ? '1px solid rgba(30, 64, 175, 0.2)'
-                          : '1px solid rgba(148, 163, 184, 0.3)')
-                      : (hasCompletedPhase1 
-                          ? '1px solid rgba(30, 64, 175, 0.1)'
-                          : '1px solid rgba(148, 163, 184, 0.2)')
-                  }}>
-                    <Stack 
-                      direction={{ xs: 'column', sm: 'row' }} 
-                      spacing={{ xs: 2, sm: 3 }} 
-                      alignItems="center"
-                      divider={<Divider 
-                        orientation={{ xs: 'horizontal', sm: 'vertical' }} 
-                        flexItem 
-                        sx={{ 
-                          borderColor: theme.palette.mode === 'dark'
-                            ? (hasCompletedPhase1 
-                                ? 'rgba(30, 64, 175, 0.25)' 
-                                : 'rgba(148, 163, 184, 0.3)')
-                            : (hasCompletedPhase1 
-                                ? 'rgba(30, 64, 175, 0.15)' 
-                                : 'rgba(148, 163, 184, 0.2)')
-                        }}
-                      />}
-                    >
-                      <Box sx={{ flex: 1, textAlign: 'center' }}>
-                        <Typography 
-                          variant={{ xs: 'h5', sm: 'h4' }} 
-                          sx={{ 
-                            fontWeight: 800, 
-                            background: hasCompletedPhase1 
-                              ? 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)'
-                              : 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 0.5
-                          }}
-                        >
-                          {p2Completed}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          fontWeight: 500,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>
-                          of 9 Steps
-                        </Typography>
-                      </Box>
-                      <Box sx={{ flex: 1, textAlign: 'center' }}>
-                        <Typography 
-                          variant={{ xs: 'h5', sm: 'h4' }} 
-                          sx={{ 
-                            fontWeight: 800, 
-                            background: hasCompletedPhase1 
-                              ? 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)'
-                              : 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 0.5
-                          }}
-                        >
-                          5
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          fontWeight: 500,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>
-                          Team Members
-                        </Typography>
-                      </Box>
-                      <Box sx={{ flex: 1, textAlign: 'center' }}>
-                        <Typography 
-                          variant={{ xs: 'h5', sm: 'h4' }} 
-                          sx={{ 
-                            fontWeight: 800, 
-                            background: hasCompletedPhase1 
-                              ? 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)'
-                              : 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 0.5
-                          }}
-                        >
-                          3
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ 
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          fontWeight: 500,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>
-                          Main Phases
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </Box>
-                  
-                  {hasCompletedPhase1 && p2Completed > 0 && (
-                    <Box sx={{ mb: 3 }}>
-                      <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Phase 2 Progress
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {p2Completed} of 9 steps
-                        </Typography>
-                      </Stack>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={(p2Completed / 9) * 100} 
-                        sx={{ height: 8, borderRadius: 4 }}
-                      />
-                    </Box>
-                  )}
-                  
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                    <Button 
-                      variant={hasCompletedPhase1 ? "contained" : "outlined"}
-                      startIcon={hasCompletedPhase1 ? <PlayArrowIcon /> : <LockIcon />}
-                      href={hasCompletedPhase1 ? (hasPhase2Progress && currentPhase2Step ? (currentPhase2Step.type === 'remedial' ? currentPhase2Step.url : `/phase2/step/${currentPhase2Step.stepId}`) : "/phase2") : undefined}
-                      disabled={!hasCompletedPhase1}
-                      sx={{ 
-                        flex: 1, 
-                        borderRadius: 2, 
-                        py: 1.5,
-                        ...(hasCompletedPhase1 ? {
-                          background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
-                          boxShadow: '0 4px 15px rgba(30, 64, 175, 0.4)',
-                          fontWeight: 600,
-                          textTransform: 'none',
-                          fontSize: '1rem',
-                          '&:hover': {
-                            background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)',
-                            boxShadow: '0 6px 20px rgba(30, 64, 175, 0.6)',
-                            transform: 'translateY(-1px)'
-                          }
-                        } : {
-                          borderColor: 'rgba(148, 163, 184, 0.4)',
-                          color: 'rgba(148, 163, 184, 0.8)',
-                          fontWeight: 600,
-                          textTransform: 'none',
-                          fontSize: '1rem',
-                          cursor: 'not-allowed'
-                        })
-                      }}
-                    >
-                      {hasCompletedPhase1 
-                        ? (hasPhase2Progress ? 'Continue Phase 2' : 'Start Phase 2')
-                        : 'Locked - Complete Phase 1'
-                      }
-                    </Button>
-                    {hasCompletedPhase1 && (
-                      <Button 
-                        variant="outlined"
-                        startIcon={<InfoIcon />}
-                        href="/phase2"
-                        sx={{ 
-                          borderRadius: 2, 
-                          py: 1.5,
-                          borderColor: theme.palette.mode === 'dark' 
-                            ? 'rgba(30, 64, 175, 0.4)' 
-                            : 'rgba(30, 64, 175, 0.3)',
-                          color: theme.palette.mode === 'dark' 
-                            ? '#60a5fa' 
-                            : '#1e40af',
-                          fontWeight: 600,
-                          textTransform: 'none',
-                          fontSize: '1rem',
-                          '&:hover': {
-                            borderColor: theme.palette.mode === 'dark' 
-                              ? '#60a5fa' 
-                              : '#1e40af',
-                            backgroundColor: theme.palette.mode === 'dark' 
-                              ? 'rgba(96, 165, 250, 0.1)' 
-                              : 'rgba(30, 64, 175, 0.05)',
-                            transform: 'translateY(-1px)'
-                          }
-                        }}
-                      >
-                        Learn More
-                      </Button>
-                    )}
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-        </Box>
-
-        {/* Performance Overview */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: 'text.primary' }}>
-            Performance Overview
-          </Typography>
-          
-          <Grid container spacing={3}>
-            {[
-              { 
-                label: 'Total Assessments', 
-                value: totalAssessments, 
-                icon: <AssessmentIcon />, 
-                color: 'primary',
-                description: 'Completed assessments across all phases'
-              },
-              { 
-                label: 'Best CEFR Level', 
-                value: bestLevel, 
-                icon: <WorkspacePremiumIcon />, 
-                color: 'secondary',
-                description: 'Highest achieved proficiency level'
-              },
-              { 
-                label: 'Total XP Earned', 
-                value: totalXp, 
-                icon: <AutoAwesomeIcon />, 
-                color: 'success',
-                description: 'Experience points from all activities'
-              },
-              { 
-                label: 'Average Score', 
-                value: `${avgXp} XP`, 
-                icon: <TrendingUpIcon />, 
-                color: 'warning',
-                description: 'Average performance per assessment'
-              }
-            ].map((stat, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Card sx={{ height: '100%', textAlign: 'center' }}>
-                  <CardContent sx={{ p: 3 }}>
-                    <Avatar 
-                      sx={{ 
-                        width: 56, 
-                        height: 56, 
-                        bgcolor: `${stat.color}.main`,
-                        mx: 'auto',
-                        mb: 2
-                      }}
-                    >
-                      {stat.icon}
-                    </Avatar>
-                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: `${stat.color}.main` }}>
-                      {stat.value}
-                    </Typography>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                      {stat.label}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {stat.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+                </Box>
+              </motion.div>
             ))}
-          </Grid>
-        </Box>
+          </Box>
+        </motion.div>
 
-        {/* Recent Activity */}
-        <Box sx={{ mb: 4 }}>
-          <Paper sx={{ p: 4, borderRadius: 3 }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-              <Box>
-                <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
-                  Recent Activity
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Your latest assessment progress and achievements
-                </Typography>
-              </Box>
-              {(recent_assessments?.length || phase2_progress?.responses?.length) && (
-                <Button 
-                  variant="outlined" 
-                  size="small"
-                  startIcon={<LaunchIcon />}
-                  href="/results"
-                  sx={{ borderRadius: 2 }}
-                >
-                  View All Activity
-                </Button>
-              )}
-            </Stack>
-            
-            {/* Recent Activity */}
-            {(recent_assessments?.length || hasPhase2Progress) ? (
-              <Box>
-                {/* Phase 1 Recent Assessments */}
-                {recent_assessments?.length > 0 && (
-                  <Box sx={{ mb: hasPhase2Progress ? 4 : 0 }}>
-                    <Typography variant="subtitle1" color="secondary.main" sx={{ fontWeight: 600, mb: 2 }}>
-                      Phase 1 - Foundation Assessments
-                    </Typography>
+        {/* ── PHASE CARDS ── */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={3}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
+            <Typography sx={{ fontWeight: 800, fontSize: '1.3rem', color: '#0f172a', letterSpacing: '-0.01em' }}>
+              Assessment Phases
+            </Typography>
+            <Chip
+              label={`${completedPhases}/5`}
+              size="small"
+              sx={{
+                fontWeight: 700, fontSize: '0.75rem',
+                bgcolor: completedPhases === 4 ? '#f0fdf4' : '#f8fafc',
+                color: completedPhases === 4 ? '#16a34a' : '#64748b',
+                border: `1px solid ${completedPhases === 4 ? '#bbf7d0' : '#e2e8f0'}`,
+              }}
+            />
+          </Stack>
+        </motion.div>
+
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+          gap: 2.5,
+          mb: 4,
+        }}>
+          {PHASE_CONFIG.map((phase, i) => {
+            const state = getPhaseState(phase.id)
+            const progress = getPhaseProgress(phase.id)
+            const IconComp = phase.icon
+
+            return (
+              <motion.div key={phase.id} variants={fadeUp} initial="hidden" animate="visible" custom={i + 4}>
+                <motion.div whileHover={state.unlocked ? { y: -4, transition: { duration: 0.2 } } : {}}>
+                  <Box sx={{
+                    p: 3,
+                    borderRadius: 4,
+                    bgcolor: 'white',
+                    border: '1px solid #f1f5f9',
+                    opacity: state.unlocked ? 1 : 0.5,
+                    transition: 'all 0.3s',
+                    height: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&:hover': state.unlocked ? {
+                      borderColor: `${phase.color}30`,
+                      boxShadow: `0 16px 40px ${phase.color}12`,
+                    } : {},
+                  }}>
+                    {/* Subtle gradient accent at top */}
+                    {state.unlocked && (
+                      <Box sx={{
+                        position: 'absolute', top: 0, left: 0, right: 0, height: 3,
+                        background: phase.gradient,
+                        borderRadius: '16px 16px 0 0',
+                      }} />
+                    )}
+
                     <Stack spacing={2}>
-                      {recent_assessments.slice(0, 3).map((assessment, idx) => (
-                        <Box key={idx} sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-                          <Stack direction="row" justifyContent="space-between" alignItems="center">
-                            <Box sx={{ flex: 1 }}>
-                              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-                                <Chip size="small" label={assessment.cefr_level} color="secondary" />
-                                <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                  Assessment #{assessment.id} - {assessment.cefr_level} Level
-                                </Typography>
-                                {assessment.completed_at && (
-                                  <Chip 
-                                    size="small" 
-                                    label="Completed" 
-                                    color="success" 
-                                    variant="outlined"
-                                    icon={<CheckCircleIcon />}
-                                  />
-                                )}
-                              </Stack>
-                              <Stack direction="row" spacing={2} alignItems="center">
-                                <Typography variant="body2" color="text.secondary">
-                                  <CalendarTodayIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                                  {assessment.completed_at ? new Date(assessment.completed_at).toLocaleDateString() : 'In Progress'}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  <AutoAwesomeIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                                  {assessment.total_xp} XP
-                                </Typography>
-                                {assessment.ai_responses > 0 && (
-                                  <Chip size="small" label={`${assessment.ai_responses} AI Detected`} color="warning" variant="outlined" />
-                                )}
-                              </Stack>
-                            </Box>
-                            <Stack direction="row" spacing={1}>
-                              {!assessment.completed_at && (
-                                <Button 
-                                  size="small"
-                                  variant="contained" 
-                                  color="secondary"
-                                  href="/game"
-                                  sx={{ borderRadius: 1.5 }}
-                                >
-                                  Continue
-                                </Button>
-                              )}
-                              <Button 
-                                size="small"
-                                variant="outlined" 
-                                href="/results"
-                                sx={{ borderRadius: 1.5 }}
-                              >
-                                View Results
-                              </Button>
-                            </Stack>
-                          </Stack>
-                        </Box>
-                      ))}
-                    </Stack>
-                  </Box>
-                )}
-                
-                {/* Phase 2 Recent Activity */}
-                {hasPhase2Progress && (
-                  <Box>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                      <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 600 }}>
-                        Phase 2 - Cultural Event Planning
+                      {/* Header row */}
+                      <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Avatar sx={{
+                            width: 48, height: 48,
+                            background: state.unlocked ? phase.gradient : '#f1f5f9',
+                            boxShadow: state.unlocked ? `0 4px 14px ${phase.color}30` : 'none',
+                          }}>
+                            {state.completed ? (
+                              <CheckCircleIcon sx={{ fontSize: 24, color: 'white' }} />
+                            ) : !state.unlocked ? (
+                              <LockIcon sx={{ fontSize: 22, color: '#cbd5e1' }} />
+                            ) : (
+                              <IconComp sx={{ fontSize: 24, color: 'white' }} />
+                            )}
+                          </Avatar>
+                          <Box>
+                            <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: state.unlocked ? '#0f172a' : '#94a3b8', lineHeight: 1.2 }}>
+                              Phase {phase.id}
+                            </Typography>
+                            <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: state.unlocked ? '#64748b' : '#cbd5e1' }}>
+                              {phase.title}
+                            </Typography>
+                          </Box>
+                        </Stack>
+
+                        {state.completed && (
+                          <Chip size="small" label="Completed" sx={{
+                            height: 22, fontSize: '0.68rem', fontWeight: 700,
+                            bgcolor: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0',
+                          }} />
+                        )}
+                        {state.inProgress && !state.completed && (
+                          <Chip size="small" label="In Progress" sx={{
+                            height: 22, fontSize: '0.68rem', fontWeight: 700,
+                            bgcolor: `${phase.color}08`, color: phase.color, border: `1px solid ${phase.color}25`,
+                          }} />
+                        )}
+                        {!state.unlocked && (
+                          <Chip size="small" label="Locked" icon={<LockIcon sx={{ fontSize: '12px !important' }} />} sx={{
+                            height: 22, fontSize: '0.68rem', fontWeight: 600,
+                            bgcolor: '#f8fafc', color: '#94a3b8', border: '1px solid #f1f5f9',
+                          }} />
+                        )}
+                      </Stack>
+
+                      {/* Description */}
+                      <Typography sx={{ color: '#94a3b8', fontSize: '0.83rem', lineHeight: 1.5 }}>
+                        {phase.subtitle}
                       </Typography>
-                      {currentPhase2Step && (
-                        <Button 
-                          size="small"
-                          variant="contained" 
-                          color="primary"
-                          href={`/phase2/step/${currentPhase2Step}`}
-                          sx={{ borderRadius: 1.5 }}
+
+                      {/* Progress bar */}
+                      {state.unlocked && progress > 0 && !state.completed && (
+                        <Box>
+                          <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                            <Typography sx={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 500 }}>Progress</Typography>
+                            <Typography sx={{ fontSize: '0.72rem', color: phase.color, fontWeight: 700 }}>{Math.round(Math.min(progress, 100))}%</Typography>
+                          </Stack>
+                          <Box sx={{ height: 5, borderRadius: 3, bgcolor: '#f1f5f9', overflow: 'hidden' }}>
+                            <motion.div
+                              initial={{ width: '0%' }}
+                              animate={{ width: `${Math.min(progress, 100)}%` }}
+                              transition={{ delay: 0.3 + i * 0.1, duration: 0.8, ease: 'easeOut' }}
+                              style={{ height: '100%', borderRadius: 6, background: phase.gradient }}
+                            />
+                          </Box>
+                        </Box>
+                      )}
+
+                      {/* Action button */}
+                      {state.unlocked && (
+                        <Button
+                          href={getPhaseHref(phase)}
+                          fullWidth
+                          endIcon={<ArrowForwardIcon sx={{ fontSize: '16px !important' }} />}
+                          sx={{
+                            py: 1.2,
+                            borderRadius: 2.5,
+                            fontWeight: 600,
+                            fontSize: '0.85rem',
+                            ...(state.completed ? {
+                              bgcolor: '#fafafa',
+                              color: '#475569',
+                              border: '1px solid #e2e8f0',
+                              '&:hover': { bgcolor: '#f1f5f9' },
+                            } : {
+                              background: phase.gradient,
+                              color: 'white',
+                              boxShadow: `0 4px 14px ${phase.color}30`,
+                              '&:hover': { boxShadow: `0 6px 20px ${phase.color}40`, filter: 'brightness(1.05)' },
+                            }),
+                          }}
                         >
-                          Continue Phase 2
+                          {state.completed ? 'Review' : state.inProgress ? 'Continue' : 'Start Phase'}
                         </Button>
                       )}
                     </Stack>
-                    
-                    {/* Show recent responses and remedial activities */}
-                    {(() => {
-                      // Combine regular responses and remedial activities
-                      const allActivity = []
-                      
-                      // Add regular responses
-                      if (phase2_progress?.responses?.length > 0) {
-                        phase2_progress.responses.forEach(r => {
-                          allActivity.push({
-                            type: 'response',
-                            ...r,
-                            timestamp: r.submitted_at,
-                            title: `${String(r.step_id || '').replaceAll('_', ' ')} - Step ${r.action_item_id?.slice(-1)}`,
-                            continueUrl: `/phase2/step/${r.step_id}`
-                          })
-                        })
-                      }
-                      
-                      // Add remedial activities
-                      if (phase2_progress?.remedial_activities?.length > 0) {
-                        phase2_progress.remedial_activities.forEach(rem => {
-                          allActivity.push({
-                            type: 'remedial',
-                            ...rem,
-                            timestamp: rem.submitted_at,
-                            title: `${String(rem.step_id || '').replaceAll('_', ' ')} - ${rem.level} Practice`,
-                            continueUrl: `/phase2/remedial/${rem.step_id}/${rem.level}`
-                          })
-                        })
-                      }
-                      
-                      // Sort by timestamp, most recent first
-                      allActivity.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                      
-                      return allActivity.length > 0 ? (
-                        <Stack spacing={2}>
-                          {allActivity.slice(0, 3).map((activity, idx) => (
-                            <Box key={idx} sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-                              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                <Box sx={{ flex: 1 }}>
-                                  <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-                                    <Chip 
-                                      size="small" 
-                                      label={activity.type === 'remedial' ? activity.level : activity.cefr_level} 
-                                      color={activity.type === 'remedial' ? 'secondary' : 'primary'} 
-                                    />
-                                    <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                      {activity.title}
-                                    </Typography>
-                                    {activity.type === 'remedial' && (
-                                      <Chip size="small" label="Practice" variant="outlined" color="secondary" />
-                                    )}
-                                  </Stack>
-                                  <Stack direction="row" spacing={2} alignItems="center">
-                                    <Typography variant="body2" color="text.secondary">
-                                      <CalendarTodayIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                                      {String(activity.timestamp || '').split('T')[0]}
-                                    </Typography>
-                                    {activity.points_earned && (
-                                      <Typography variant="body2" color="text.secondary">
-                                        <AutoAwesomeIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                                        +{activity.points_earned} XP
-                                      </Typography>
-                                    )}
-                                    {activity.ai_detected && (
-                                      <Chip size="small" label="AI Detected" color="warning" variant="outlined" />
-                                    )}
-                                  </Stack>
-                                </Box>
-                                <Button 
-                                  size="small"
-                                  variant="outlined" 
-                                  href={activity.continueUrl}
-                                  sx={{ borderRadius: 1.5 }}
-                                >
-                                  {activity.type === 'remedial' ? 'Continue' : 'Review'}
-                                </Button>
-                              </Stack>
-                            </Box>
-                          ))}
-                        </Stack>
-                      ) : null
-                    })()}
-                    
-                    {/* Show step progress if no responses but has steps */}
-                    {(!phase2_progress?.responses?.length && phase2_progress?.steps?.length > 0) && (
-                      <Stack spacing={2}>
-                        {phase2_progress.steps.slice(-3).map((step, idx) => (
-                          <Box key={idx} sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center">
-                              <Box sx={{ flex: 1 }}>
-                                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-                                  <Chip 
-                                    size="small" 
-                                    label={step.completed_at ? "Completed" : "In Progress"} 
-                                    color={step.completed_at ? "success" : "primary"} 
-                                  />
-                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                    {String(step.step_id || '').replaceAll('_', ' ')}
-                                  </Typography>
-                                </Stack>
-                                <Stack direction="row" spacing={2} alignItems="center">
-                                  <Typography variant="body2" color="text.secondary">
-                                    <CalendarTodayIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                                    {step.started_at ? new Date(step.started_at).toLocaleDateString() : 'Started'}
-                                  </Typography>
-                                </Stack>
-                              </Box>
-                              <Button 
-                                size="small"
-                                variant={step.completed_at ? "outlined" : "contained"}
-                                color="primary"
-                                href={`/phase2/step/${step.step_id}`}
-                                sx={{ borderRadius: 1.5 }}
-                              >
-                                {step.completed_at ? "Review" : "Continue"}
-                              </Button>
+                  </Box>
+                </motion.div>
+              </motion.div>
+            )
+          })}
+        </Box>
+
+        {/* ── RECENT ACTIVITY ── */}
+        {recent_assessments?.length > 0 && (
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={8}>
+            <Box sx={{ mb: 4 }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
+                <Typography sx={{ fontWeight: 800, fontSize: '1.3rem', color: '#0f172a', letterSpacing: '-0.01em' }}>
+                  Recent Activity
+                </Typography>
+                <Button
+                  href="/results"
+                  size="small"
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: '14px !important' }} />}
+                  sx={{ color: '#6366f1', fontWeight: 600, fontSize: '0.82rem' }}
+                >
+                  View All
+                </Button>
+              </Stack>
+
+              <Stack spacing={2}>
+                {recent_assessments.slice(0, 3).map((assessment, idx) => (
+                  <motion.div key={idx} whileHover={{ y: -2, transition: { duration: 0.2 } }}>
+                    <Box sx={{
+                      p: 2.5,
+                      borderRadius: 3,
+                      bgcolor: 'white',
+                      border: '1px solid #f1f5f9',
+                      transition: 'all 0.3s',
+                      '&:hover': { borderColor: '#6366f125', boxShadow: '0 8px 24px rgba(99,102,241,0.08)' },
+                    }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Avatar sx={{
+                            width: 40, height: 40,
+                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            boxShadow: '0 2px 8px rgba(99,102,241,0.25)',
+                          }}>
+                            <SchoolIcon sx={{ fontSize: 20, color: 'white' }} />
+                          </Avatar>
+                          <Box>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                              <Typography sx={{ fontWeight: 600, fontSize: '0.92rem', color: '#0f172a' }}>
+                                Phase 1 Assessment
+                              </Typography>
+                              <Chip size="small" label={assessment.cefr_level} sx={{
+                                height: 22, fontSize: '0.7rem', fontWeight: 700,
+                                background: 'linear-gradient(135deg, #6366f110, #8b5cf610)',
+                                color: '#6366f1', border: '1px solid #6366f120',
+                              }} />
+                            </Stack>
+                            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 0.3 }}>
+                              <Typography sx={{ color: '#94a3b8', fontSize: '0.78rem' }}>
+                                {assessment.completed_at ? new Date(assessment.completed_at).toLocaleDateString() : 'In Progress'}
+                              </Typography>
+                              <Box sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: '#e2e8f0' }} />
+                              <Typography sx={{ color: '#f59e0b', fontSize: '0.78rem', fontWeight: 600 }}>
+                                {assessment.total_xp} XP
+                              </Typography>
                             </Stack>
                           </Box>
-                        ))}
+                        </Stack>
+                        <Button
+                          href={assessment.completed_at ? '/results' : '/game'}
+                          size="small"
+                          sx={{
+                            color: '#6366f1', fontWeight: 600, fontSize: '0.8rem', minWidth: 'auto',
+                            '&:hover': { bgcolor: '#6366f108' }
+                          }}
+                        >
+                          {assessment.completed_at ? 'View' : 'Continue'}
+                        </Button>
                       </Stack>
-                    )}
-                  </Box>
-                )}
-              </Box>
-            ) : (
-              <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Avatar sx={{ width: 80, height: 80, bgcolor: 'grey.100', mx: 'auto', mb: 2 }}>
-                  <HistoryIcon sx={{ fontSize: 40, color: 'grey.400' }} />
-                </Avatar>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
-                  No Recent Activity
+                    </Box>
+                  </motion.div>
+                ))}
+              </Stack>
+            </Box>
+          </motion.div>
+        )}
+
+        {/* ── EMPTY STATE ── */}
+        {totalAssessments === 0 && (
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={4}>
+            <Box sx={{
+              p: { xs: 5, md: 7 },
+              borderRadius: 4,
+              textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden',
+              background: 'linear-gradient(145deg, #fafafa, #ffffff)',
+              border: '1px solid #f1f5f9',
+            }}>
+              {/* Decorative circles */}
+              <Box sx={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.06), transparent 70%)', pointerEvents: 'none' }} />
+              <Box sx={{ position: 'absolute', bottom: -20, left: -20, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.05), transparent 70%)', pointerEvents: 'none' }} />
+
+              <Box sx={{ position: 'relative' }}>
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <Avatar sx={{
+                    width: 72, height: 72,
+                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                    boxShadow: '0 12px 32px rgba(99,102,241,0.3)',
+                    mx: 'auto', mb: 3,
+                  }}>
+                    <RocketLaunchIcon sx={{ fontSize: 36, color: 'white' }} />
+                  </Avatar>
+                </motion.div>
+                <Typography sx={{ fontWeight: 800, fontSize: '1.5rem', color: '#0f172a', mb: 1, letterSpacing: '-0.02em' }}>
+                  Ready to begin?
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  Start your first assessment to see your progress here
+                <Typography sx={{ color: '#64748b', mb: 4, maxWidth: 420, mx: 'auto', fontSize: '1rem', lineHeight: 1.6 }}>
+                  Take a 15-minute CEFR assessment to discover your English level and unlock the full learning journey.
                 </Typography>
-                <Button 
-                  variant="contained" 
-                  startIcon={<PlayArrowIcon />}
+                <Button
                   href="/game"
-                  sx={{ borderRadius: 2 }}
+                  size="large"
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    px: 5, py: 1.6,
+                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    color: 'white',
+                    fontSize: '1rem',
+                    boxShadow: '0 8px 32px rgba(99,102,241,0.35)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #5856eb 0%, #4338ca 100%)',
+                      boxShadow: '0 12px 40px rgba(99,102,241,0.45)',
+                    }
+                  }}
                 >
                   Start Assessment
                 </Button>
               </Box>
-            )}
-          </Paper>
-        </Box>
+            </Box>
+          </motion.div>
+        )}
       </Container>
-
-      {/* First-Time User Onboarding Modal */}
-      <Dialog 
-        open={showOnboarding} 
-        onClose={() => setShowOnboarding(false)}
-        maxWidth="sm" 
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            p: 1
-          }
-        }}
-      >
-        <DialogTitle sx={{ textAlign: 'center', pb: 2 }}>
-          <Box sx={{ mb: 2 }}>
-            <Avatar 
-              sx={{ 
-                width: 64, 
-                height: 64, 
-                bgcolor: 'primary.main', 
-                mx: 'auto', 
-                mb: 2 
-              }}
-            >
-              <AutoAwesomeIcon sx={{ fontSize: 32 }} />
-            </Avatar>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              Welcome to FARDI! 🎉
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Let's get you started with your English assessment journey
-            </Typography>
-          </Box>
-        </DialogTitle>
-        
-        <DialogContent sx={{ px: 3 }}>
-          <Stepper orientation="vertical" sx={{ mb: 3 }}>
-            <Step active>
-              <StepLabel>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Take Your First Assessment
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Complete 9 workplace scenarios to discover your CEFR level (15-20 minutes)
-                </Typography>
-              </StepLabel>
-            </Step>
-            <Step>
-              <StepLabel>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  View Your Results
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Get detailed feedback, skills breakdown, and certificate
-                </Typography>
-              </StepLabel>
-            </Step>
-            <Step>
-              <StepLabel>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  Continue with Phase 2
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Practice advanced teamwork scenarios (optional)
-                </Typography>
-              </StepLabel>
-            </Step>
-          </Stepper>
-
-          <Paper sx={{ p: 3, bgcolor: 'primary.50', border: '1px solid', borderColor: 'primary.200' }}>
-            <Typography variant="h6" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
-              🚀 Quick Start Tips
-            </Typography>
-            <List dense>
-              <ListItem sx={{ px: 0 }}>
-                <ListItemIcon sx={{ minWidth: 28 }}>
-                  <CheckCircleIcon color="primary" fontSize="small" />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="No preparation needed - just be yourself!"
-                  primaryTypographyProps={{ variant: 'body2' }}
-                />
-              </ListItem>
-              <ListItem sx={{ px: 0 }}>
-                <ListItemIcon sx={{ minWidth: 28 }}>
-                  <CheckCircleIcon color="primary" fontSize="small" />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="Answer naturally in your own words"
-                  primaryTypographyProps={{ variant: 'body2' }}
-                />
-              </ListItem>
-              <ListItem sx={{ px: 0 }}>
-                <ListItemIcon sx={{ minWidth: 28 }}>
-                  <CheckCircleIcon color="primary" fontSize="small" />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="You can save and resume anytime"
-                  primaryTypographyProps={{ variant: 'body2' }}
-                />
-              </ListItem>
-            </List>
-          </Paper>
-        </DialogContent>
-        
-        <DialogActions sx={{ p: 3, pt: 2 }}>
-          <Button 
-            onClick={() => setShowOnboarding(false)}
-            color="inherit"
-          >
-            I'll explore first
-          </Button>
-          <Button 
-            variant="contained" 
-            size="large"
-            startIcon={<PlayArrowIcon />}
-            href="/game"
-            sx={{ px: 4 }}
-          >
-            Start My Assessment
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }

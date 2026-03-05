@@ -177,7 +177,7 @@ export default function VocabularyWarmup() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/3/interaction/1')
+    navigate('/phase4/step/3/interaction/1')
   }
 
   const handleShowExample = (e) => {

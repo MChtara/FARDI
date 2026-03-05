@@ -159,7 +159,7 @@ export default function RemedialB2TaskC() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/4/remedial/b2/taskD')
+    navigate('/phase4/step/4/remedial/b2/taskD')
   }
 
   const progress = ((currentIndex + 1) / GRAMMAR_SENTENCES.length) * 100

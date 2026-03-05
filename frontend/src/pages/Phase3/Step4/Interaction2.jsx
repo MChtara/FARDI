@@ -209,46 +209,13 @@ export default function Phase3Step4Interaction2() {
   }
 
   const handleContinue = () => {
-    // Calculate total Step 4 score
+    // Store scores for ScoreCalculation page
     const int1Score = parseInt(sessionStorage.getItem('phase3_step4_interaction1_score') || '0')
     const int2Score = evaluation?.score || 0
+    sessionStorage.setItem('phase3_step4_interaction2_score', int2Score.toString())
 
-    const totalScore = int1Score + int2Score
-    const totalMax = 10 // 5 + 5
-    const percentage = (totalScore / totalMax) * 100
-
-    sessionStorage.setItem('phase3_step4_total_score', totalScore.toString())
-    sessionStorage.setItem('phase3_step4_total_max', totalMax.toString())
-    sessionStorage.setItem('phase3_step4_percentage', percentage.toFixed(2))
-
-    console.log(`[Phase 3 Step 4 - TOTAL] Score: ${totalScore}/${totalMax} (${percentage.toFixed(1)}%)`)
-
-    // Route based on 80% threshold - Step 4 is final, so go to Phase 4 or retry entire Phase 3
-    if (percentage >= 80) {
-      // Check overall Phase 3 performance across all steps
-      const step1Percentage = parseFloat(sessionStorage.getItem('phase3_step1_percentage') || '0')
-      const step2Percentage = parseFloat(sessionStorage.getItem('phase3_step2_percentage') || '0')
-      const step3Percentage = parseFloat(sessionStorage.getItem('phase3_step3_percentage') || '0')
-      const step4Percentage = percentage
-
-      const overallPercentage = (step1Percentage + step2Percentage + step3Percentage + step4Percentage) / 4
-
-      console.log(`[Phase 3 - OVERALL] Average: ${overallPercentage.toFixed(1)}%`)
-
-      if (overallPercentage >= 80) {
-        console.log('[Phase 3 Complete] ≥80% overall → Proceeding to Phase 4')
-        alert(`Congratulations! You completed Phase 3 with ${overallPercentage.toFixed(1)}% overall. Proceeding to Phase 4!`)
-        navigate('/app/dashboard') // TODO: Navigate to Phase 4 Step 1 when ready
-      } else {
-        console.log('[Phase 3 Complete] <80% overall → Need to retry Phase 3')
-        alert(`Your overall Phase 3 score was ${overallPercentage.toFixed(1)}%. You need 80% or higher to proceed to Phase 4. Please review and retry Phase 3.`)
-        navigate('/app/phase3/step/1/interaction/1')
-      }
-    } else {
-      console.log('[Phase 3 Step 4] <80% → Need to retry Step 4')
-      alert(`Your Step 4 score was ${percentage.toFixed(1)}%. You need 80% or higher. Please review and try again.`)
-      navigate('/app/phase3/step/4/interaction/1')
-    }
+    // Navigate to ScoreCalculation page for backend-driven routing
+    navigate('/phase3/step/4/score')
   }
 
   const selectedSponsorData = SPONSOR_PROFILES.find(s => s.id === selectedSponsor)

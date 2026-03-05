@@ -227,7 +227,7 @@ export default function RemedialB1TaskB() {
             </Stack>
 
             <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <Button variant="contained" color="primary" onClick={() => navigate('/app/phase4/step3/remedial/b1/taskC')} size="large">
+              <Button variant="contained" color="primary" onClick={() => navigate('/phase4/step3/remedial/b1/taskC')} size="large">
                 Continue to Task C →
               </Button>
             </Box>

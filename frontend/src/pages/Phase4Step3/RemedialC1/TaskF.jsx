@@ -471,7 +471,7 @@ export default function RemedialC1TaskF() {
 
           <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center' }}>
             <Button
-              onClick={() => navigate('/app/phase4/step3/remedial/c1/taskG')}
+              onClick={() => navigate('/phase4/step3/remedial/c1/taskG')}
               variant="contained"
               size="large"
               sx={{

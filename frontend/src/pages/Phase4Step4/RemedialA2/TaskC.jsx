@@ -186,10 +186,10 @@ export default function Phase4Step4RemedialA2TaskC() {
 
       if (passed) {
         // Navigate to dashboard or next phase
-        navigate('/app/dashboard')
+        navigate('/dashboard')
       } else {
         // Restart from Task A
-        navigate('/app/phase4/step/4/remedial/a2/taskA')
+        navigate('/phase4/step/4/remedial/a2/taskA')
       }
     }, 5000) // 5 second delay
   }

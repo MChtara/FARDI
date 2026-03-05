@@ -186,6 +186,15 @@ export default function Phase4Step4Interaction3() {
     console.log('TOTAL SCORE:', totalScore, '/15')
     console.log('='.repeat(60))
 
+    // Check if student should proceed: I3 (sentence production) score >= 3 means B1+ level
+    const shouldProceed = interaction3Score >= 3
+    if (shouldProceed) {
+      console.log(`→ I3 score ${interaction3Score}/5 >= 3 (B1+). Proceeding to Step 5.`)
+      console.log('='.repeat(60) + '\n')
+      navigate('/phase4/step/5')
+      return
+    }
+
     // Route based on total score:
     // 0-3 pts → Remedial A1
     // 4-6 pts → Remedial A2
@@ -195,19 +204,19 @@ export default function Phase4Step4Interaction3() {
 
     if (totalScore <= 3) {
       console.log('→ Routing to Remedial A1 (0-3 points)')
-      navigate('/app/phase4/step/4/remedial/a1/taskA')
+      navigate('/phase4/step/4/remedial/a1/taskA')
     } else if (totalScore <= 6) {
       console.log('→ Routing to Remedial A2 (4-6 points)')
-      navigate('/app/phase4/step/4/remedial/a2/taskA')
+      navigate('/phase4/step/4/remedial/a2/taskA')
     } else if (totalScore <= 9) {
       console.log('→ Routing to Remedial B1 (7-9 points)')
-      navigate('/app/phase4/step/4/remedial/b1/taskA')
+      navigate('/phase4/step/4/remedial/b1/taskA')
     } else if (totalScore <= 12) {
       console.log('→ Routing to Remedial B2 (10-12 points)')
-      navigate('/app/phase4/step/4/remedial/b2/taskA')
+      navigate('/phase4/step/4/remedial/b2/taskA')
     } else {
       console.log('→ Routing to Remedial C1 (13-15 points)')
-      navigate('/app/phase4/step/4/remedial/c1/taskA')
+      navigate('/phase4/step/4/remedial/c1/taskA')
     }
     console.log('='.repeat(60) + '\n')
   }
@@ -377,7 +386,7 @@ export default function Phase4Step4Interaction3() {
             fullWidth
             sx={{ mt: 3 }}
           >
-            Next
+            {(evaluation?.score || 0) >= 3 ? 'Continue to Step 5' : 'Continue to Remedial Activities'}
           </Button>
         </Paper>
       )}

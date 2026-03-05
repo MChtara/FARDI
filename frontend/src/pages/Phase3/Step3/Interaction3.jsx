@@ -186,15 +186,8 @@ export default function Phase3Step3Interaction3() {
 
     console.log(`[Phase 3 Step 3 - TOTAL] Score: ${totalScore}/${totalMax} (${percentage.toFixed(1)}%)`)
 
-    // Route based on 80% threshold
-    if (percentage >= 80) {
-      console.log('[Phase 3 Step 3] ≥80% → Proceeding to Step 4')
-      navigate('/app/phase3/step/4/interaction/1')
-    } else {
-      console.log('[Phase 3 Step 3] <80% → Need to retry')
-      alert(`Your score was ${percentage.toFixed(1)}%. You need 80% or higher to proceed to Step 4. Please review the material and try again.`)
-      navigate('/app/phase3/step/3/interaction/1')
-    }
+    // Navigate to ScoreCalculation page for backend-driven routing
+    navigate('/phase3/step/3/score')
   }
 
   const wordCount = response.trim().split(/\s+/).filter(w => w.length > 0).length

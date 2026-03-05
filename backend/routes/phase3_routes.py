@@ -55,6 +55,83 @@ def submit_response(step_id):
             'error': str(e)
         }), 500
 
+@phase3_bp.route('/step/<int:step_id>/calculate-score', methods=['POST'])
+@login_required
+def calculate_step_score(step_id):
+    """
+    Calculate Phase 3 step score and determine remedial routing.
+    Steps 1-3: I1 (vocab game, 0-8), I2 (game, 0-8), I3 (sentence CEFR, 1-5)
+    Step 4: I1 (budget, 1-5), I2 (pitch CEFR, 1-5)
+    The CEFR score (I3 for steps 1-3, I2 for step 4) drives remedial level.
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        interaction1_score = data.get('interaction1_score', 0)
+        interaction2_score = data.get('interaction2_score', 0)
+        interaction3_score = data.get('interaction3_score', 0)
+
+        total_score = interaction1_score + interaction2_score + interaction3_score
+
+        # CEFR assessment score determines remedial level
+        # Steps 1-3: I3 is the sentence production (1-5 CEFR)
+        # Step 4: I2 is the pitch (1-5 CEFR)
+        cefr_score = interaction3_score if step_id <= 3 else interaction2_score
+
+        level_map = {1: 'A1', 2: 'A2', 3: 'B1', 4: 'B2', 5: 'C1'}
+        remedial_level = level_map.get(cefr_score, 'A1')
+        should_proceed = cefr_score >= 3
+
+        # Determine next URL
+        next_step_map = {1: 2, 2: 3, 3: 4, 4: None}
+        next_step = next_step_map.get(step_id)
+
+        if should_proceed and next_step:
+            next_url = f"/app/phase3/step/{next_step}"
+        elif should_proceed and not next_step:
+            next_url = "/app/phase4/step/1"
+        else:
+            next_url = f"/app/phase3/step/{step_id}/remedial/{remedial_level.lower()}/task/a"
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print(f"PHASE 3 STEP {step_id} - SCORING RESULTS")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}")
+        print(f"Total: {total_score}, CEFR Score: {cefr_score}, Level: {remedial_level}")
+        print(f"PROCEED: {'YES' if should_proceed else 'NO - Remedial Required'}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 3 Step {step_id} - User {user_id}: I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}, Total={total_score}, Level={remedial_level}, Proceed={should_proceed}")
+
+        # Max scores depend on step
+        if step_id <= 3:
+            i1_max, i2_max, i3_max, total_max = 8, 8, 5, 21
+        else:
+            i1_max, i2_max, i3_max, total_max = 5, 5, 0, 10
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'interaction1': {'score': interaction1_score, 'max_score': i1_max},
+                'interaction2': {'score': interaction2_score, 'max_score': i2_max, 'level': level_map.get(interaction2_score, 'A1') if step_id > 3 else None},
+                'interaction3': {'score': interaction3_score, 'max_score': i3_max, 'level': level_map.get(interaction3_score, 'A1') if step_id <= 3 else None},
+                'total': {
+                    'score': total_score,
+                    'max_score': total_max,
+                    'remedial_level': remedial_level,
+                    'should_proceed': should_proceed,
+                    'next_url': next_url
+                }
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 3 Step {step_id} score: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @phase3_bp.route('/remedial/log', methods=['POST'])
 @login_required
 def log_remedial_task():

@@ -151,7 +151,7 @@ export default function RemedialB2TaskC() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step3/remedial/b2/taskD')
+    navigate('/phase4/step3/remedial/b2/taskD')
   }
 
   const allMatched = Object.keys(matches).length === 8

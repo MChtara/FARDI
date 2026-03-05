@@ -291,10 +291,10 @@ export default function RemedialA1TaskC() {
 
       if (passed) {
         // Navigate to dashboard or next phase
-        navigate('/app/dashboard')
+        navigate('/dashboard')
       } else {
         // Restart from Task A
-        navigate('/app/phase4/step3/remedial/a1/taskA')
+        navigate('/phase4/step3/remedial/a1/taskA')
       }
     }, 5000) // 5 second delay
   }

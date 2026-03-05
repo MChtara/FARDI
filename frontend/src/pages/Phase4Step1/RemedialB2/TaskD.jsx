@@ -196,10 +196,10 @@ export default function RemedialB2TaskD() {
 
       if (passed) {
         // Navigate to Phase 4 Step 2 intro
-        navigate('/app/phase4/step/2')
+        navigate('/phase4/step/2')
       } else {
         // Restart from Task A
-        navigate('/app/phase4/remedial/b2/taskA')
+        navigate('/phase4/remedial/b2/taskA')
       }
     }, 5000) // 5 second delay
   }

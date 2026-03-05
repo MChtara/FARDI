@@ -98,7 +98,7 @@ export default function Phase4Step4RemedialA1TaskB() {
   }
 
   const handleContinue = () => {
-    navigate('/app/phase4/step/4/remedial/a1/taskC')
+    navigate('/phase4/step/4/remedial/a1/taskC')
   }
 
   return (
