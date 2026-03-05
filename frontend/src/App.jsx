@@ -10,6 +10,59 @@ import Phase2Step from './pages/Phase2Step.jsx'
 import Phase2Complete from './pages/Phase2Complete.jsx'
 import Phase2Remedial from './pages/Phase2Remedial.jsx'
 import Phase2StepResults from './pages/Phase2StepResults.jsx'
+
+// Phase 3 Step 1 imports - organized in folder
+import Phase3Step1Intro from './pages/Phase3/Step1/index.jsx'
+import Phase3Step1Interaction1 from './pages/Phase3/Step1/Interaction1.jsx'
+import Phase3Step1Interaction2 from './pages/Phase3/Step1/Interaction2.jsx'
+import Phase3Step1Interaction3 from './pages/Phase3/Step1/Interaction3.jsx'
+
+// Phase 3 Step 1 Remedial imports (only A1 has Task B)
+import Phase3Step1RemedialA1TaskA from './pages/Phase3/Step1/RemedialA1/TaskA.jsx'
+import Phase3Step1RemedialA1TaskB from './pages/Phase3/Step1/RemedialA1/TaskB.jsx'
+import Phase3Step1RemedialA2TaskA from './pages/Phase3/Step1/RemedialA2/TaskA.jsx'
+import Phase3Step1RemedialB1TaskA from './pages/Phase3/Step1/RemedialB1/TaskA.jsx'
+import Phase3Step1RemedialB2TaskA from './pages/Phase3/Step1/RemedialB2/TaskA.jsx'
+import Phase3Step1RemedialC1TaskA from './pages/Phase3/Step1/RemedialC1/TaskA.jsx'
+
+// Phase 3 Step 2 imports - organized in folder
+import Phase3Step2Intro from './pages/Phase3/Step2/index.jsx'
+import Phase3Step2Interaction1 from './pages/Phase3/Step2/Interaction1.jsx'
+import Phase3Step2Interaction2 from './pages/Phase3/Step2/Interaction2.jsx'
+import Phase3Step2Interaction3 from './pages/Phase3/Step2/Interaction3.jsx'
+
+// Phase 3 Step 2 Remedial imports
+import Phase3Step2RemedialA1TaskA from './pages/Phase3/Step2/RemedialA1/TaskA.jsx'
+import Phase3Step2RemedialA2TaskA from './pages/Phase3/Step2/RemedialA2/TaskA.jsx'
+import Phase3Step2RemedialB1TaskA from './pages/Phase3/Step2/RemedialB1/TaskA.jsx'
+import Phase3Step2RemedialB2TaskA from './pages/Phase3/Step2/RemedialB2/TaskA.jsx'
+import Phase3Step2RemedialC1TaskA from './pages/Phase3/Step2/RemedialC1/TaskA.jsx'
+
+// Phase 3 Step 3 imports - organized in folder
+import Phase3Step3Intro from './pages/Phase3/Step3/index.jsx'
+import Phase3Step3Interaction1 from './pages/Phase3/Step3/Interaction1.jsx'
+import Phase3Step3Interaction2 from './pages/Phase3/Step3/Interaction2.jsx'
+import Phase3Step3Interaction3 from './pages/Phase3/Step3/Interaction3.jsx'
+
+// Phase 3 Step 3 Remedial imports
+import Phase3Step3RemedialA1TaskA from './pages/Phase3/Step3/RemedialA1/TaskA.jsx'
+import Phase3Step3RemedialA2TaskA from './pages/Phase3/Step3/RemedialA2/TaskA.jsx'
+import Phase3Step3RemedialB1TaskA from './pages/Phase3/Step3/RemedialB1/TaskA.jsx'
+import Phase3Step3RemedialB2TaskA from './pages/Phase3/Step3/RemedialB2/TaskA.jsx'
+import Phase3Step3RemedialC1TaskA from './pages/Phase3/Step3/RemedialC1/TaskA.jsx'
+
+// Phase 3 Step 4 imports - organized in folder
+import Phase3Step4Intro from './pages/Phase3/Step4/index.jsx'
+import Phase3Step4Interaction1 from './pages/Phase3/Step4/Interaction1.jsx'
+import Phase3Step4Interaction2 from './pages/Phase3/Step4/Interaction2.jsx'
+
+// Phase 3 Step 4 Remedial imports
+import Phase3Step4RemedialA1TaskA from './pages/Phase3/Step4/RemedialA1/TaskA.jsx'
+import Phase3Step4RemedialA2TaskA from './pages/Phase3/Step4/RemedialA2/TaskA.jsx'
+import Phase3Step4RemedialB1TaskA from './pages/Phase3/Step4/RemedialB1/TaskA.jsx'
+import Phase3Step4RemedialB2TaskA from './pages/Phase3/Step4/RemedialB2/TaskA.jsx'
+import Phase3Step4RemedialC1TaskA from './pages/Phase3/Step4/RemedialC1/TaskA.jsx'
+
 // Phase 4 Step 1 imports - organized in folder
 import Phase4Step1Intro from './pages/Phase4Step1/index.jsx'
 import Phase4Step1Interaction1 from './pages/Phase4Step1/Interaction1.jsx'
@@ -34,6 +87,195 @@ import Phase4Step5Intro from './pages/Phase4Step5/Intro.jsx'
 import Phase4Step5Interaction1 from './pages/Phase4Step5/Interaction1.jsx'
 import Phase4Step5Interaction2 from './pages/Phase4Step5/Interaction2.jsx'
 import Phase4Step5Interaction3 from './pages/Phase4Step5/Interaction3.jsx'
+
+// Phase 4.2 Step 1 imports - Social Media Marketing
+import Phase4_2Step1Intro from './pages/Phase4_2/Step1/index.jsx'
+import Phase4_2Step1Interaction1 from './pages/Phase4_2/Step1/Interaction1.jsx'
+import Phase4_2Step1Interaction2 from './pages/Phase4_2/Step1/Interaction2.jsx'
+import Phase4_2Step1Interaction3 from './pages/Phase4_2/Step1/Interaction3.jsx'
+
+// Phase 4.2 Step 2 imports - Social Media Marketing
+import Phase4_2Step2Intro from './pages/Phase4_2/Step2/index.jsx'
+import Phase4_2Step2Interaction1 from './pages/Phase4_2/Step2/Interaction1.jsx'
+import Phase4_2Step2Interaction2 from './pages/Phase4_2/Step2/Interaction2.jsx'
+import Phase4_2Step2Interaction3 from './pages/Phase4_2/Step2/Interaction3.jsx'
+
+// Phase 4.2 Step 3 imports - Social Media Marketing
+import Phase4_2Step3Intro from './pages/Phase4_2/Step3/index.jsx'
+import Phase4_2Step3Interaction1 from './pages/Phase4_2/Step3/Interaction1.jsx'
+import Phase4_2Step3Interaction2 from './pages/Phase4_2/Step3/Interaction2.jsx'
+import Phase4_2Step3Interaction3 from './pages/Phase4_2/Step3/Interaction3.jsx'
+
+// Phase 4.2 Step 4 imports - Social Media Marketing
+import Phase4_2Step4Intro from './pages/Phase4_2/Step4/index.jsx'
+import Phase4_2Step4Interaction1 from './pages/Phase4_2/Step4/Interaction1.jsx'
+import Phase4_2Step4Interaction2 from './pages/Phase4_2/Step4/Interaction2.jsx'
+import Phase4_2Step4Interaction3 from './pages/Phase4_2/Step4/Interaction3.jsx'
+
+// Phase 4.2 Step 5 imports - Error Correction & Evaluation
+import Phase4_2Step5Intro from './pages/Phase4_2/Step5/index.jsx'
+import Phase4_2Step5Interaction1 from './pages/Phase4_2/Step5/Interaction1.jsx'
+import Phase4_2Step5Interaction2 from './pages/Phase4_2/Step5/Interaction2.jsx'
+import Phase4_2Step5Interaction3 from './pages/Phase4_2/Step5/Interaction3.jsx'
+
+// Phase 4.2 Step 1 Remedial A1 imports
+import Phase4_2Step1RemedialA1TaskA from './pages/Phase4_2/Step1/RemedialA1/TaskA.jsx'
+import Phase4_2Step1RemedialA1TaskB from './pages/Phase4_2/Step1/RemedialA1/TaskB.jsx'
+import Phase4_2Step1RemedialA1TaskC from './pages/Phase4_2/Step1/RemedialA1/TaskC.jsx'
+import Phase4_2Step1RemedialA1Results from './pages/Phase4_2/Step1/RemedialA1/Results.jsx'
+
+// Phase 4.2 Step 1 Remedial A2 imports
+import Phase4_2Step1RemedialA2TaskA from './pages/Phase4_2/Step1/RemedialA2/TaskA.jsx'
+import Phase4_2Step1RemedialA2TaskB from './pages/Phase4_2/Step1/RemedialA2/TaskB.jsx'
+import Phase4_2Step1RemedialA2TaskC from './pages/Phase4_2/Step1/RemedialA2/TaskC.jsx'
+import Phase4_2Step1RemedialA2Results from './pages/Phase4_2/Step1/RemedialA2/Results.jsx'
+
+// Phase 4.2 Step 1 Remedial B1 imports
+import Phase4_2Step1RemedialB1TaskA from './pages/Phase4_2/Step1/RemedialB1/TaskA.jsx'
+import Phase4_2Step1RemedialB1TaskB from './pages/Phase4_2/Step1/RemedialB1/TaskB.jsx'
+import Phase4_2Step1RemedialB1TaskC from './pages/Phase4_2/Step1/RemedialB1/TaskC.jsx'
+import Phase4_2Step1RemedialB1TaskD from './pages/Phase4_2/Step1/RemedialB1/TaskD.jsx'
+import Phase4_2Step1RemedialB1TaskE from './pages/Phase4_2/Step1/RemedialB1/TaskE.jsx'
+import Phase4_2Step1RemedialB1TaskF from './pages/Phase4_2/Step1/RemedialB1/TaskF.jsx'
+import Phase4_2Step1RemedialB1Results from './pages/Phase4_2/Step1/RemedialB1/Results.jsx'
+
+// Phase 4.2 Step 1 Remedial B2 imports
+import Phase4_2Step1RemedialB2TaskA from './pages/Phase4_2/Step1/RemedialB2/TaskA.jsx'
+import Phase4_2Step1RemedialB2TaskB from './pages/Phase4_2/Step1/RemedialB2/TaskB.jsx'
+import Phase4_2Step1RemedialB2TaskC from './pages/Phase4_2/Step1/RemedialB2/TaskC.jsx'
+import Phase4_2Step1RemedialB2TaskD from './pages/Phase4_2/Step1/RemedialB2/TaskD.jsx'
+import Phase4_2Step1RemedialB2TaskE from './pages/Phase4_2/Step1/RemedialB2/TaskE.jsx'
+import Phase4_2Step1RemedialB2TaskF from './pages/Phase4_2/Step1/RemedialB2/TaskF.jsx'
+import Phase4_2Step1RemedialB2Results from './pages/Phase4_2/Step1/RemedialB2/Results.jsx'
+
+// Phase 4.2 Step 1 Remedial C1 imports
+import Phase4_2Step1RemedialC1TaskA from './pages/Phase4_2/Step1/RemedialC1/TaskA.jsx'
+import Phase4_2Step1RemedialC1TaskB from './pages/Phase4_2/Step1/RemedialC1/TaskB.jsx'
+import Phase4_2Step1RemedialC1TaskC from './pages/Phase4_2/Step1/RemedialC1/TaskC.jsx'
+import Phase4_2Step1RemedialC1TaskD from './pages/Phase4_2/Step1/RemedialC1/TaskD.jsx'
+import Phase4_2Step1RemedialC1TaskE from './pages/Phase4_2/Step1/RemedialC1/TaskE.jsx'
+import Phase4_2Step1RemedialC1TaskF from './pages/Phase4_2/Step1/RemedialC1/TaskF.jsx'
+import Phase4_2Step1RemedialC1TaskG from './pages/Phase4_2/Step1/RemedialC1/TaskG.jsx'
+import Phase4_2Step1RemedialC1TaskH from './pages/Phase4_2/Step1/RemedialC1/TaskH.jsx'
+import Phase4_2Step1RemedialC1Results from './pages/Phase4_2/Step1/RemedialC1/Results.jsx'
+
+// Phase 4.2 Step 2 Remedial A2 imports
+import Phase4_2Step2RemedialA2TaskA from './pages/Phase4_2/Step2/RemedialA2/TaskA.jsx'
+import Phase4_2Step2RemedialA2TaskB from './pages/Phase4_2/Step2/RemedialA2/TaskB.jsx'
+import Phase4_2Step2RemedialA2TaskC from './pages/Phase4_2/Step2/RemedialA2/TaskC.jsx'
+import Phase4_2Step2RemedialA2Results from './pages/Phase4_2/Step2/RemedialA2/Results.jsx'
+
+// Phase 4.2 Step 2 Remedial B1 imports
+import Phase4_2Step2RemedialB1TaskA from './pages/Phase4_2/Step2/RemedialB1/TaskA.jsx'
+import Phase4_2Step2RemedialB1TaskB from './pages/Phase4_2/Step2/RemedialB1/TaskB.jsx'
+import Phase4_2Step2RemedialB1TaskC from './pages/Phase4_2/Step2/RemedialB1/TaskC.jsx'
+import Phase4_2Step2RemedialB1Results from './pages/Phase4_2/Step2/RemedialB1/Results.jsx'
+
+// Phase 4.2 Step 2 Remedial B2 imports
+import Phase4_2Step2RemedialB2TaskA from './pages/Phase4_2/Step2/RemedialB2/TaskA.jsx'
+import Phase4_2Step2RemedialB2TaskB from './pages/Phase4_2/Step2/RemedialB2/TaskB.jsx'
+import Phase4_2Step2RemedialB2TaskC from './pages/Phase4_2/Step2/RemedialB2/TaskC.jsx'
+import Phase4_2Step2RemedialB2TaskD from './pages/Phase4_2/Step2/RemedialB2/TaskD.jsx'
+import Phase4_2Step2RemedialB2Results from './pages/Phase4_2/Step2/RemedialB2/Results.jsx'
+
+// Phase 4.2 Step 2 Remedial C1 imports
+import Phase4_2Step2RemedialC1TaskA from './pages/Phase4_2/Step2/RemedialC1/TaskA.jsx'
+import Phase4_2Step2RemedialC1TaskB from './pages/Phase4_2/Step2/RemedialC1/TaskB.jsx'
+import Phase4_2Step2RemedialC1TaskC from './pages/Phase4_2/Step2/RemedialC1/TaskC.jsx'
+import Phase4_2Step2RemedialC1TaskD from './pages/Phase4_2/Step2/RemedialC1/TaskD.jsx'
+import Phase4_2Step2RemedialC1TaskE from './pages/Phase4_2/Step2/RemedialC1/TaskE.jsx'
+import Phase4_2Step2RemedialC1TaskF from './pages/Phase4_2/Step2/RemedialC1/TaskF.jsx'
+import Phase4_2Step2RemedialC1TaskG from './pages/Phase4_2/Step2/RemedialC1/TaskG.jsx'
+import Phase4_2Step2RemedialC1TaskH from './pages/Phase4_2/Step2/RemedialC1/TaskH.jsx'
+import Phase4_2Step2RemedialC1Results from './pages/Phase4_2/Step2/RemedialC1/Results.jsx'
+
+// Phase 4.2 Step 3 Remedial A2 imports
+import Phase4_2Step3RemedialA2TaskA from './pages/Phase4_2/Step3/RemedialA2/TaskA.jsx'
+import Phase4_2Step3RemedialA2TaskB from './pages/Phase4_2/Step3/RemedialA2/TaskB.jsx'
+import Phase4_2Step3RemedialA2TaskC from './pages/Phase4_2/Step3/RemedialA2/TaskC.jsx'
+import Phase4_2Step3RemedialA2Results from './pages/Phase4_2/Step3/RemedialA2/Results.jsx'
+
+// Phase 4.2 Step 3 Remedial B1 imports
+import Phase4_2Step3RemedialB1TaskA from './pages/Phase4_2/Step3/RemedialB1/TaskA.jsx'
+import Phase4_2Step3RemedialB1TaskB from './pages/Phase4_2/Step3/RemedialB1/TaskB.jsx'
+import Phase4_2Step3RemedialB1TaskC from './pages/Phase4_2/Step3/RemedialB1/TaskC.jsx'
+import Phase4_2Step3RemedialB1TaskD from './pages/Phase4_2/Step3/RemedialB1/TaskD.jsx'
+import Phase4_2Step3RemedialB1Results from './pages/Phase4_2/Step3/RemedialB1/Results.jsx'
+
+// Phase 4.2 Step 3 Remedial B2 imports
+import Phase4_2Step3RemedialB2TaskA from './pages/Phase4_2/Step3/RemedialB2/TaskA.jsx'
+import Phase4_2Step3RemedialB2TaskB from './pages/Phase4_2/Step3/RemedialB2/TaskB.jsx'
+import Phase4_2Step3RemedialB2TaskC from './pages/Phase4_2/Step3/RemedialB2/TaskC.jsx'
+import Phase4_2Step3RemedialB2TaskD from './pages/Phase4_2/Step3/RemedialB2/TaskD.jsx'
+import Phase4_2Step3RemedialB2Results from './pages/Phase4_2/Step3/RemedialB2/Results.jsx'
+
+// Phase 4.2 Step 3 Remedial C1 imports
+import Phase4_2Step3RemedialC1TaskA from './pages/Phase4_2/Step3/RemedialC1/TaskA.jsx'
+import Phase4_2Step3RemedialC1TaskB from './pages/Phase4_2/Step3/RemedialC1/TaskB.jsx'
+import Phase4_2Step3RemedialC1TaskC from './pages/Phase4_2/Step3/RemedialC1/TaskC.jsx'
+import Phase4_2Step3RemedialC1TaskD from './pages/Phase4_2/Step3/RemedialC1/TaskD.jsx'
+import Phase4_2Step3RemedialC1TaskE from './pages/Phase4_2/Step3/RemedialC1/TaskE.jsx'
+import Phase4_2Step3RemedialC1TaskF from './pages/Phase4_2/Step3/RemedialC1/TaskF.jsx'
+import Phase4_2Step3RemedialC1TaskG from './pages/Phase4_2/Step3/RemedialC1/TaskG.jsx'
+import Phase4_2Step3RemedialC1TaskH from './pages/Phase4_2/Step3/RemedialC1/TaskH.jsx'
+import Phase4_2Step3RemedialC1Results from './pages/Phase4_2/Step3/RemedialC1/Results.jsx'
+
+// Phase 4.2 Step 4 Remedial A2 imports
+import Phase4_2Step4RemedialA2TaskA from './pages/Phase4_2/Step4/RemedialA2/TaskA.jsx'
+import Phase4_2Step4RemedialA2TaskB from './pages/Phase4_2/Step4/RemedialA2/TaskB.jsx'
+import Phase4_2Step4RemedialA2TaskC from './pages/Phase4_2/Step4/RemedialA2/TaskC.jsx'
+import Phase4_2Step4RemedialA2Results from './pages/Phase4_2/Step4/RemedialA2/Results.jsx'
+
+// Phase 4.2 Step 4 Remedial B1 imports
+import Phase4_2Step4RemedialB1TaskA from './pages/Phase4_2/Step4/RemedialB1/TaskA.jsx'
+import Phase4_2Step4RemedialB1TaskB from './pages/Phase4_2/Step4/RemedialB1/TaskB.jsx'
+import Phase4_2Step4RemedialB1TaskC from './pages/Phase4_2/Step4/RemedialB1/TaskC.jsx'
+import Phase4_2Step4RemedialB1Results from './pages/Phase4_2/Step4/RemedialB1/Results.jsx'
+
+// Phase 4.2 Step 4 Remedial B2 imports
+import Phase4_2Step4RemedialB2TaskA from './pages/Phase4_2/Step4/RemedialB2/TaskA.jsx'
+import Phase4_2Step4RemedialB2TaskB from './pages/Phase4_2/Step4/RemedialB2/TaskB.jsx'
+import Phase4_2Step4RemedialB2TaskC from './pages/Phase4_2/Step4/RemedialB2/TaskC.jsx'
+import Phase4_2Step4RemedialB2TaskD from './pages/Phase4_2/Step4/RemedialB2/TaskD.jsx'
+import Phase4_2Step4RemedialB2Results from './pages/Phase4_2/Step4/RemedialB2/Results.jsx'
+
+// Phase 4.2 Step 4 Remedial C1 imports
+import Phase4_2Step4RemedialC1TaskA from './pages/Phase4_2/Step4/RemedialC1/TaskA.jsx'
+import Phase4_2Step4RemedialC1TaskB from './pages/Phase4_2/Step4/RemedialC1/TaskB.jsx'
+import Phase4_2Step4RemedialC1TaskC from './pages/Phase4_2/Step4/RemedialC1/TaskC.jsx'
+import Phase4_2Step4RemedialC1TaskD from './pages/Phase4_2/Step4/RemedialC1/TaskD.jsx'
+import Phase4_2Step4RemedialC1TaskE from './pages/Phase4_2/Step4/RemedialC1/TaskE.jsx'
+import Phase4_2Step4RemedialC1TaskF from './pages/Phase4_2/Step4/RemedialC1/TaskF.jsx'
+import Phase4_2Step4RemedialC1TaskG from './pages/Phase4_2/Step4/RemedialC1/TaskG.jsx'
+import Phase4_2Step4RemedialC1TaskH from './pages/Phase4_2/Step4/RemedialC1/TaskH.jsx'
+import Phase4_2Step4RemedialC1Results from './pages/Phase4_2/Step4/RemedialC1/Results.jsx'
+
+// Phase 4.2 Step 5 Remedial A2 imports
+import Phase4_2Step5RemedialA2TaskA from './pages/Phase4_2/Step5/RemedialA2/TaskA.jsx'
+import Phase4_2Step5RemedialA2TaskB from './pages/Phase4_2/Step5/RemedialA2/TaskB.jsx'
+import Phase4_2Step5RemedialA2TaskC from './pages/Phase4_2/Step5/RemedialA2/TaskC.jsx'
+import Phase4_2Step5RemedialA2Results from './pages/Phase4_2/Step5/RemedialA2/Results.jsx'
+
+// Phase 4.2 Step 5 Remedial B1 imports
+import Phase4_2Step5RemedialB1TaskA from './pages/Phase4_2/Step5/RemedialB1/TaskA.jsx'
+import Phase4_2Step5RemedialB1TaskB from './pages/Phase4_2/Step5/RemedialB1/TaskB.jsx'
+import Phase4_2Step5RemedialB1TaskC from './pages/Phase4_2/Step5/RemedialB1/TaskC.jsx'
+import Phase4_2Step5RemedialB1TaskD from './pages/Phase4_2/Step5/RemedialB1/TaskD.jsx'
+import Phase4_2Step5RemedialB1Results from './pages/Phase4_2/Step5/RemedialB1/Results.jsx'
+
+// Phase 4.2 Step 5 Remedial B2 imports
+import Phase4_2Step5RemedialB2TaskA from './pages/Phase4_2/Step5/RemedialB2/TaskA.jsx'
+import Phase4_2Step5RemedialB2TaskB from './pages/Phase4_2/Step5/RemedialB2/TaskB.jsx'
+import Phase4_2Step5RemedialB2TaskC from './pages/Phase4_2/Step5/RemedialB2/TaskC.jsx'
+import Phase4_2Step5RemedialB2TaskD from './pages/Phase4_2/Step5/RemedialB2/TaskD.jsx'
+import Phase4_2Step5RemedialB2Results from './pages/Phase4_2/Step5/RemedialB2/Results.jsx'
+
+// Phase 4.2 Step 5 Remedial C1 imports
+import Phase4_2Step5RemedialC1TaskA from './pages/Phase4_2/Step5/RemedialC1/TaskA.jsx'
+import Phase4_2Step5RemedialC1TaskB from './pages/Phase4_2/Step5/RemedialC1/TaskB.jsx'
+import Phase4_2Step5RemedialC1TaskC from './pages/Phase4_2/Step5/RemedialC1/TaskC.jsx'
+import Phase4_2Step5RemedialC1TaskD from './pages/Phase4_2/Step5/RemedialC1/TaskD.jsx'
+import Phase4_2Step5RemedialC1Results from './pages/Phase4_2/Step5/RemedialC1/Results.jsx'
 
 // Phase 4 Step 5 Remedial imports
 import Phase4Step5RemedialA1TaskA from './pages/Phase4Step5/RemedialA1/TaskA.jsx'
@@ -62,7 +304,6 @@ import Phase4Step5RemedialC1TaskC from './pages/Phase4Step5/RemedialC1/TaskC.jsx
 import Phase4Step5RemedialC1TaskD from './pages/Phase4Step5/RemedialC1/TaskD.jsx'
 import Phase4Step5RemedialC1TaskE from './pages/Phase4Step5/RemedialC1/TaskE.jsx'
 import Phase4Step5RemedialC1TaskF from './pages/Phase4Step5/RemedialC1/TaskF.jsx'
-import Phase4Step5RemedialC1TaskG from './pages/Phase4Step5/RemedialC1/TaskG.jsx'
 import Phase4Step5RemedialC1Results from './pages/Phase4Step5/RemedialC1/Results.jsx'
 
 // Phase 4 Step 4 Remedial imports
@@ -187,6 +428,110 @@ function App() {
           <Route path="/phase2/remedial/:stepId/:level" element={<Phase2Remedial />} />
           <Route path="/phase2/complete" element={<Phase2Complete />} />
 
+          {/* Phase 3 Routes */}
+          <Route path="/phase3/step/1" element={<Phase3Step1Intro />} />
+          <Route path="/app/phase3/step/1" element={<Phase3Step1Intro />} />
+          <Route path="/phase3/step/1/interaction/1" element={<Phase3Step1Interaction1 />} />
+          <Route path="/app/phase3/step/1/interaction/1" element={<Phase3Step1Interaction1 />} />
+          <Route path="/phase3/step/1/interaction/2" element={<Phase3Step1Interaction2 />} />
+          <Route path="/app/phase3/step/1/interaction/2" element={<Phase3Step1Interaction2 />} />
+          <Route path="/phase3/step/1/interaction/3" element={<Phase3Step1Interaction3 />} />
+          <Route path="/app/phase3/step/1/interaction/3" element={<Phase3Step1Interaction3 />} />
+
+          {/* Phase 3 Step 1 Remedial Routes (only A1 has Task B) */}
+          <Route path="/phase3/step/1/remedial/a1/taskA" element={<Phase3Step1RemedialA1TaskA />} />
+          <Route path="/app/phase3/step/1/remedial/a1/taskA" element={<Phase3Step1RemedialA1TaskA />} />
+          <Route path="/phase3/step/1/remedial/a1/taskB" element={<Phase3Step1RemedialA1TaskB />} />
+          <Route path="/app/phase3/step/1/remedial/a1/taskB" element={<Phase3Step1RemedialA1TaskB />} />
+
+          <Route path="/phase3/step/1/remedial/a2/taskA" element={<Phase3Step1RemedialA2TaskA />} />
+          <Route path="/app/phase3/step/1/remedial/a2/taskA" element={<Phase3Step1RemedialA2TaskA />} />
+
+          <Route path="/phase3/step/1/remedial/b1/taskA" element={<Phase3Step1RemedialB1TaskA />} />
+          <Route path="/app/phase3/step/1/remedial/b1/taskA" element={<Phase3Step1RemedialB1TaskA />} />
+
+          <Route path="/phase3/step/1/remedial/b2/taskA" element={<Phase3Step1RemedialB2TaskA />} />
+          <Route path="/app/phase3/step/1/remedial/b2/taskA" element={<Phase3Step1RemedialB2TaskA />} />
+
+          <Route path="/phase3/step/1/remedial/c1/taskA" element={<Phase3Step1RemedialC1TaskA />} />
+          <Route path="/app/phase3/step/1/remedial/c1/taskA" element={<Phase3Step1RemedialC1TaskA />} />
+
+          {/* Phase 3 Step 2 Routes */}
+          <Route path="/phase3/step/2" element={<Phase3Step2Intro />} />
+          <Route path="/app/phase3/step/2" element={<Phase3Step2Intro />} />
+          <Route path="/phase3/step/2/interaction/1" element={<Phase3Step2Interaction1 />} />
+          <Route path="/app/phase3/step/2/interaction/1" element={<Phase3Step2Interaction1 />} />
+          <Route path="/phase3/step/2/interaction/2" element={<Phase3Step2Interaction2 />} />
+          <Route path="/app/phase3/step/2/interaction/2" element={<Phase3Step2Interaction2 />} />
+          <Route path="/phase3/step/2/interaction/3" element={<Phase3Step2Interaction3 />} />
+          <Route path="/app/phase3/step/2/interaction/3" element={<Phase3Step2Interaction3 />} />
+
+          {/* Phase 3 Step 2 Remedial Routes */}
+          <Route path="/phase3/step/2/remedial/a1/taskA" element={<Phase3Step2RemedialA1TaskA />} />
+          <Route path="/app/phase3/step/2/remedial/a1/taskA" element={<Phase3Step2RemedialA1TaskA />} />
+
+          <Route path="/phase3/step/2/remedial/a2/taskA" element={<Phase3Step2RemedialA2TaskA />} />
+          <Route path="/app/phase3/step/2/remedial/a2/taskA" element={<Phase3Step2RemedialA2TaskA />} />
+
+          <Route path="/phase3/step/2/remedial/b1/taskA" element={<Phase3Step2RemedialB1TaskA />} />
+          <Route path="/app/phase3/step/2/remedial/b1/taskA" element={<Phase3Step2RemedialB1TaskA />} />
+
+          <Route path="/phase3/step/2/remedial/b2/taskA" element={<Phase3Step2RemedialB2TaskA />} />
+          <Route path="/app/phase3/step/2/remedial/b2/taskA" element={<Phase3Step2RemedialB2TaskA />} />
+
+          <Route path="/phase3/step/2/remedial/c1/taskA" element={<Phase3Step2RemedialC1TaskA />} />
+          <Route path="/app/phase3/step/2/remedial/c1/taskA" element={<Phase3Step2RemedialC1TaskA />} />
+
+          {/* Phase 3 Step 3 Routes */}
+          <Route path="/phase3/step/3" element={<Phase3Step3Intro />} />
+          <Route path="/app/phase3/step/3" element={<Phase3Step3Intro />} />
+          <Route path="/phase3/step/3/interaction/1" element={<Phase3Step3Interaction1 />} />
+          <Route path="/app/phase3/step/3/interaction/1" element={<Phase3Step3Interaction1 />} />
+          <Route path="/phase3/step/3/interaction/2" element={<Phase3Step3Interaction2 />} />
+          <Route path="/app/phase3/step/3/interaction/2" element={<Phase3Step3Interaction2 />} />
+          <Route path="/phase3/step/3/interaction/3" element={<Phase3Step3Interaction3 />} />
+          <Route path="/app/phase3/step/3/interaction/3" element={<Phase3Step3Interaction3 />} />
+
+          {/* Phase 3 Step 3 Remedial Routes */}
+          <Route path="/phase3/step/3/remedial/a1/taskA" element={<Phase3Step3RemedialA1TaskA />} />
+          <Route path="/app/phase3/step/3/remedial/a1/taskA" element={<Phase3Step3RemedialA1TaskA />} />
+
+          <Route path="/phase3/step/3/remedial/a2/taskA" element={<Phase3Step3RemedialA2TaskA />} />
+          <Route path="/app/phase3/step/3/remedial/a2/taskA" element={<Phase3Step3RemedialA2TaskA />} />
+
+          <Route path="/phase3/step/3/remedial/b1/taskA" element={<Phase3Step3RemedialB1TaskA />} />
+          <Route path="/app/phase3/step/3/remedial/b1/taskA" element={<Phase3Step3RemedialB1TaskA />} />
+
+          <Route path="/phase3/step/3/remedial/b2/taskA" element={<Phase3Step3RemedialB2TaskA />} />
+          <Route path="/app/phase3/step/3/remedial/b2/taskA" element={<Phase3Step3RemedialB2TaskA />} />
+
+          <Route path="/phase3/step/3/remedial/c1/taskA" element={<Phase3Step3RemedialC1TaskA />} />
+          <Route path="/app/phase3/step/3/remedial/c1/taskA" element={<Phase3Step3RemedialC1TaskA />} />
+
+          {/* Phase 3 Step 4 Routes */}
+          <Route path="/phase3/step/4" element={<Phase3Step4Intro />} />
+          <Route path="/app/phase3/step/4" element={<Phase3Step4Intro />} />
+          <Route path="/phase3/step/4/interaction/1" element={<Phase3Step4Interaction1 />} />
+          <Route path="/app/phase3/step/4/interaction/1" element={<Phase3Step4Interaction1 />} />
+          <Route path="/phase3/step/4/interaction/2" element={<Phase3Step4Interaction2 />} />
+          <Route path="/app/phase3/step/4/interaction/2" element={<Phase3Step4Interaction2 />} />
+
+          {/* Phase 3 Step 4 Remedial Routes */}
+          <Route path="/phase3/step/4/remedial/a1/taskA" element={<Phase3Step4RemedialA1TaskA />} />
+          <Route path="/app/phase3/step/4/remedial/a1/taskA" element={<Phase3Step4RemedialA1TaskA />} />
+
+          <Route path="/phase3/step/4/remedial/a2/taskA" element={<Phase3Step4RemedialA2TaskA />} />
+          <Route path="/app/phase3/step/4/remedial/a2/taskA" element={<Phase3Step4RemedialA2TaskA />} />
+
+          <Route path="/phase3/step/4/remedial/b1/taskA" element={<Phase3Step4RemedialB1TaskA />} />
+          <Route path="/app/phase3/step/4/remedial/b1/taskA" element={<Phase3Step4RemedialB1TaskA />} />
+
+          <Route path="/phase3/step/4/remedial/b2/taskA" element={<Phase3Step4RemedialB2TaskA />} />
+          <Route path="/app/phase3/step/4/remedial/b2/taskA" element={<Phase3Step4RemedialB2TaskA />} />
+
+          <Route path="/phase3/step/4/remedial/c1/taskA" element={<Phase3Step4RemedialC1TaskA />} />
+          <Route path="/app/phase3/step/4/remedial/c1/taskA" element={<Phase3Step4RemedialC1TaskA />} />
+
           {/* Phase 4 Routes */}
           <Route path="/phase4/step/1" element={<Phase4Step1Intro />} />
           <Route path="/app/phase4/step/1" element={<Phase4Step1Intro />} />
@@ -288,10 +633,334 @@ function App() {
           <Route path="/app/phase4/step/5/remedial/c1/taskE" element={<Phase4Step5RemedialC1TaskE />} />
           <Route path="/phase4/step/5/remedial/c1/taskF" element={<Phase4Step5RemedialC1TaskF />} />
           <Route path="/app/phase4/step/5/remedial/c1/taskF" element={<Phase4Step5RemedialC1TaskF />} />
-          <Route path="/phase4/step/5/remedial/c1/taskG" element={<Phase4Step5RemedialC1TaskG />} />
-          <Route path="/app/phase4/step/5/remedial/c1/taskG" element={<Phase4Step5RemedialC1TaskG />} />
           <Route path="/phase4/step/5/remedial/c1/results" element={<Phase4Step5RemedialC1Results />} />
           <Route path="/app/phase4/step/5/remedial/c1/results" element={<Phase4Step5RemedialC1Results />} />
+
+          {/* Phase 4.2 Step 1 Routes - Social Media Marketing */}
+          <Route path="/phase4_2/step/1" element={<Phase4_2Step1Intro />} />
+          <Route path="/app/phase4_2/step/1" element={<Phase4_2Step1Intro />} />
+          <Route path="/phase4_2/step/1/interaction/1" element={<Phase4_2Step1Interaction1 />} />
+          <Route path="/app/phase4_2/step/1/interaction/1" element={<Phase4_2Step1Interaction1 />} />
+          <Route path="/phase4_2/step/1/interaction/2" element={<Phase4_2Step1Interaction2 />} />
+          <Route path="/app/phase4_2/step/1/interaction/2" element={<Phase4_2Step1Interaction2 />} />
+          <Route path="/phase4_2/step/1/interaction/3" element={<Phase4_2Step1Interaction3 />} />
+          <Route path="/app/phase4_2/step/1/interaction/3" element={<Phase4_2Step1Interaction3 />} />
+
+          {/* Phase 4.2 Step 2 Routes - Social Media Marketing */}
+          <Route path="/phase4_2/step/2" element={<Phase4_2Step2Intro />} />
+          <Route path="/app/phase4_2/step/2" element={<Phase4_2Step2Intro />} />
+          <Route path="/phase4_2/step/2/interaction/1" element={<Phase4_2Step2Interaction1 />} />
+          <Route path="/app/phase4_2/step/2/interaction/1" element={<Phase4_2Step2Interaction1 />} />
+          <Route path="/phase4_2/step/2/interaction/2" element={<Phase4_2Step2Interaction2 />} />
+          <Route path="/app/phase4_2/step/2/interaction/2" element={<Phase4_2Step2Interaction2 />} />
+          <Route path="/phase4_2/step/2/interaction/3" element={<Phase4_2Step2Interaction3 />} />
+          <Route path="/app/phase4_2/step/2/interaction/3" element={<Phase4_2Step2Interaction3 />} />
+
+          {/* Phase 4.2 Step 3 Routes - Social Media Marketing */}
+          <Route path="/phase4_2/step/3" element={<Phase4_2Step3Intro />} />
+          <Route path="/app/phase4_2/step/3" element={<Phase4_2Step3Intro />} />
+          <Route path="/phase4_2/step/3/interaction/1" element={<Phase4_2Step3Interaction1 />} />
+          <Route path="/app/phase4_2/step/3/interaction/1" element={<Phase4_2Step3Interaction1 />} />
+          <Route path="/phase4_2/step/3/interaction/2" element={<Phase4_2Step3Interaction2 />} />
+          <Route path="/app/phase4_2/step/3/interaction/2" element={<Phase4_2Step3Interaction2 />} />
+          <Route path="/phase4_2/step/3/interaction/3" element={<Phase4_2Step3Interaction3 />} />
+          <Route path="/app/phase4_2/step/3/interaction/3" element={<Phase4_2Step3Interaction3 />} />
+
+          {/* Phase 4.2 Step 4 Routes - Social Media Marketing */}
+          <Route path="/phase4_2/step/4" element={<Phase4_2Step4Intro />} />
+          <Route path="/app/phase4_2/step/4" element={<Phase4_2Step4Intro />} />
+          <Route path="/phase4_2/step/4/interaction/1" element={<Phase4_2Step4Interaction1 />} />
+          <Route path="/app/phase4_2/step/4/interaction/1" element={<Phase4_2Step4Interaction1 />} />
+          <Route path="/phase4_2/step/4/interaction/2" element={<Phase4_2Step4Interaction2 />} />
+          <Route path="/app/phase4_2/step/4/interaction/2" element={<Phase4_2Step4Interaction2 />} />
+          <Route path="/phase4_2/step/4/interaction/3" element={<Phase4_2Step4Interaction3 />} />
+          <Route path="/app/phase4_2/step/4/interaction/3" element={<Phase4_2Step4Interaction3 />} />
+
+          {/* Phase 4.2 Step 5 Routes - Error Correction & Evaluation */}
+          <Route path="/phase4_2/step/5" element={<Phase4_2Step5Intro />} />
+          <Route path="/app/phase4_2/step/5" element={<Phase4_2Step5Intro />} />
+          <Route path="/phase4_2/step/5/interaction/1" element={<Phase4_2Step5Interaction1 />} />
+          <Route path="/app/phase4_2/step/5/interaction/1" element={<Phase4_2Step5Interaction1 />} />
+          <Route path="/phase4_2/step/5/interaction/2" element={<Phase4_2Step5Interaction2 />} />
+          <Route path="/app/phase4_2/step/5/interaction/2" element={<Phase4_2Step5Interaction2 />} />
+          <Route path="/phase4_2/step/5/interaction/3" element={<Phase4_2Step5Interaction3 />} />
+          <Route path="/app/phase4_2/step/5/interaction/3" element={<Phase4_2Step5Interaction3 />} />
+
+          {/* Phase 4.2 Step 1 Remedial A1 Routes */}
+          <Route path="/phase4_2/step/1/remedial/a1/taskA" element={<Phase4_2Step1RemedialA1TaskA />} />
+          <Route path="/app/phase4_2/step/1/remedial/a1/taskA" element={<Phase4_2Step1RemedialA1TaskA />} />
+          <Route path="/phase4_2/step/1/remedial/a1/taskB" element={<Phase4_2Step1RemedialA1TaskB />} />
+          <Route path="/app/phase4_2/step/1/remedial/a1/taskB" element={<Phase4_2Step1RemedialA1TaskB />} />
+          <Route path="/phase4_2/step/1/remedial/a1/taskC" element={<Phase4_2Step1RemedialA1TaskC />} />
+          <Route path="/app/phase4_2/step/1/remedial/a1/taskC" element={<Phase4_2Step1RemedialA1TaskC />} />
+          <Route path="/phase4_2/step/1/remedial/a1/results" element={<Phase4_2Step1RemedialA1Results />} />
+          <Route path="/app/phase4_2/step/1/remedial/a1/results" element={<Phase4_2Step1RemedialA1Results />} />
+
+          {/* Phase 4.2 Step 1 Remedial A2 Routes */}
+          <Route path="/phase4_2/step/1/remedial/a2/taskA" element={<Phase4_2Step1RemedialA2TaskA />} />
+          <Route path="/app/phase4_2/step/1/remedial/a2/taskA" element={<Phase4_2Step1RemedialA2TaskA />} />
+          <Route path="/phase4_2/step/1/remedial/a2/taskB" element={<Phase4_2Step1RemedialA2TaskB />} />
+          <Route path="/app/phase4_2/step/1/remedial/a2/taskB" element={<Phase4_2Step1RemedialA2TaskB />} />
+          <Route path="/phase4_2/step/1/remedial/a2/taskC" element={<Phase4_2Step1RemedialA2TaskC />} />
+          <Route path="/app/phase4_2/step/1/remedial/a2/taskC" element={<Phase4_2Step1RemedialA2TaskC />} />
+          <Route path="/phase4_2/step/1/remedial/a2/results" element={<Phase4_2Step1RemedialA2Results />} />
+          <Route path="/app/phase4_2/step/1/remedial/a2/results" element={<Phase4_2Step1RemedialA2Results />} />
+
+          {/* Phase 4.2 Step 1 Remedial B1 Routes */}
+          <Route path="/phase4_2/step/1/remedial/b1/taskA" element={<Phase4_2Step1RemedialB1TaskA />} />
+          <Route path="/app/phase4_2/step/1/remedial/b1/taskA" element={<Phase4_2Step1RemedialB1TaskA />} />
+          <Route path="/phase4_2/step/1/remedial/b1/taskB" element={<Phase4_2Step1RemedialB1TaskB />} />
+          <Route path="/app/phase4_2/step/1/remedial/b1/taskB" element={<Phase4_2Step1RemedialB1TaskB />} />
+          <Route path="/phase4_2/step/1/remedial/b1/taskC" element={<Phase4_2Step1RemedialB1TaskC />} />
+          <Route path="/app/phase4_2/step/1/remedial/b1/taskC" element={<Phase4_2Step1RemedialB1TaskC />} />
+          <Route path="/phase4_2/step/1/remedial/b1/taskD" element={<Phase4_2Step1RemedialB1TaskD />} />
+          <Route path="/app/phase4_2/step/1/remedial/b1/taskD" element={<Phase4_2Step1RemedialB1TaskD />} />
+          <Route path="/phase4_2/step/1/remedial/b1/taskE" element={<Phase4_2Step1RemedialB1TaskE />} />
+          <Route path="/app/phase4_2/step/1/remedial/b1/taskE" element={<Phase4_2Step1RemedialB1TaskE />} />
+          <Route path="/phase4_2/step/1/remedial/b1/taskF" element={<Phase4_2Step1RemedialB1TaskF />} />
+          <Route path="/app/phase4_2/step/1/remedial/b1/taskF" element={<Phase4_2Step1RemedialB1TaskF />} />
+          <Route path="/phase4_2/step/1/remedial/b1/results" element={<Phase4_2Step1RemedialB1Results />} />
+          <Route path="/app/phase4_2/step/1/remedial/b1/results" element={<Phase4_2Step1RemedialB1Results />} />
+
+          {/* Phase 4.2 Step 1 Remedial B2 Routes */}
+          <Route path="/phase4_2/step/1/remedial/b2/taskA" element={<Phase4_2Step1RemedialB2TaskA />} />
+          <Route path="/app/phase4_2/step/1/remedial/b2/taskA" element={<Phase4_2Step1RemedialB2TaskA />} />
+          <Route path="/phase4_2/step/1/remedial/b2/taskB" element={<Phase4_2Step1RemedialB2TaskB />} />
+          <Route path="/app/phase4_2/step/1/remedial/b2/taskB" element={<Phase4_2Step1RemedialB2TaskB />} />
+          <Route path="/phase4_2/step/1/remedial/b2/taskC" element={<Phase4_2Step1RemedialB2TaskC />} />
+          <Route path="/app/phase4_2/step/1/remedial/b2/taskC" element={<Phase4_2Step1RemedialB2TaskC />} />
+          <Route path="/phase4_2/step/1/remedial/b2/taskD" element={<Phase4_2Step1RemedialB2TaskD />} />
+          <Route path="/app/phase4_2/step/1/remedial/b2/taskD" element={<Phase4_2Step1RemedialB2TaskD />} />
+          <Route path="/phase4_2/step/1/remedial/b2/taskE" element={<Phase4_2Step1RemedialB2TaskE />} />
+          <Route path="/app/phase4_2/step/1/remedial/b2/taskE" element={<Phase4_2Step1RemedialB2TaskE />} />
+          <Route path="/phase4_2/step/1/remedial/b2/taskF" element={<Phase4_2Step1RemedialB2TaskF />} />
+          <Route path="/app/phase4_2/step/1/remedial/b2/taskF" element={<Phase4_2Step1RemedialB2TaskF />} />
+          <Route path="/phase4_2/step/1/remedial/b2/results" element={<Phase4_2Step1RemedialB2Results />} />
+          <Route path="/app/phase4_2/step/1/remedial/b2/results" element={<Phase4_2Step1RemedialB2Results />} />
+
+          {/* Phase 4.2 Step 1 Remedial C1 Routes */}
+          <Route path="/phase4_2/step/1/remedial/c1/taskA" element={<Phase4_2Step1RemedialC1TaskA />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskA" element={<Phase4_2Step1RemedialC1TaskA />} />
+          <Route path="/phase4_2/step/1/remedial/c1/taskB" element={<Phase4_2Step1RemedialC1TaskB />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskB" element={<Phase4_2Step1RemedialC1TaskB />} />
+          <Route path="/phase4_2/step/1/remedial/c1/taskC" element={<Phase4_2Step1RemedialC1TaskC />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskC" element={<Phase4_2Step1RemedialC1TaskC />} />
+          <Route path="/phase4_2/step/1/remedial/c1/taskD" element={<Phase4_2Step1RemedialC1TaskD />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskD" element={<Phase4_2Step1RemedialC1TaskD />} />
+          <Route path="/phase4_2/step/1/remedial/c1/taskE" element={<Phase4_2Step1RemedialC1TaskE />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskE" element={<Phase4_2Step1RemedialC1TaskE />} />
+          <Route path="/phase4_2/step/1/remedial/c1/taskF" element={<Phase4_2Step1RemedialC1TaskF />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskF" element={<Phase4_2Step1RemedialC1TaskF />} />
+          <Route path="/phase4_2/step/1/remedial/c1/taskG" element={<Phase4_2Step1RemedialC1TaskG />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskG" element={<Phase4_2Step1RemedialC1TaskG />} />
+          <Route path="/phase4_2/step/1/remedial/c1/taskH" element={<Phase4_2Step1RemedialC1TaskH />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/taskH" element={<Phase4_2Step1RemedialC1TaskH />} />
+          <Route path="/phase4_2/step/1/remedial/c1/results" element={<Phase4_2Step1RemedialC1Results />} />
+          <Route path="/app/phase4_2/step/1/remedial/c1/results" element={<Phase4_2Step1RemedialC1Results />} />
+
+          {/* Phase 4.2 Step 2 Remedial A2 Routes */}
+          <Route path="/phase4_2/step/2/remedial/a2/taskA" element={<Phase4_2Step2RemedialA2TaskA />} />
+          <Route path="/app/phase4_2/step/2/remedial/a2/taskA" element={<Phase4_2Step2RemedialA2TaskA />} />
+          <Route path="/phase4_2/step/2/remedial/a2/taskB" element={<Phase4_2Step2RemedialA2TaskB />} />
+          <Route path="/app/phase4_2/step/2/remedial/a2/taskB" element={<Phase4_2Step2RemedialA2TaskB />} />
+          <Route path="/phase4_2/step/2/remedial/a2/taskC" element={<Phase4_2Step2RemedialA2TaskC />} />
+          <Route path="/app/phase4_2/step/2/remedial/a2/taskC" element={<Phase4_2Step2RemedialA2TaskC />} />
+          <Route path="/phase4_2/step/2/remedial/a2/results" element={<Phase4_2Step2RemedialA2Results />} />
+          <Route path="/app/phase4_2/step/2/remedial/a2/results" element={<Phase4_2Step2RemedialA2Results />} />
+
+          {/* Phase 4.2 Step 2 Remedial B1 Routes */}
+          <Route path="/phase4_2/step/2/remedial/b1/taskA" element={<Phase4_2Step2RemedialB1TaskA />} />
+          <Route path="/app/phase4_2/step/2/remedial/b1/taskA" element={<Phase4_2Step2RemedialB1TaskA />} />
+          <Route path="/phase4_2/step/2/remedial/b1/taskB" element={<Phase4_2Step2RemedialB1TaskB />} />
+          <Route path="/app/phase4_2/step/2/remedial/b1/taskB" element={<Phase4_2Step2RemedialB1TaskB />} />
+          <Route path="/phase4_2/step/2/remedial/b1/taskC" element={<Phase4_2Step2RemedialB1TaskC />} />
+          <Route path="/app/phase4_2/step/2/remedial/b1/taskC" element={<Phase4_2Step2RemedialB1TaskC />} />
+          <Route path="/phase4_2/step/2/remedial/b1/results" element={<Phase4_2Step2RemedialB1Results />} />
+          <Route path="/app/phase4_2/step/2/remedial/b1/results" element={<Phase4_2Step2RemedialB1Results />} />
+
+          {/* Phase 4.2 Step 2 Remedial B2 Routes */}
+          <Route path="/phase4_2/step/2/remedial/b2/taskA" element={<Phase4_2Step2RemedialB2TaskA />} />
+          <Route path="/app/phase4_2/step/2/remedial/b2/taskA" element={<Phase4_2Step2RemedialB2TaskA />} />
+          <Route path="/phase4_2/step/2/remedial/b2/taskB" element={<Phase4_2Step2RemedialB2TaskB />} />
+          <Route path="/app/phase4_2/step/2/remedial/b2/taskB" element={<Phase4_2Step2RemedialB2TaskB />} />
+          <Route path="/phase4_2/step/2/remedial/b2/taskC" element={<Phase4_2Step2RemedialB2TaskC />} />
+          <Route path="/app/phase4_2/step/2/remedial/b2/taskC" element={<Phase4_2Step2RemedialB2TaskC />} />
+          <Route path="/phase4_2/step/2/remedial/b2/taskD" element={<Phase4_2Step2RemedialB2TaskD />} />
+          <Route path="/app/phase4_2/step/2/remedial/b2/taskD" element={<Phase4_2Step2RemedialB2TaskD />} />
+          <Route path="/phase4_2/step/2/remedial/b2/results" element={<Phase4_2Step2RemedialB2Results />} />
+          <Route path="/app/phase4_2/step/2/remedial/b2/results" element={<Phase4_2Step2RemedialB2Results />} />
+
+          {/* Phase 4.2 Step 2 Remedial C1 Routes */}
+          <Route path="/phase4_2/step/2/remedial/c1/taskA" element={<Phase4_2Step2RemedialC1TaskA />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskA" element={<Phase4_2Step2RemedialC1TaskA />} />
+          <Route path="/phase4_2/step/2/remedial/c1/taskB" element={<Phase4_2Step2RemedialC1TaskB />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskB" element={<Phase4_2Step2RemedialC1TaskB />} />
+          <Route path="/phase4_2/step/2/remedial/c1/taskC" element={<Phase4_2Step2RemedialC1TaskC />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskC" element={<Phase4_2Step2RemedialC1TaskC />} />
+          <Route path="/phase4_2/step/2/remedial/c1/taskD" element={<Phase4_2Step2RemedialC1TaskD />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskD" element={<Phase4_2Step2RemedialC1TaskD />} />
+          <Route path="/phase4_2/step/2/remedial/c1/taskE" element={<Phase4_2Step2RemedialC1TaskE />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskE" element={<Phase4_2Step2RemedialC1TaskE />} />
+          <Route path="/phase4_2/step/2/remedial/c1/taskF" element={<Phase4_2Step2RemedialC1TaskF />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskF" element={<Phase4_2Step2RemedialC1TaskF />} />
+          <Route path="/phase4_2/step/2/remedial/c1/taskG" element={<Phase4_2Step2RemedialC1TaskG />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskG" element={<Phase4_2Step2RemedialC1TaskG />} />
+          <Route path="/phase4_2/step/2/remedial/c1/taskH" element={<Phase4_2Step2RemedialC1TaskH />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/taskH" element={<Phase4_2Step2RemedialC1TaskH />} />
+          <Route path="/phase4_2/step/2/remedial/c1/results" element={<Phase4_2Step2RemedialC1Results />} />
+          <Route path="/app/phase4_2/step/2/remedial/c1/results" element={<Phase4_2Step2RemedialC1Results />} />
+
+          {/* Phase 4.2 Step 3 Remedial A2 Routes */}
+          <Route path="/phase4_2/step/3/remedial/a2/taskA" element={<Phase4_2Step3RemedialA2TaskA />} />
+          <Route path="/app/phase4_2/step/3/remedial/a2/taskA" element={<Phase4_2Step3RemedialA2TaskA />} />
+          <Route path="/phase4_2/step/3/remedial/a2/taskB" element={<Phase4_2Step3RemedialA2TaskB />} />
+          <Route path="/app/phase4_2/step/3/remedial/a2/taskB" element={<Phase4_2Step3RemedialA2TaskB />} />
+          <Route path="/phase4_2/step/3/remedial/a2/taskC" element={<Phase4_2Step3RemedialA2TaskC />} />
+          <Route path="/app/phase4_2/step/3/remedial/a2/taskC" element={<Phase4_2Step3RemedialA2TaskC />} />
+          <Route path="/phase4_2/step/3/remedial/a2/results" element={<Phase4_2Step3RemedialA2Results />} />
+          <Route path="/app/phase4_2/step/3/remedial/a2/results" element={<Phase4_2Step3RemedialA2Results />} />
+
+          {/* Phase 4.2 Step 3 Remedial B1 Routes */}
+          <Route path="/phase4_2/step/3/remedial/b1/taskA" element={<Phase4_2Step3RemedialB1TaskA />} />
+          <Route path="/app/phase4_2/step/3/remedial/b1/taskA" element={<Phase4_2Step3RemedialB1TaskA />} />
+          <Route path="/phase4_2/step/3/remedial/b1/taskB" element={<Phase4_2Step3RemedialB1TaskB />} />
+          <Route path="/app/phase4_2/step/3/remedial/b1/taskB" element={<Phase4_2Step3RemedialB1TaskB />} />
+          <Route path="/phase4_2/step/3/remedial/b1/taskC" element={<Phase4_2Step3RemedialB1TaskC />} />
+          <Route path="/app/phase4_2/step/3/remedial/b1/taskC" element={<Phase4_2Step3RemedialB1TaskC />} />
+          <Route path="/phase4_2/step/3/remedial/b1/taskD" element={<Phase4_2Step3RemedialB1TaskD />} />
+          <Route path="/app/phase4_2/step/3/remedial/b1/taskD" element={<Phase4_2Step3RemedialB1TaskD />} />
+          <Route path="/phase4_2/step/3/remedial/b1/results" element={<Phase4_2Step3RemedialB1Results />} />
+          <Route path="/app/phase4_2/step/3/remedial/b1/results" element={<Phase4_2Step3RemedialB1Results />} />
+
+          {/* Phase 4.2 Step 3 Remedial B2 Routes */}
+          <Route path="/phase4_2/step/3/remedial/b2/taskA" element={<Phase4_2Step3RemedialB2TaskA />} />
+          <Route path="/app/phase4_2/step/3/remedial/b2/taskA" element={<Phase4_2Step3RemedialB2TaskA />} />
+          <Route path="/phase4_2/step/3/remedial/b2/taskB" element={<Phase4_2Step3RemedialB2TaskB />} />
+          <Route path="/app/phase4_2/step/3/remedial/b2/taskB" element={<Phase4_2Step3RemedialB2TaskB />} />
+          <Route path="/phase4_2/step/3/remedial/b2/taskC" element={<Phase4_2Step3RemedialB2TaskC />} />
+          <Route path="/app/phase4_2/step/3/remedial/b2/taskC" element={<Phase4_2Step3RemedialB2TaskC />} />
+          <Route path="/phase4_2/step/3/remedial/b2/taskD" element={<Phase4_2Step3RemedialB2TaskD />} />
+          <Route path="/app/phase4_2/step/3/remedial/b2/taskD" element={<Phase4_2Step3RemedialB2TaskD />} />
+          <Route path="/phase4_2/step/3/remedial/b2/results" element={<Phase4_2Step3RemedialB2Results />} />
+          <Route path="/app/phase4_2/step/3/remedial/b2/results" element={<Phase4_2Step3RemedialB2Results />} />
+
+          {/* Phase 4.2 Step 3 Remedial C1 Routes */}
+          <Route path="/phase4_2/step/3/remedial/c1/taskA" element={<Phase4_2Step3RemedialC1TaskA />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskA" element={<Phase4_2Step3RemedialC1TaskA />} />
+          <Route path="/phase4_2/step/3/remedial/c1/taskB" element={<Phase4_2Step3RemedialC1TaskB />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskB" element={<Phase4_2Step3RemedialC1TaskB />} />
+          <Route path="/phase4_2/step/3/remedial/c1/taskC" element={<Phase4_2Step3RemedialC1TaskC />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskC" element={<Phase4_2Step3RemedialC1TaskC />} />
+          <Route path="/phase4_2/step/3/remedial/c1/taskD" element={<Phase4_2Step3RemedialC1TaskD />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskD" element={<Phase4_2Step3RemedialC1TaskD />} />
+          <Route path="/phase4_2/step/3/remedial/c1/taskE" element={<Phase4_2Step3RemedialC1TaskE />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskE" element={<Phase4_2Step3RemedialC1TaskE />} />
+          <Route path="/phase4_2/step/3/remedial/c1/taskF" element={<Phase4_2Step3RemedialC1TaskF />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskF" element={<Phase4_2Step3RemedialC1TaskF />} />
+          <Route path="/phase4_2/step/3/remedial/c1/taskG" element={<Phase4_2Step3RemedialC1TaskG />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskG" element={<Phase4_2Step3RemedialC1TaskG />} />
+          <Route path="/phase4_2/step/3/remedial/c1/taskH" element={<Phase4_2Step3RemedialC1TaskH />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/taskH" element={<Phase4_2Step3RemedialC1TaskH />} />
+          <Route path="/phase4_2/step/3/remedial/c1/results" element={<Phase4_2Step3RemedialC1Results />} />
+          <Route path="/app/phase4_2/step/3/remedial/c1/results" element={<Phase4_2Step3RemedialC1Results />} />
+
+          {/* Phase 4.2 Step 4 Remedial A2 Routes */}
+          <Route path="/phase4_2/step/4/remedial/a2/taskA" element={<Phase4_2Step4RemedialA2TaskA />} />
+          <Route path="/app/phase4_2/step/4/remedial/a2/taskA" element={<Phase4_2Step4RemedialA2TaskA />} />
+          <Route path="/phase4_2/step/4/remedial/a2/taskB" element={<Phase4_2Step4RemedialA2TaskB />} />
+          <Route path="/app/phase4_2/step/4/remedial/a2/taskB" element={<Phase4_2Step4RemedialA2TaskB />} />
+          <Route path="/phase4_2/step/4/remedial/a2/taskC" element={<Phase4_2Step4RemedialA2TaskC />} />
+          <Route path="/app/phase4_2/step/4/remedial/a2/taskC" element={<Phase4_2Step4RemedialA2TaskC />} />
+          <Route path="/phase4_2/step/4/remedial/a2/results" element={<Phase4_2Step4RemedialA2Results />} />
+          <Route path="/app/phase4_2/step/4/remedial/a2/results" element={<Phase4_2Step4RemedialA2Results />} />
+
+          {/* Phase 4.2 Step 4 Remedial B1 Routes */}
+          <Route path="/phase4_2/step/4/remedial/b1/taskA" element={<Phase4_2Step4RemedialB1TaskA />} />
+          <Route path="/app/phase4_2/step/4/remedial/b1/taskA" element={<Phase4_2Step4RemedialB1TaskA />} />
+          <Route path="/phase4_2/step/4/remedial/b1/taskB" element={<Phase4_2Step4RemedialB1TaskB />} />
+          <Route path="/app/phase4_2/step/4/remedial/b1/taskB" element={<Phase4_2Step4RemedialB1TaskB />} />
+          <Route path="/phase4_2/step/4/remedial/b1/taskC" element={<Phase4_2Step4RemedialB1TaskC />} />
+          <Route path="/app/phase4_2/step/4/remedial/b1/taskC" element={<Phase4_2Step4RemedialB1TaskC />} />
+          <Route path="/phase4_2/step/4/remedial/b1/results" element={<Phase4_2Step4RemedialB1Results />} />
+          <Route path="/app/phase4_2/step/4/remedial/b1/results" element={<Phase4_2Step4RemedialB1Results />} />
+
+          {/* Phase 4.2 Step 4 Remedial B2 Routes */}
+          <Route path="/phase4_2/step/4/remedial/b2/taskA" element={<Phase4_2Step4RemedialB2TaskA />} />
+          <Route path="/app/phase4_2/step/4/remedial/b2/taskA" element={<Phase4_2Step4RemedialB2TaskA />} />
+          <Route path="/phase4_2/step/4/remedial/b2/taskB" element={<Phase4_2Step4RemedialB2TaskB />} />
+          <Route path="/app/phase4_2/step/4/remedial/b2/taskB" element={<Phase4_2Step4RemedialB2TaskB />} />
+          <Route path="/phase4_2/step/4/remedial/b2/taskC" element={<Phase4_2Step4RemedialB2TaskC />} />
+          <Route path="/app/phase4_2/step/4/remedial/b2/taskC" element={<Phase4_2Step4RemedialB2TaskC />} />
+          <Route path="/phase4_2/step/4/remedial/b2/taskD" element={<Phase4_2Step4RemedialB2TaskD />} />
+          <Route path="/app/phase4_2/step/4/remedial/b2/taskD" element={<Phase4_2Step4RemedialB2TaskD />} />
+          <Route path="/phase4_2/step/4/remedial/b2/results" element={<Phase4_2Step4RemedialB2Results />} />
+          <Route path="/app/phase4_2/step/4/remedial/b2/results" element={<Phase4_2Step4RemedialB2Results />} />
+
+          {/* Phase 4.2 Step 4 Remedial C1 Routes */}
+          <Route path="/phase4_2/step/4/remedial/c1/taskA" element={<Phase4_2Step4RemedialC1TaskA />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskA" element={<Phase4_2Step4RemedialC1TaskA />} />
+          <Route path="/phase4_2/step/4/remedial/c1/taskB" element={<Phase4_2Step4RemedialC1TaskB />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskB" element={<Phase4_2Step4RemedialC1TaskB />} />
+          <Route path="/phase4_2/step/4/remedial/c1/taskC" element={<Phase4_2Step4RemedialC1TaskC />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskC" element={<Phase4_2Step4RemedialC1TaskC />} />
+          <Route path="/phase4_2/step/4/remedial/c1/taskD" element={<Phase4_2Step4RemedialC1TaskD />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskD" element={<Phase4_2Step4RemedialC1TaskD />} />
+          <Route path="/phase4_2/step/4/remedial/c1/taskE" element={<Phase4_2Step4RemedialC1TaskE />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskE" element={<Phase4_2Step4RemedialC1TaskE />} />
+          <Route path="/phase4_2/step/4/remedial/c1/taskF" element={<Phase4_2Step4RemedialC1TaskF />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskF" element={<Phase4_2Step4RemedialC1TaskF />} />
+          <Route path="/phase4_2/step/4/remedial/c1/taskG" element={<Phase4_2Step4RemedialC1TaskG />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskG" element={<Phase4_2Step4RemedialC1TaskG />} />
+          <Route path="/phase4_2/step/4/remedial/c1/taskH" element={<Phase4_2Step4RemedialC1TaskH />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/taskH" element={<Phase4_2Step4RemedialC1TaskH />} />
+          <Route path="/phase4_2/step/4/remedial/c1/results" element={<Phase4_2Step4RemedialC1Results />} />
+          <Route path="/app/phase4_2/step/4/remedial/c1/results" element={<Phase4_2Step4RemedialC1Results />} />
+
+          {/* Phase 4.2 Step 5 Remedial A2 Routes */}
+          <Route path="/phase4_2/step/5/remedial/a2/taska" element={<Phase4_2Step5RemedialA2TaskA />} />
+          <Route path="/app/phase4_2/step/5/remedial/a2/taska" element={<Phase4_2Step5RemedialA2TaskA />} />
+          <Route path="/phase4_2/step/5/remedial/a2/taskb" element={<Phase4_2Step5RemedialA2TaskB />} />
+          <Route path="/app/phase4_2/step/5/remedial/a2/taskb" element={<Phase4_2Step5RemedialA2TaskB />} />
+          <Route path="/phase4_2/step/5/remedial/a2/taskc" element={<Phase4_2Step5RemedialA2TaskC />} />
+          <Route path="/app/phase4_2/step/5/remedial/a2/taskc" element={<Phase4_2Step5RemedialA2TaskC />} />
+          <Route path="/phase4_2/step/5/remedial/a2/results" element={<Phase4_2Step5RemedialA2Results />} />
+          <Route path="/app/phase4_2/step/5/remedial/a2/results" element={<Phase4_2Step5RemedialA2Results />} />
+
+          {/* Phase 4.2 Step 5 Remedial B1 Routes */}
+          <Route path="/phase4_2/step/5/remedial/b1/taska" element={<Phase4_2Step5RemedialB1TaskA />} />
+          <Route path="/app/phase4_2/step/5/remedial/b1/taska" element={<Phase4_2Step5RemedialB1TaskA />} />
+          <Route path="/phase4_2/step/5/remedial/b1/taskb" element={<Phase4_2Step5RemedialB1TaskB />} />
+          <Route path="/app/phase4_2/step/5/remedial/b1/taskb" element={<Phase4_2Step5RemedialB1TaskB />} />
+          <Route path="/phase4_2/step/5/remedial/b1/taskc" element={<Phase4_2Step5RemedialB1TaskC />} />
+          <Route path="/app/phase4_2/step/5/remedial/b1/taskc" element={<Phase4_2Step5RemedialB1TaskC />} />
+          <Route path="/phase4_2/step/5/remedial/b1/taskd" element={<Phase4_2Step5RemedialB1TaskD />} />
+          <Route path="/app/phase4_2/step/5/remedial/b1/taskd" element={<Phase4_2Step5RemedialB1TaskD />} />
+          <Route path="/phase4_2/step/5/remedial/b1/results" element={<Phase4_2Step5RemedialB1Results />} />
+          <Route path="/app/phase4_2/step/5/remedial/b1/results" element={<Phase4_2Step5RemedialB1Results />} />
+
+          {/* Phase 4.2 Step 5 Remedial B2 Routes */}
+          <Route path="/phase4_2/step/5/remedial/b2/taska" element={<Phase4_2Step5RemedialB2TaskA />} />
+          <Route path="/app/phase4_2/step/5/remedial/b2/taska" element={<Phase4_2Step5RemedialB2TaskA />} />
+          <Route path="/phase4_2/step/5/remedial/b2/taskb" element={<Phase4_2Step5RemedialB2TaskB />} />
+          <Route path="/app/phase4_2/step/5/remedial/b2/taskb" element={<Phase4_2Step5RemedialB2TaskB />} />
+          <Route path="/phase4_2/step/5/remedial/b2/taskc" element={<Phase4_2Step5RemedialB2TaskC />} />
+          <Route path="/app/phase4_2/step/5/remedial/b2/taskc" element={<Phase4_2Step5RemedialB2TaskC />} />
+          <Route path="/phase4_2/step/5/remedial/b2/taskd" element={<Phase4_2Step5RemedialB2TaskD />} />
+          <Route path="/app/phase4_2/step/5/remedial/b2/taskd" element={<Phase4_2Step5RemedialB2TaskD />} />
+          <Route path="/phase4_2/step/5/remedial/b2/results" element={<Phase4_2Step5RemedialB2Results />} />
+          <Route path="/app/phase4_2/step/5/remedial/b2/results" element={<Phase4_2Step5RemedialB2Results />} />
+
+          {/* Phase 4.2 Step 5 Remedial C1 Routes */}
+          <Route path="/phase4_2/step/5/remedial/c1/taska" element={<Phase4_2Step5RemedialC1TaskA />} />
+          <Route path="/app/phase4_2/step/5/remedial/c1/taska" element={<Phase4_2Step5RemedialC1TaskA />} />
+          <Route path="/phase4_2/step/5/remedial/c1/taskb" element={<Phase4_2Step5RemedialC1TaskB />} />
+          <Route path="/app/phase4_2/step/5/remedial/c1/taskb" element={<Phase4_2Step5RemedialC1TaskB />} />
+          <Route path="/phase4_2/step/5/remedial/c1/taskc" element={<Phase4_2Step5RemedialC1TaskC />} />
+          <Route path="/app/phase4_2/step/5/remedial/c1/taskc" element={<Phase4_2Step5RemedialC1TaskC />} />
+          <Route path="/phase4_2/step/5/remedial/c1/taskd" element={<Phase4_2Step5RemedialC1TaskD />} />
+          <Route path="/app/phase4_2/step/5/remedial/c1/taskd" element={<Phase4_2Step5RemedialC1TaskD />} />
+          <Route path="/phase4_2/step/5/remedial/c1/results" element={<Phase4_2Step5RemedialC1Results />} />
+          <Route path="/app/phase4_2/step/5/remedial/c1/results" element={<Phase4_2Step5RemedialC1Results />} />
 
           {/* Phase 4 Step 4 Remedial A1 Routes */}
           <Route path="/phase4/step/4/remedial/a1/taskA" element={<Phase4Step4RemedialA1TaskA />} />
