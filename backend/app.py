@@ -62,6 +62,10 @@ app.register_blueprint(phase5_bp)
 from routes.evaluation_routes import evaluation_bp
 app.register_blueprint(evaluation_bp, url_prefix='/api')
 
+# Register Phase 3 routes
+from routes.phase3_routes import phase3_bp
+app.register_blueprint(phase3_bp)
+
 # Register Phase 4 routes
 from routes.phase4_routes import phase4_bp
 app.register_blueprint(phase4_bp)

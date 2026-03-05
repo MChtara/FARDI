@@ -147,10 +147,13 @@ export default function RemedialC1TaskE() {
       const correctAnswer = sentence.answer.toLowerCase()
 
       // Check if answer is correct (allow some flexibility)
-      const isCorrect = userAnswer === correctAnswer ||
-                       userAnswer === correctAnswer.replace(' ', '') ||
-                       correctAnswer.includes(userAnswer) ||
-                       userAnswer.includes(correctAnswer)
+      // IMPORTANT: Must have an answer (not empty) to be correct
+      const isCorrect = userAnswer.length > 0 && (
+        userAnswer === correctAnswer ||
+        userAnswer === correctAnswer.replace(' ', '') ||
+        correctAnswer.includes(userAnswer) ||
+        userAnswer.includes(correctAnswer)
+      )
 
       return {
         sentenceId: sentence.id,

@@ -6,7 +6,7 @@ __pycache__/
 .claude
 # Flask session data
 flask_session/
-
+note.txt
 # Environment variables
 .env
 .venv

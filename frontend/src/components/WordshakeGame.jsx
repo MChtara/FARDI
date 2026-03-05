@@ -24,8 +24,8 @@ const WordshakeGame = ({
   const [gameEnded, setGameEnded] = useState(false)
   const [score, setScore] = useState(0)
 
-  // Predefined grid with all target words
-  const PREDEFINED_GRID = [
+  // Predefined grids for different word sets
+  const DEFAULT_GRID = [
     ['C', 'O', 'M', 'M', 'E', 'R', 'C', 'I', 'A', 'L', 'K', 'P'],
     ['X', 'A', 'D', 'H', 'T', 'Y', 'U', 'I', 'O', 'P', 'L', 'O'],
     ['B', 'I', 'L', 'L', 'B', 'O', 'A', 'R', 'D', 'M', 'S', 'S'],
@@ -35,6 +35,23 @@ const WordshakeGame = ({
     ['M', 'N', 'B', 'V', 'C', 'X', 'Z', 'L', 'K', 'J', 'A', 'H'],
     ['P', 'O', 'I', 'U', 'Y', 'T', 'R', 'E', 'W', 'Q', 'N', 'M']
   ]
+
+  // Social media vocabulary grid (hashtag, caption, viral, engagement, emoji, tag, story, ad)
+  const SOCIAL_MEDIA_GRID = [
+    ['H', 'A', 'S', 'H', 'T', 'A', 'G', 'X', 'Y', 'Z', 'Q', 'W'],
+    ['C', 'A', 'P', 'T', 'I', 'O', 'N', 'M', 'K', 'L', 'E', 'R'],
+    ['V', 'I', 'R', 'A', 'L', 'B', 'C', 'D', 'F', 'G', 'N', 'T'],
+    ['E', 'N', 'G', 'A', 'G', 'E', 'M', 'E', 'N', 'T', 'G', 'Y'],
+    ['E', 'M', 'O', 'J', 'I', 'X', 'Y', 'Z', 'Q', 'W', 'A', 'U'],
+    ['T', 'A', 'G', 'P', 'O', 'I', 'U', 'Y', 'T', 'R', 'G', 'I'],
+    ['S', 'T', 'O', 'R', 'Y', 'M', 'N', 'B', 'V', 'C', 'E', 'O'],
+    ['A', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'M', 'P']
+  ]
+
+  // Determine which grid to use based on target words
+  const PREDEFINED_GRID = targetWords.includes('hashtag') || targetWords.includes('emoji')
+    ? SOCIAL_MEDIA_GRID
+    : DEFAULT_GRID
 
   // Generate letter grid containing target words
   useEffect(() => {

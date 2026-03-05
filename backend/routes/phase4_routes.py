@@ -4905,3 +4905,1462 @@ Return ONLY valid JSON."""
             'correct': True,
             'feedback': 'Correction recorded.'
         }), 200
+
+# ===================================
+# Phase 4.2 Routes - Social Media Marketing
+# ===================================
+
+@phase4_bp.route('/4_2/interaction/log', methods=['POST'])
+@login_required
+def log_phase4_2_interaction():
+    """
+    Log Phase 4.2 interaction completion (Wordshake, Sushi Spell, etc.)
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        step = data.get('step', 1)
+        interaction = data.get('interaction', 1)
+        completed = data.get('completed', False)
+        score = data.get('score', 0)
+        max_score = data.get('max_score', 0)
+        time_taken = data.get('time_taken', 0)
+        game_type = data.get('game_type', 'unknown')
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print(f"PHASE 4.2 STEP {step} - INTERACTION {interaction}")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"Game Type: {game_type}")
+        print(f"Score: {score}/{max_score}")
+        print(f"Time Taken: {time_taken} seconds")
+        print(f"Completed: {completed}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4.2 Step {step} Interaction {interaction} - User {user_id}: {game_type} - Score={score}/{max_score}, Time={time_taken}s")
+
+        return jsonify({
+            'success': True,
+            'message': 'Interaction logged successfully'
+        })
+
+    except Exception as e:
+        logger.error(f"Error logging Phase 4.2 interaction: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/4_2/step1/evaluate-response', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step1_response():
+    """
+    Evaluate Phase 4.2 Step 1 Interaction 2 response (Social Media Post Discussion)
+    Uses AI to evaluate student's social media post idea
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        interaction = data.get('interaction', 2)
+        response = data.get('response', '').strip()
+
+        if not response:
+            return jsonify({
+                'success': False,
+                'error': 'Response cannot be empty'
+            }), 400
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print(f"PHASE 4.2 STEP 1 - INTERACTION {interaction} EVALUATION")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"Response: {response[:100]}...")
+        print("="*60)
+
+        # Use AI service to evaluate
+        try:
+            system_prompt = """You are evaluating a student's social media post idea for the Global Cultures Festival.
+
+The student should suggest an idea for a social media post (Instagram, Twitter, etc.) and explain why it works, using terms like: hashtag, caption, call-to-action, engagement, viral, tag, emoji, story.
+
+Evaluate based on CEFR levels:
+- A1 (1 point): Very basic attempt mentioning posts or hashtags
+- A2 (2 points): Simple idea with connector (because/so) and basic social media elements
+- B1 (3 points): Clear explanation with reasoning and at least one key term, mentioning specific elements
+- B2 (4 points): Detailed explanation with comparison or strategic thinking about engagement
+- C1 (5 points): Sophisticated analysis using advanced terminology about discoverability, conversions, or emotional connection
+
+Return a JSON object with:
+{
+    "score": <1-5>,
+    "level": "<A1|A2|B1|B2|C1>",
+    "feedback": "<constructive feedback>",
+    "details": {
+        "terms_used": <count of social media terms used>,
+        "reasoning_quality": "<basic|good|excellent>"
+    }
+}"""
+
+            user_prompt = f"Student response:\n{response}"
+
+            ai_response = ai_service.client.chat.completions.create(
+                model="llama-3.1-70b-versatile",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                max_tokens=300,
+                temperature=0.3
+            )
+
+            result_text = ai_response.choices[0].message.content.strip()
+
+            # Parse JSON
+            if '```json' in result_text:
+                result_text = result_text.split('```json')[1].split('```')[0]
+            elif '```' in result_text:
+                result_text = result_text.split('```')[1].split('```')[0]
+
+            result = json.loads(result_text.strip())
+
+            score = result.get('score', 1)
+            level = result.get('level', 'A1')
+            feedback = result.get('feedback', 'Good work!')
+            details = result.get('details', {})
+
+            print(f"AI Evaluation: Level={level}, Score={score}/5")
+            print(f"Feedback: {feedback}")
+            print("="*60 + "\n")
+
+            logger.info(f"Phase 4.2 Step 1 Int 2 - User {user_id}: Level={level}, Score={score}/5")
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': details
+            })
+
+        except Exception as ai_error:
+            logger.error(f"AI evaluation error: {ai_error}")
+            # Fallback to simple evaluation
+            word_count = len(response.split())
+            has_social_term = any(term in response.lower() for term in ['hashtag', 'caption', 'post', 'emoji', 'tag'])
+
+            if word_count < 5:
+                score, level = 1, 'A1'
+            elif word_count < 10:
+                score, level = 2, 'A2'
+            elif word_count < 20:
+                score, level = 3, 'B1'
+            else:
+                score, level = 4, 'B2'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': 'Good effort! Try to use more social media vocabulary terms and explain your reasoning.',
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 1 response: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@phase4_bp.route('/4_2/step2/evaluate-explanation', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step2_explanation():
+    """
+    Evaluate Phase 4.2 Step 2 Interaction 2 - Explain Engagement Element
+    Students explain ONE element (hashtag, emoji, or CTA) and why it works
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        interaction = data.get('interaction', 2)
+        explanation = data.get('explanation', '').strip()
+        caption = data.get('caption', '').strip()
+
+        if not explanation:
+            return jsonify({
+                'success': False,
+                'error': 'Explanation cannot be empty'
+            }), 400
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print(f"PHASE 4.2 STEP 2 - INTERACTION {interaction} EVALUATION")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"Explanation: {explanation[:100]}...")
+        print("="*60)
+
+        # Use AI service to evaluate
+        try:
+            system_prompt = """You are evaluating a student's explanation of what makes their Instagram post engaging.
+
+The student should explain ONE element (hashtag, emoji, or call-to-action) and provide reasoning for why it works, using social media vocabulary.
+
+Expected responses by level:
+- A2 (2 points): "Hashtag because people see." - Basic mention with simple reasoning
+- B1 (3 points): "I used #Festival because it makes post viral." - Clear explanation with reasoning
+- B2 (4 points): "The call-to-action 'Tag a friend!' increases engagement and reach." - Strategic explanation with vocabulary
+- C1 (5 points): "Strategic hashtags combined with a direct CTA create a viral loop, amplifying organic reach through network effects." - Sophisticated analysis
+
+Evaluation criteria:
+- Mentions at least one element (hashtag/emoji/CTA)
+- Provides reasoning (because/since/so)
+- Uses social media vocabulary (engagement, viral, reach, organic, etc.)
+
+Return a JSON object with:
+{
+    "score": <1-5>,
+    "level": "<A1|A2|B1|B2|C1>",
+    "feedback": "<constructive feedback>",
+    "details": {
+        "element_mentioned": "<yes|no>",
+        "has_reasoning": "<yes|no>",
+        "social_vocab_count": <count>
+    }
+}"""
+
+            user_prompt = f"Original caption:\n{caption}\n\nStudent explanation:\n{explanation}"
+
+            ai_response = ai_service.client.chat.completions.create(
+                model="llama-3.1-70b-versatile",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                max_tokens=300,
+                temperature=0.3
+            )
+
+            result_text = ai_response.choices[0].message.content.strip()
+
+            # Parse JSON
+            if '```json' in result_text:
+                result_text = result_text.split('```json')[1].split('```')[0]
+            elif '```' in result_text:
+                result_text = result_text.split('```')[1].split('```')[0]
+
+            result = json.loads(result_text.strip())
+
+            score = result.get('score', 1)
+            level = result.get('level', 'A1')
+            feedback = result.get('feedback', 'Good work!')
+            details = result.get('details', {})
+
+            print(f"AI Evaluation: Level={level}, Score={score}/5")
+            print(f"Feedback: {feedback}")
+            print("="*60 + "\n")
+
+            logger.info(f"Phase 4.2 Step 2 Int 2 - User {user_id}: Level={level}, Score={score}/5")
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': details
+            })
+
+        except Exception as ai_error:
+            logger.error(f"AI evaluation error: {ai_error}")
+            # Fallback to simple evaluation
+            word_count = len(explanation.split())
+            has_element = any(term in explanation.lower() for term in ['hashtag', 'emoji', 'call-to-action', 'cta', 'tag'])
+            has_reasoning = any(term in explanation.lower() for term in ['because', 'since', 'so', 'helps', 'makes'])
+
+            if word_count >= 15 and has_element and has_reasoning:
+                score, level = 4, 'B2'
+            elif word_count >= 10 and has_element and has_reasoning:
+                score, level = 3, 'B1'
+            elif word_count >= 5 and has_element:
+                score, level = 2, 'A2'
+            else:
+                score, level = 1, 'A1'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': 'Good effort! Try to use more social media vocabulary and explain your reasoning clearly.',
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 2 explanation: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@phase4_bp.route('/4_2/step2/evaluate-revision', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step2_revision():
+    """
+    Evaluate Phase 4.2 Step 2 Interaction 3 - Revise & Improve
+    Students improve ONE sentence from original caption using new social media terms
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        interaction = data.get('interaction', 3)
+        revision = data.get('revision', '').strip()
+        original_caption = data.get('original_caption', '').strip()
+
+        if not revision:
+            return jsonify({
+                'success': False,
+                'error': 'Revision cannot be empty'
+            }), 400
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print(f"PHASE 4.2 STEP 2 - INTERACTION {interaction} EVALUATION")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"Revision: {revision[:100]}...")
+        print("="*60)
+
+        # Use AI service to evaluate
+        try:
+            system_prompt = """You are evaluating a student's revision of their Instagram caption.
+
+The student should show how to improve ONE sentence from their original caption using new social media vocabulary.
+
+Expected responses by level:
+- A2 (2 points): "Add emoji 😊" - Basic improvement attempt
+- B1 (3 points): "Add call-to-action: 'Join us!'" - Clear improvement with new element
+- B2 (4 points): "Replace 'fun' with 'immersive experience' for stronger appeal." - Strategic revision with sophisticated vocabulary
+- C1 (5 points): "Integrate 'network effects' into CTA: 'Tag friends to expand our global community!'" - Advanced revision with marketing concepts
+
+Evaluation criteria:
+- Shows improvement/revision
+- Uses new social media term
+- Score 1-5 based on sophistication
+
+Return a JSON object with:
+{
+    "score": <1-5>,
+    "level": "<A1|A2|B1|B2|C1>",
+    "feedback": "<constructive feedback>",
+    "details": {
+        "shows_improvement": "<yes|no>",
+        "uses_new_term": "<yes|no>",
+        "sophistication": "<basic|good|excellent>"
+    }
+}"""
+
+            user_prompt = f"Original caption:\n{original_caption}\n\nStudent revision:\n{revision}"
+
+            ai_response = ai_service.client.chat.completions.create(
+                model="llama-3.1-70b-versatile",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                max_tokens=300,
+                temperature=0.3
+            )
+
+            result_text = ai_response.choices[0].message.content.strip()
+
+            # Parse JSON
+            if '```json' in result_text:
+                result_text = result_text.split('```json')[1].split('```')[0]
+            elif '```' in result_text:
+                result_text = result_text.split('```')[1].split('```')[0]
+
+            result = json.loads(result_text.strip())
+
+            score = result.get('score', 1)
+            level = result.get('level', 'A1')
+            feedback = result.get('feedback', 'Good work!')
+            details = result.get('details', {})
+
+            print(f"AI Evaluation: Level={level}, Score={score}/5")
+            print(f"Feedback: {feedback}")
+            print("="*60 + "\n")
+
+            logger.info(f"Phase 4.2 Step 2 Int 3 - User {user_id}: Level={level}, Score={score}/5")
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': details
+            })
+
+        except Exception as ai_error:
+            logger.error(f"AI evaluation error: {ai_error}")
+            # Fallback to simple evaluation
+            word_count = len(revision.split())
+            has_social_term = any(term in revision.lower() for term in ['hashtag', 'emoji', 'tag', 'call-to-action', 'engagement', 'viral', 'immersive', 'experience'])
+            shows_improvement = any(term in revision.lower() for term in ['add', 'replace', 'improve', 'change', 'integrate'])
+
+            if word_count >= 12 and has_social_term and shows_improvement:
+                score, level = 4, 'B2'
+            elif word_count >= 8 and has_social_term and shows_improvement:
+                score, level = 3, 'B1'
+            elif word_count >= 5 and (has_social_term or shows_improvement):
+                score, level = 2, 'A2'
+            else:
+                score, level = 1, 'A1'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': 'Good effort! Try to be more specific about how you would improve the caption using new social media vocabulary.',
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 2 revision: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ==================== PHASE 4.2 STEP 3 ROUTES ====================
+
+@phase4_bp.route('/4_2/step3/evaluate-caption-definition', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step3_caption_definition():
+    """Evaluate caption definition in Phase 4.2 Step 3 Interaction 1"""
+    try:
+        data = request.json
+        definition = data.get('definition', '').strip()
+
+        if not definition:
+            return jsonify({
+                'success': False,
+                'error': 'Definition is required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 3 - Caption definition: {definition[:100]}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's definition of "caption" in social media posts.
+
+Student's definition: "{definition}"
+
+Scoring criteria (CEFR-aligned):
+- A2 (1 point): Basic definition like "words under photo"
+- B1 (2 points): Simple explanation with examples, mentions text under photo/video to explain or attract
+- B2 (3-4 points): Describes caption as descriptive/persuasive text providing context, engaging viewers, including CTAs
+- C1 (5 points): Analyzes caption as narrative hook contextualizing visuals, driving engagement through storytelling, strategically incorporating hashtags/CTAs
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "level": "<A2/B1/B2/C1>",
+  "feedback": "<specific feedback on their definition>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            # Parse JSON from response
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}, Level: {result.get('level')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 1),
+                'level': result.get('level', 'A2'),
+                'feedback': result.get('feedback', 'Good effort!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+            # Fallback evaluation
+            definition_lower = definition.lower()
+            word_count = len(definition.split())
+
+            # Check for key terms
+            has_basic_def = any(term in definition_lower for term in ['words', 'text', 'under', 'photo', 'post'])
+            has_function = any(term in definition_lower for term in ['explain', 'attract', 'attention', 'describe'])
+            has_strategic = any(term in definition_lower for term in ['engage', 'engagement', 'cta', 'call-to-action', 'context'])
+            has_advanced = any(term in definition_lower for term in ['narrative', 'hook', 'storytelling', 'strategic', 'conversions', 'reach', 'maximize'])
+
+            # Scoring logic
+            score = 1
+            level = 'A2'
+            feedback = ''
+
+            # C1: 5 points - Advanced strategic analysis
+            if word_count >= 25 and has_advanced and has_strategic:
+                score = 5
+                level = 'C1'
+                feedback = 'Excellent! You demonstrate sophisticated understanding of captions as strategic narrative tools that drive engagement and conversions.'
+            # B2: 3-4 points - Strategic description
+            elif word_count >= 15 and has_strategic and has_function:
+                score = 4 if word_count >= 20 else 3
+                level = 'B2'
+                feedback = 'Great work! You understand captions as persuasive text that provides context and engages viewers through calls-to-action.'
+            # B1: 2 points - Simple explanation with examples
+            elif word_count >= 10 and has_function and has_basic_def:
+                score = 2
+                level = 'B1'
+                feedback = 'Good! You correctly explain that a caption is text under photos/videos to explain or attract attention.'
+            # A2: 1 point - Basic definition
+            elif has_basic_def:
+                score = 1
+                level = 'A2'
+                feedback = 'Correct basic definition! Try to add more detail about what captions do (explain, attract attention, engage).'
+            else:
+                score = 1
+                level = 'A2'
+                feedback = 'Good effort! A caption is the text written under a photo or video. Try to explain its purpose.'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 3 caption definition: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/4_2/step3/evaluate-cta-explanation', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step3_cta_explanation():
+    """Evaluate CTA explanation in Phase 4.2 Step 3 Interaction 2"""
+    try:
+        data = request.json
+        explanation = data.get('explanation', '').strip()
+
+        if not explanation:
+            return jsonify({
+                'success': False,
+                'error': 'Explanation is required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 3 - CTA explanation: {explanation[:100]}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's explanation of "call-to-action" (CTA) in social media posts.
+
+Student's explanation: "{explanation}"
+
+Scoring criteria (CEFR-aligned):
+- A2 (1 point): Very basic like "CTA is do something. Like 'come'"
+- B1 (2 points): Explains CTA as post saying "do this" with example, mentions interaction
+- B2 (3-4 points): Defines CTA as direct instruction prompting specific action, mentions engagement/conversions with examples
+- C1 (5 points): Analyzes CTA as strategic conversion trigger directing behavior to amplify reach through network effects with nuanced examples
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "level": "<A2/B1/B2/C1>",
+  "feedback": "<specific feedback on their explanation>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}, Level: {result.get('level')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 1),
+                'level': result.get('level', 'A2'),
+                'feedback': result.get('feedback', 'Good effort!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+            # Fallback evaluation
+            explanation_lower = explanation.lower()
+            word_count = len(explanation.split())
+
+            # Check for key concepts
+            has_basic = any(term in explanation_lower for term in ['do', 'action', 'tell', 'come', 'join'])
+            has_instruction = any(term in explanation_lower for term in ['instruction', 'prompt', 'direct', 'ask', 'request'])
+            has_purpose = any(term in explanation_lower for term in ['engage', 'engagement', 'conversion', 'boost', 'interact'])
+            has_example = any(term in explanation_lower for term in ['tag', 'friend', 'join us', 'click', 'visit', 'share'])
+            has_strategic = any(term in explanation_lower for term in ['strategic', 'trigger', 'amplify', 'reach', 'network', 'behavior', 'measurable'])
+
+            score = 1
+            level = 'A2'
+            feedback = ''
+
+            # C1: 5 points - Strategic analysis
+            if word_count >= 25 and has_strategic and has_purpose and has_example:
+                score = 5
+                level = 'C1'
+                feedback = 'Outstanding! You demonstrate sophisticated understanding of CTAs as strategic conversion triggers that drive measurable actions through network effects.'
+            # B2: 3-4 points - Detailed with purpose
+            elif word_count >= 15 and has_instruction and has_purpose and has_example:
+                score = 4 if word_count >= 20 else 3
+                level = 'B2'
+                feedback = 'Excellent! You clearly explain CTAs as direct instructions that prompt specific actions to boost engagement and conversions.'
+            # B1: 2 points - Simple explanation with example
+            elif word_count >= 8 and has_basic and has_example:
+                score = 2
+                level = 'B1'
+                feedback = 'Good! You understand that CTAs tell people to do something and you provided an example.'
+            # A2: 1 point - Very basic
+            elif has_basic:
+                score = 1
+                level = 'A2'
+                feedback = 'Correct basic idea! Try to explain why CTAs are used (to make people interact) and give an example.'
+            else:
+                score = 1
+                level = 'A2'
+                feedback = 'Good try! A call-to-action tells people to do something, like "Join us!" or "Tag a friend!"'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 3 CTA explanation: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/4_2/step3/evaluate-term-explanation', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step3_term_explanation():
+    """Evaluate social media term explanation in Phase 4.2 Step 3 Interaction 3"""
+    try:
+        data = request.json
+        explanation = data.get('explanation', '').strip()
+
+        if not explanation:
+            return jsonify({
+                'success': False,
+                'error': 'Explanation is required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 3 - Term explanation: {explanation[:100]}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's explanation of a social media term after playing Sushi Spell.
+
+Student's explanation: "{explanation}"
+
+They should explain one term (hashtag, caption, emoji, call-to-action, engagement, viral, thread, reach) and relate it to the videos watched.
+
+Scoring criteria (CEFR-aligned):
+- A2 (1 point): Minimal like "Game for hashtag"
+- B1 (2 points): Uses game for term with simple reasoning from video
+- B2 (3-4 points): Incorporates game for rapid spelling with video example showing strategic use
+- C1 (5 points): Leverages game to master term through competitive spelling, relates to strategic metrics/effects from video examples
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "level": "<A2/B1/B2/C1>",
+  "feedback": "<specific feedback on their explanation>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}, Level: {result.get('level')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 1),
+                'level': result.get('level', 'A2'),
+                'feedback': result.get('feedback', 'Good effort!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+            # Fallback evaluation
+            explanation_lower = explanation.lower()
+            word_count = len(explanation.split())
+
+            # Check for key social media terms
+            terms = ['hashtag', 'caption', 'emoji', 'call-to-action', 'cta', 'engagement', 'viral', 'thread', 'reach', 'tag', 'story']
+            mentions_term = any(term in explanation_lower for term in terms)
+            mentions_game = any(word in explanation_lower for word in ['sushi', 'spell', 'game', 'play'])
+            has_reasoning = any(word in explanation_lower for word in ['because', 'since', 'so', 'makes', 'helps', 'boost'])
+            has_video_ref = any(word in explanation_lower for word in ['video', 'example', 'instagram', 'twitter', 'post', 'shown'])
+            has_strategic = any(word in explanation_lower for word in ['strategic', 'metrics', 'competitive', 'master', 'leverage', 'interaction', 'conversion'])
+
+            score = 1
+            level = 'A2'
+            feedback = ''
+
+            # C1: 5 points - Strategic mastery
+            if word_count >= 20 and mentions_term and has_strategic and has_video_ref:
+                score = 5
+                level = 'C1'
+                feedback = 'Exceptional! You demonstrate sophisticated understanding by linking the game to strategic vocabulary mastery and relating it to metrics and effects from the video examples.'
+            # B2: 3-4 points - Strategic with video example
+            elif word_count >= 12 and mentions_term and has_reasoning and has_video_ref:
+                score = 4 if word_count >= 16 else 3
+                level = 'B2'
+                feedback = 'Excellent! You effectively incorporate the game for rapid spelling practice and connect it to strategic examples from the videos.'
+            # B1: 2 points - Simple reasoning
+            elif word_count >= 6 and mentions_term and has_reasoning:
+                score = 2
+                level = 'B1'
+                feedback = 'Good! You explain how the game helps with the term and provide simple reasoning from what you learned.'
+            # A2: 1 point - Minimal
+            elif mentions_term or mentions_game:
+                score = 1
+                level = 'A2'
+                feedback = 'Good start! Try to explain WHY the term is important and how it relates to the video examples you watched.'
+            else:
+                score = 1
+                level = 'A2'
+                feedback = 'Good effort! Please mention a specific social media term you spelled (hashtag, caption, engagement, etc.) and explain why it matters.'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 3 term explanation: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ==================== PHASE 4.2 STEP 4 ROUTES ====================
+
+@phase4_bp.route('/4_2/step4/evaluate-instagram-post', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step4_instagram_post():
+    """Evaluate Instagram post in Phase 4.2 Step 4 Interaction 1"""
+    try:
+        data = request.json
+        caption = data.get('caption', '').strip()
+        hashtags = data.get('hashtags', '').strip()
+
+        if not caption or not hashtags:
+            return jsonify({
+                'success': False,
+                'error': 'Both caption and hashtags are required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 4 - Instagram post: Caption length={len(caption)}, Hashtags={hashtags[:50]}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's Instagram post for the Global Cultures Festival.
+
+Caption: "{caption}"
+Hashtags: "{hashtags}"
+
+Scoring criteria (CEFR-aligned):
+- A2 (1-2 points): Simple guided post with basic words (e.g., "Festival is fun. Come March 8. #Festival #Fun")
+- B1 (3 points): Structured post with hashtags/CTAs following examples (e.g., clear date, location, action words)
+- B2 (4 points): Engaging multi-sentence post with strategic elements (emojis, multiple details, tagging suggestion, diverse hashtags)
+- C1 (5 points): Sophisticated autonomous post with storytelling, strategic hashtags, advanced vocabulary, compelling narrative
+
+Evaluate for:
+1. Grammar (subject-verb agreement, tense consistency)
+2. Spelling (especially social media terms like "hashtag")
+3. Structure (logical flow, CTA placement, sentence variety)
+4. Vocabulary use (hashtag, caption, emoji, CTA)
+5. Following/adapting template examples
+6. Hashtag quality (5-10 relevant hashtags)
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "level": "<A2/B1/B2/C1>",
+  "feedback": "<specific feedback on their Instagram post>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}, Level: {result.get('level')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 1),
+                'level': result.get('level', 'A2'),
+                'feedback': result.get('feedback', 'Good effort!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+            # Fallback evaluation
+            caption_lower = caption.lower()
+            hashtags_lower = hashtags.lower()
+
+            # Count sentences
+            sentence_count = len([s for s in caption.split('.') if s.strip()])
+            word_count = len(caption.split())
+            hashtag_count = len([h for h in hashtags.split('#') if h.strip()])
+
+            # Check for key elements
+            has_date = any(term in caption_lower for term in ['march', 'date', '8', 'march 8'])
+            has_location = any(term in caption_lower for term in ['student center', 'campus', 'tunis'])
+            has_cta = any(term in caption_lower for term in ['join', 'tag', 'come', 'rsvp', 'visit', 'don\'t miss'])
+            has_emoji = any(char in caption for char in ['🌍', '🌎', '🌏', '❤️', '🎉', '🎊', '✨'])
+            has_details = any(term in caption_lower for term in ['music', 'food', 'dance', 'workshop', 'culture', 'performance'])
+            has_advanced_vocab = any(term in caption_lower for term in ['immersive', 'authentic', 'diversity', 'unity', 'celebration', 'vibrant', 'foster', 'microcosm'])
+
+            score = 1
+            level = 'A2'
+            feedback = ''
+
+            # C1: 5 points - Sophisticated autonomous post
+            if word_count >= 80 and sentence_count >= 5 and hashtag_count >= 8 and has_advanced_vocab and has_cta and has_details:
+                score = 5
+                level = 'C1'
+                feedback = 'Exceptional! Your Instagram post demonstrates sophisticated writing with storytelling, strategic hashtags, and compelling narrative. The post is autonomous, engaging, and professionally crafted.'
+            # B2: 4 points - Engaging multi-sentence with strategic elements
+            elif word_count >= 50 and sentence_count >= 4 and hashtag_count >= 5 and has_emoji and has_cta and has_details and (has_date or has_location):
+                score = 4
+                level = 'B2'
+                feedback = 'Great work! Your post is engaging with multiple strategic elements including emojis, CTAs, and diverse hashtags. You\'ve effectively adapted the template to create compelling content.'
+            # B1: 3 points - Structured with hashtags/CTAs
+            elif word_count >= 20 and sentence_count >= 3 and hashtag_count >= 3 and has_cta and (has_date or has_location):
+                score = 3
+                level = 'B1'
+                feedback = 'Good! You\'ve created a structured post following the template with clear date/location information, hashtags, and call-to-action.'
+            # A2: 1-2 points - Simple guided post
+            elif word_count >= 10 and hashtag_count >= 2:
+                score = 2 if has_cta else 1
+                level = 'A2'
+                feedback = 'Correct basic structure! Try to add more details (date, location, what to expect) and use 5-10 hashtags to improve your post.'
+            else:
+                score = 1
+                level = 'A2'
+                feedback = 'Good start! Follow the template more closely: add sentences about the festival, include date/location, add a call-to-action, and use at least 5 hashtags.'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 4 Instagram post: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/4_2/step4/evaluate-twitter-thread', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step4_twitter_thread():
+    """Evaluate Twitter/X thread in Phase 4.2 Step 4 Interaction 2"""
+    try:
+        data = request.json
+        tweets = data.get('tweets', [])
+
+        if not tweets or len(tweets) < 2:
+            return jsonify({
+                'success': False,
+                'error': 'At least 2 tweets are required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 4 - Twitter thread: {len(tweets)} tweets")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's Twitter/X thread for the Global Cultures Festival.
+
+Tweets:
+{chr(10).join([f"Tweet {i+1}: {tweet}" for i, tweet in enumerate(tweets)])}
+
+Scoring criteria (CEFR-aligned):
+- A2 (1-2 points): Very simple thread (e.g., "1/2 Festival March 8. Come! 2/2 #Festival")
+- B1 (3 points): Structured thread with basic details and hashtags following examples
+- B2 (4 points): Engaging thread with multiple tweets, strategic elements, good flow
+- C1 (5 points): Sophisticated thread with compelling narrative, strategic numbering, advanced vocabulary, strong CTAs
+
+Evaluate for:
+1. Grammar (tense consistency)
+2. Spelling (especially "thread")
+3. Structure (tweet length ~280 chars, logical sequence, thread numbering)
+4. Vocabulary use
+5. Adaptation of template examples
+6. Hashtag and CTA inclusion
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "level": "<A2/B1/B2/C1>",
+  "feedback": "<specific feedback on their Twitter thread>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}, Level: {result.get('level')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 1),
+                'level': result.get('level', 'A2'),
+                'feedback': result.get('feedback', 'Good effort!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+            # Fallback evaluation
+            full_thread = ' '.join(tweets).lower()
+            tweet_count = len(tweets)
+
+            # Check elements
+            has_numbering = any(char in tweets[0] for char in ['1/', '1 /']) or any(char in str(tweets) for char in ['/', '|'])
+            has_hashtag = '#' in full_thread
+            has_cta = any(term in full_thread for term in ['join', 'tag', 'rsvp', 'visit', 'come', 'don\'t miss'])
+            has_date = any(term in full_thread for term in ['march', '8', 'march 8'])
+            has_emoji = any(ord(char) > 127 for tweet in tweets for char in tweet)
+            has_details = any(term in full_thread for term in ['music', 'food', 'dance', 'workshop', 'performance', 'culture'])
+            has_advanced = any(term in full_thread for term in ['immersive', 'catalyst', 'mosaic', 'authentic', 'dialogue', 'unity', 'empathy'])
+
+            # Check tweet lengths (should be under 280)
+            over_limit = any(len(tweet) > 280 for tweet in tweets)
+
+            score = 1
+            level = 'A2'
+            feedback = ''
+
+            if over_limit:
+                score = 1
+                level = 'A2'
+                feedback = 'Some tweets exceed 280 characters. Please shorten them to meet Twitter\'s character limit.'
+            # C1: 5 points - Sophisticated thread
+            elif tweet_count >= 4 and has_numbering and has_advanced and has_cta and has_hashtag and has_details:
+                score = 5
+                level = 'C1'
+                feedback = 'Outstanding! Your Twitter thread is sophisticated with compelling narrative flow, strategic numbering, advanced vocabulary, and strong calls-to-action. Excellent work!'
+            # B2: 4 points - Engaging with strategic elements
+            elif tweet_count >= 3 and has_numbering and has_cta and has_hashtag and has_details and (has_date or has_emoji):
+                score = 4
+                level = 'B2'
+                feedback = 'Excellent! Your thread is engaging with good structure, strategic elements, and effective CTAs. You\'ve adapted the template well to create compelling content.'
+            # B1: 3 points - Structured with basics
+            elif tweet_count >= 2 and has_cta and has_hashtag:
+                score = 3
+                level = 'B1'
+                feedback = 'Good! You\'ve created a structured thread following the template with hashtags and call-to-action. Try adding more details and numbering for better flow.'
+            # A2: 1-2 points - Very simple
+            elif tweet_count >= 2:
+                score = 2 if has_hashtag else 1
+                level = 'A2'
+                feedback = 'Basic thread structure is correct! Add more details about the festival, use thread numbering (1/3, 2/3), and include hashtags and call-to-action.'
+            else:
+                score = 1
+                level = 'A2'
+                feedback = 'Good start! Write at least 2-3 tweets with thread numbering, festival details, and hashtags.'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 4 Twitter thread: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/4_2/step4/evaluate-vocabulary-revision', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step4_vocabulary_revision():
+    """Evaluate vocabulary revision in Phase 4.2 Step 4 Interaction 3"""
+    try:
+        data = request.json
+        spelled_term = data.get('spelled_term', '').strip()
+        revised_sentence = data.get('revised_sentence', '').strip()
+
+        if not spelled_term or not revised_sentence:
+            return jsonify({
+                'success': False,
+                'error': 'Both spelled term and revised sentence are required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 4 - Vocabulary revision: Term={spelled_term}, Sentence length={len(revised_sentence)}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's vocabulary integration and sentence revision after playing Sushi Spell.
+
+Spelled Term: "{spelled_term}"
+Revised Sentence: "{revised_sentence}"
+
+Scoring criteria (CEFR-aligned):
+- A2 (1-2 points): Basic term use (e.g., "Spell hashtag. Add #Festival")
+- B1 (3 points): Uses term with simple revision showing error detection
+- B2 (4 points): Incorporates term with structure improvement and clear error correction
+- C1 (5 points): Leverages term with sophisticated revision, detecting grammar/structure errors autonomously
+
+Evaluate for:
+1. Correct use of spelled term in sentence
+2. Vocabulary integration (term fits naturally)
+3. Error detection and correction (grammar, spelling, structure)
+4. Autonomous improvement of original post
+5. Quality of revision explanation
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "level": "<A2/B1/B2/C1>",
+  "feedback": "<specific feedback on their revision>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}, Level: {result.get('level')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 1),
+                'level': result.get('level', 'A2'),
+                'feedback': result.get('feedback', 'Good effort!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+            # Fallback evaluation
+            sentence_lower = revised_sentence.lower()
+            term_lower = spelled_term.lower()
+
+            # Valid social media terms
+            valid_terms = ['hashtag', 'caption', 'call-to-action', 'cta', 'engagement', 'viral']
+            term_is_valid = any(term in term_lower for term in valid_terms)
+            term_in_sentence = term_lower in sentence_lower
+
+            # Check for revision indicators
+            has_before_after = any(word in sentence_lower for word in ['original', 'revised', 'fixed', 'corrected', 'to', 'from'])
+            has_error_mention = any(word in sentence_lower for word in ['error', 'mistake', 'wrong', 'incorrect', 'fragment', 'missing'])
+            word_count = len(revised_sentence.split())
+
+            # Grammar indicators
+            has_complete_sentence = revised_sentence[0].isupper() if revised_sentence else False
+            has_punctuation = revised_sentence[-1] in '.!?' if revised_sentence else False
+
+            score = 1
+            level = 'A2'
+            feedback = ''
+
+            # C1: 5 points - Sophisticated revision
+            if term_is_valid and term_in_sentence and has_error_mention and word_count >= 15 and has_complete_sentence:
+                score = 5
+                level = 'C1'
+                feedback = 'Excellent! You\'ve demonstrated sophisticated autonomous error detection and revision, integrating the vocabulary term naturally while improving grammar and structure.'
+            # B2: 4 points - Clear error correction
+            elif term_is_valid and term_in_sentence and (has_before_after or has_error_mention) and word_count >= 10:
+                score = 4
+                level = 'B2'
+                feedback = 'Great work! You\'ve incorporated the term with clear structure improvement and error correction. Your revision shows good awareness of grammar and flow.'
+            # B1: 3 points - Simple revision
+            elif term_is_valid and term_in_sentence and word_count >= 6:
+                score = 3
+                level = 'B1'
+                feedback = 'Good! You\'ve used the spelled term in a revised sentence. Try to show more explicitly what error you detected and how you fixed it.'
+            # A2: 1-2 points - Basic term use
+            elif term_is_valid and term_in_sentence:
+                score = 2
+                level = 'A2'
+                feedback = 'Correct basic use of the term! Try to write a complete sentence showing how you revised and improved your original post.'
+            elif term_is_valid:
+                score = 1
+                level = 'A2'
+                feedback = 'Good term choice! Make sure to use the spelled term in your revised sentence and explain what you corrected.'
+            else:
+                score = 1
+                level = 'A2'
+                feedback = 'Please use one of the social media terms you spelled (hashtag, caption, call-to-action, engagement, viral) in your revision.'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'level': level,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 4 vocabulary revision: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ==================== PHASE 4.2 STEP 5 ROUTES ====================
+
+@phase4_bp.route('/4_2/step5/evaluate-spelling', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step5_spelling():
+    """Evaluate spelling correction in Phase 4.2 Step 5 Interaction 1"""
+    try:
+        data = request.json
+        original_post = data.get('original_post', '').strip()
+        corrected_post = data.get('corrected_post', '').strip()
+        level = data.get('level', 'B1')
+
+        if not corrected_post:
+            return jsonify({
+                'success': False,
+                'error': 'Corrected post is required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 5 - Spelling correction ({level}): {corrected_post[:100]}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's spelling corrections for a social media post at {level} CEFR level.
+
+Original faulty post: "{original_post}"
+Student's corrected post: "{corrected_post}"
+
+Key spelling corrections expected by level:
+- A2: "Global" (not Globol), "Festival" (not Festivel)
+- B1: "Global" (not Globel), "friend" (not frend)
+- B2: "Global" (not Globel), "friends" (not freinds), "Events" (not Evnts)
+- C1: "global" (not globel), "fellow" (not felllow)
+
+Scoring criteria (CEFR-aligned):
+- 5 points: All spelling errors corrected perfectly
+- 4 points: Most spelling errors corrected (1-2 minor errors remain)
+- 3 points: Several spelling corrections made but some errors remain
+- 2 points: Few corrections made, multiple errors remain
+- 1 point: Minimal corrections, most errors remain
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "feedback": "<specific feedback on spelling corrections>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 3),
+                'feedback': result.get('feedback', 'Good spelling corrections!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+
+            # Fallback evaluation - check for correct spellings
+            corrected_lower = corrected_post.lower()
+
+            # Count corrections
+            corrections = 0
+            max_corrections = 5
+
+            if 'global' in corrected_lower:
+                corrections += 1
+            if 'festival' in corrected_lower:
+                corrections += 1
+            if 'friend' in corrected_lower or 'friends' in corrected_lower:
+                corrections += 1
+            if 'fellow' in corrected_lower:
+                corrections += 1
+            if 'events' in corrected_lower or 'event' in corrected_lower:
+                corrections += 1
+
+            # Calculate score
+            score = min(5, max(1, corrections))
+
+            if score >= 4:
+                feedback = 'Excellent spelling corrections! You caught all the major errors.'
+            elif score == 3:
+                feedback = 'Good work! You corrected several spelling errors. Double-check for any remaining misspellings.'
+            elif score == 2:
+                feedback = 'You made some corrections. Look for more misspelled words like "Globel", "freinds", "Evnts".'
+            else:
+                feedback = 'Remember to check all words carefully for spelling errors. Focus on words like "Global", "Festival", "friends".'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 5 spelling: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/4_2/step5/evaluate-grammar', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step5_grammar():
+    """Evaluate grammar correction in Phase 4.2 Step 5 Interaction 2"""
+    try:
+        data = request.json
+        spelling_corrected = data.get('spelling_corrected', '').strip()
+        grammar_corrected = data.get('grammar_corrected', '').strip()
+        level = data.get('level', 'B1')
+
+        if not grammar_corrected:
+            return jsonify({
+                'success': False,
+                'error': 'Grammar-corrected post is required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 5 - Grammar correction ({level}): {grammar_corrected[:100]}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's grammar corrections for a social media post at {level} CEFR level.
+
+Spelling-corrected post: "{spelling_corrected}"
+Student's grammar-corrected post: "{grammar_corrected}"
+
+Key grammar corrections expected by level:
+- A2: Add "the" before Festival, add "on" before date
+- B1: Add articles (the, a), use "There is", fix subject-verb agreement
+- B2: Add articles, add "is on" for date, use proper prepositions
+- C1: Add sophisticated phrasing ("a celebration of", "returns on"), use articles correctly
+
+Scoring criteria (CEFR-aligned):
+- 5 points: All grammar errors corrected perfectly (articles, prepositions, verb agreement)
+- 4 points: Most grammar errors corrected (1-2 minor errors remain)
+- 3 points: Several grammar corrections made but some errors remain
+- 2 points: Few corrections made, multiple errors remain
+- 1 point: Minimal corrections, most errors remain
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "feedback": "<specific feedback on grammar corrections>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 3),
+                'feedback': result.get('feedback', 'Good grammar corrections!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+
+            # Fallback evaluation - check for grammar improvements
+            corrections = 0
+
+            # Check for articles
+            if ' the ' in grammar_corrected.lower() or grammar_corrected.lower().startswith('the '):
+                corrections += 1
+            if ' a ' in grammar_corrected.lower():
+                corrections += 1
+
+            # Check for prepositions
+            if ' on ' in grammar_corrected.lower() or ' at ' in grammar_corrected.lower() or ' in ' in grammar_corrected.lower():
+                corrections += 1
+
+            # Check for proper verb forms
+            if ' is ' in grammar_corrected.lower():
+                corrections += 1
+
+            # Word count increase (shows expansion with proper grammar)
+            spelling_words = len(spelling_corrected.split())
+            grammar_words = len(grammar_corrected.split())
+            if grammar_words > spelling_words:
+                corrections += 1
+
+            # Calculate score
+            score = min(5, max(1, corrections))
+
+            if score >= 4:
+                feedback = 'Excellent grammar corrections! You added proper articles, prepositions, and fixed verb agreement.'
+            elif score == 3:
+                feedback = 'Good work! You made several grammar improvements. Check for missing articles and prepositions.'
+            elif score == 2:
+                feedback = 'You made some corrections. Remember to add articles (the, a) and prepositions (on, at, in).'
+            else:
+                feedback = 'Focus on adding missing words: articles like "the" and "a", and prepositions like "on" for dates.'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 5 grammar: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/4_2/step5/evaluate-enhancement', methods=['POST'])
+@login_required
+def evaluate_phase4_2_step5_enhancement():
+    """Evaluate enhancement (coherence, tone, vocabulary) in Phase 4.2 Step 5 Interaction 3"""
+    try:
+        data = request.json
+        grammar_corrected = data.get('grammar_corrected', '').strip()
+        enhanced_post = data.get('enhanced_post', '').strip()
+        level = data.get('level', 'B1')
+
+        if not enhanced_post:
+            return jsonify({
+                'success': False,
+                'error': 'Enhanced post is required'
+            }), 400
+
+        # Log interaction
+        logger.info(f"Phase 4.2 Step 5 - Enhancement ({level}): {enhanced_post[:100]}")
+
+        # AI Evaluation Prompt
+        ai_prompt = f"""Evaluate this student's enhancement of a social media post at {level} CEFR level.
+
+Grammar-corrected post: "{grammar_corrected}"
+Student's enhanced post: "{enhanced_post}"
+
+Key enhancements expected by level:
+- A2: Add emojis (😊), exclamation marks for energy
+- B1: Add emojis (😍), connectors ("and", "come with us!"), hashtags (#JoinUs)
+- B2: Add emojis (🌍), expand details (live music, global food), stronger CTA ("Don't miss out!"), more hashtags
+- C1: Add emojis (🌏), sophisticated vocabulary (immersive, authentic, catalyst, interconnected), compelling narrative, strategic hashtags
+
+Scoring criteria (CEFR-aligned):
+- 5 points: Excellent enhancements - emojis, connectors, rich vocabulary, strong CTA, strategic hashtags, engaging tone
+- 4 points: Good enhancements - most elements present (emojis, some connectors, improved vocabulary, CTA)
+- 3 points: Moderate enhancements - some improvements (emojis or connectors, basic CTA)
+- 2 points: Minor enhancements - minimal improvements
+- 1 point: Very few or no enhancements
+
+Return ONLY a JSON object:
+{{
+  "score": <1-5>,
+  "feedback": "<specific feedback on enhancements>"
+}}"""
+
+        # Try AI evaluation
+        try:
+            ai_response = ai_service.evaluate_response(ai_prompt, max_tokens=300)
+            result = json.loads(ai_response)
+
+            logger.info(f"AI Evaluation - Score: {result.get('score')}")
+
+            return jsonify({
+                'success': True,
+                'score': result.get('score', 3),
+                'feedback': result.get('feedback', 'Good enhancements to the post!'),
+                'details': {}
+            })
+        except Exception as ai_error:
+            logger.warning(f"AI evaluation failed, using fallback: {ai_error}")
+
+            # Fallback evaluation - check for enhancements
+            enhancements = 0
+
+            # Check for emojis (Unicode emoji characters)
+            import re
+            emoji_pattern = re.compile("[\U00010000-\U0010ffff]", flags=re.UNICODE)
+            if emoji_pattern.search(enhanced_post):
+                enhancements += 1
+
+            # Check for exclamation marks (energy)
+            if '!' in enhanced_post:
+                enhancements += 1
+
+            # Check for connectors
+            connectors = ['and', 'because', 'so', 'with', 'join us', 'come']
+            if any(connector in enhanced_post.lower() for connector in connectors):
+                enhancements += 1
+
+            # Check for hashtags (count)
+            hashtag_count = enhanced_post.count('#')
+            if hashtag_count >= 3:
+                enhancements += 1
+
+            # Check for enhanced vocabulary
+            enhanced_words = ['immersive', 'authentic', 'catalyst', 'global', 'cultural', 'diversity', 'experience', 'celebration']
+            if any(word in enhanced_post.lower() for word in enhanced_words):
+                enhancements += 1
+
+            # Calculate score
+            score = min(5, max(1, enhancements))
+
+            if score >= 4:
+                feedback = 'Excellent enhancements! You added emojis, connectors, rich vocabulary, and strategic hashtags for maximum engagement.'
+            elif score == 3:
+                feedback = 'Good work! You added some enhancements. Consider adding more emojis, connectors, or a stronger call-to-action.'
+            elif score == 2:
+                feedback = 'You made some improvements. Try adding emojis, connectors like "and" or "because", and more hashtags.'
+            else:
+                feedback = 'Add more engagement elements: emojis for emotion, exclamation marks for energy, connectors, and hashtags.'
+
+            return jsonify({
+                'success': True,
+                'score': score,
+                'feedback': feedback,
+                'details': {}
+            })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 4.2 Step 5 enhancement: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
