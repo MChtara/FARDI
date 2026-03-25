@@ -596,33 +596,54 @@ def submit_phase2_response():
             total_items = len(action_items)
             completed_items = 0
             total_score = 0
-            
+
+            print(f"\n{'='*60}")
+            print(f"[Phase2 Step {step_id}] Calculating total score...")
+            print(f"{'='*60}")
+
             assessments = session.get('phase2_assessments', {})
-            for item in action_items:
+            for idx, item in enumerate(action_items, 1):
                 session_key = f"phase2_{step_id}_{item['id']}"
                 if session_key in assessments:
                     completed_items += 1
                     assessment_data = assessments[session_key]
                     level = assessment_data.get('level', 'A1')
-                    total_score += PHASE_2_POINTS.get(level, 1)
+                    points = PHASE_2_POINTS.get(level, 1)
+                    total_score += points
+                    print(f"  Interaction {idx}: {item.get('question', item['id'])[:50]}...")
+                    print(f"    → Level: {level} | Points: {points}")
+                else:
+                    print(f"  Interaction {idx}: NOT COMPLETED")
             
+            print(f"\n  TOTAL SCORE: {total_score}/{PHASE_2_SUCCESS_THRESHOLD}")
+            print(f"  Completed: {completed_items}/{total_items} interactions")
+
             needs_remedial = total_score < PHASE_2_SUCCESS_THRESHOLD
-            
+
+            print(f"\n[Phase2 Routing Decision]")
+            print(f"  Needs Remedial: {needs_remedial}")
+
             if needs_remedial:
                 user_level = determine_phase2_user_level(total_score)
                 next_action = "remedial_activities"
                 next_url = f"/app/phase2/remedial/{step_id}/{user_level}"
                 message = f"Good work! Let's strengthen your skills with some practice activities before moving forward."
+                print(f"  → Routing to: Remedial {user_level}")
+                print(f"  → URL: {next_url}")
             else:
                 next_step = get_next_phase2_step(step_id)
                 if next_step:
                     next_action = "next_step"
                     next_url = f"/app/phase2/step/{next_step}"
                     message = f"Excellent! You've completed this step. Ready for the next challenge?"
+                    print(f"  → Routing to: Next Step ({next_step})")
                 else:
                     next_action = "phase2_complete"
                     next_url = "/app/phase2/complete"
                     message = "🎉 Congratulations! You've completed Phase 2!"
+                    print(f"  → Routing to: Phase 2 Complete!")
+
+            print(f"{'='*60}\n")
         else:
             # Move to next action item in same step
             next_action = "next_action_item"
@@ -1579,15 +1600,32 @@ def get_next_phase2_step(current_step):
     return None
 
 def determine_phase2_user_level(total_score):
-    """Determine user level based on Phase 2 score"""
-    if total_score <= 7:  # 1 point per item = A1 level
-        return 'A1'
-    elif total_score <= 10:  # 2 points per item = A2 level
-        return 'A2'
-    elif total_score <= 15:  # 3 points per item = B1 level
-        return 'B1'
+    """
+    Determine user level based on Phase 2 Step 1 total score
+
+    Scoring system (5 interactions):
+    - Each interaction scored by CEFR level: A1=1, A2=2, B1=3, B2=4
+    - Maximum possible score: 5 * 4 = 20 points
+
+    Routing logic:
+    - Score < 10: Remedial A1 (needs basic support)
+    - Score < 15: Remedial A2 (elementary level support)
+    - Score < 20: Remedial B1 (intermediate level support)
+    - Score = 20: Pass directly to Step 2 (B2 level, no remedial needed)
+    """
+    print(f"[Phase2 Routing] Determining level for score: {total_score}/20")
+
+    if total_score < 10:
+        level = 'A1'
+    elif total_score < 15:
+        level = 'A2'
+    elif total_score < 20:
+        level = 'B1'
     else:
-        return 'B2'  # Should not reach remedial if B2
+        level = 'B2'  # Should not reach remedial if B2 (score = 20)
+
+    print(f"[Phase2 Routing] Score {total_score} → Level {level}")
+    return level
 
 def get_phase2_overall_assessment(user_id=None):
     """Get overall Phase 2 assessment for storage"""

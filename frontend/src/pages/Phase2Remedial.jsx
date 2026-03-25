@@ -242,6 +242,9 @@ export default function Phase2Remedial() {
       const res = await r.json()
       if (!r.ok) throw new Error(res.error || 'Submission failed')
 
+      // Mark exercise as completed
+      setExerciseCompleted(true)
+
       // Clear sessionStorage
       const storageKey = `remedial_${data.step_id}_${data.level}_${data.activity.id}`
       sessionStorage.removeItem(storageKey)
@@ -328,12 +331,24 @@ export default function Phase2Remedial() {
             load()
           }
         } else {
-          load()
+          // If no next_url but not complete, go to next activity
+          if (data && data.current_index < data.total - 1) {
+            navigate(`/phase2/remedial/${data.step_id}/${data.level}?activity=${data.current_index + 1}`)
+          } else {
+            load()
+          }
         }
       }
     }
 
     setFeedback(null)
+  }
+
+  // Navigate to next activity
+  const goToNextActivity = () => {
+    if (data && data.current_index < data.total - 1) {
+      navigate(`/phase2/remedial/${data.step_id}/${data.level}?activity=${data.current_index + 1}`)
+    }
   }
 
   // Render gamified exercise component
@@ -694,7 +709,7 @@ export default function Phase2Remedial() {
 
         {/* Submit Button (for non-self-submitting components) */}
         {!isSelfSubmitting() && (
-          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
             <Button
               variant="contained"
               size="large"
@@ -704,6 +719,36 @@ export default function Phase2Remedial() {
               sx={{ minWidth: 200 }}
             >
               {submitting ? 'Submitting...' : 'Submit & Continue'}
+            </Button>
+          </Box>
+        )}
+
+        {/* Next Activity Button (shown after exercise completion) */}
+        {exerciseCompleted && data.current_index < data.total - 1 && (
+          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              size="large"
+              color="success"
+              onClick={goToNextActivity}
+              sx={{ minWidth: 200 }}
+            >
+              Next Activity →
+            </Button>
+          </Box>
+        )}
+
+        {/* Return to Step Button (shown when all activities completed) */}
+        {exerciseCompleted && data.current_index >= data.total - 1 && (
+          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              onClick={() => navigate(`/phase2/step/${data.step_id}`)}
+              sx={{ minWidth: 200 }}
+            >
+              Return to Step {data.step_id}
             </Button>
           </Box>
         )}
@@ -737,10 +782,17 @@ export default function Phase2Remedial() {
               {feedback.success && <Chip label="✅ Passed" color="success" />}
             </Stack>
           )}
+
+          {/* Show progress */}
+          {data && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              Activity {data.current_index + 1} of {data.total}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-          <Button onClick={() => handleFeedbackClose(true)} variant="contained">
-            Continue
+          <Button onClick={() => handleFeedbackClose(true)} variant="contained" size="large">
+            {data && data.current_index < data.total - 1 ? 'Next Activity →' : 'Continue'}
           </Button>
         </DialogActions>
       </Dialog>

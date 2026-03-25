@@ -120,35 +120,49 @@ export default function Phase3Step1Interaction3() {
 
       {/* Input Area */}
       {!submitted && (
-        <Paper elevation={2} sx={{ p: 4, mb: 3 }}>
-          <Typography variant="body1" gutterBottom sx={{ mb: 2 }}>
-            Your sentence:
-          </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            value={userSentence}
-            onChange={(e) => setUserSentence(e.target.value)}
-            placeholder="Write one sentence using the word 'budget' about the Global Cultures Festival..."
-            variant="outlined"
-            sx={{ mb: 2 }}
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="caption" color="text.secondary">
-              Word count: {userSentence.trim().split(/\s+/).filter(w => w).length}
+        <>
+          <Paper elevation={2} sx={{ p: 4, mb: 3 }}>
+            <Typography variant="body1" gutterBottom sx={{ mb: 2 }}>
+              Your sentence:
             </Typography>
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              value={userSentence}
+              onChange={(e) => setUserSentence(e.target.value)}
+              placeholder="Write one sentence using the word 'budget' about the Global Cultures Festival..."
+              variant="outlined"
+              sx={{ mb: 2 }}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="caption" color="text.secondary">
+                Word count: {userSentence.trim().split(/\s+/).filter(w => w).length}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+                endIcon={<SendIcon />}
+                disabled={!userSentence.trim()}
+              >
+                Submit Sentence
+              </Button>
+            </Box>
+          </Paper>
+
+          {/* Skip Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
             <Button
-              variant="contained"
+              variant="outlined"
               color="primary"
-              onClick={handleSubmit}
-              endIcon={<SendIcon />}
-              disabled={!userSentence.trim()}
+              onClick={handleNext}
+              size="large"
             >
-              Submit Sentence
+              Skip & Continue →
             </Button>
           </Box>
-        </Paper>
+        </>
       )}
 
       {/* Submitted Response Display */}

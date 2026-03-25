@@ -128,6 +128,20 @@ export default function Phase3Step1Interaction1() {
         </Box>
       )}
 
+      {/* Skip Button - Always visible when game not completed */}
+      {!gameCompleted && (
+        <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 3 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleContinue}
+            size="large"
+          >
+            Skip & Continue →
+          </Button>
+        </Stack>
+      )}
+
       {/* Results Display */}
       {gameCompleted && gameResult && (
         <Paper

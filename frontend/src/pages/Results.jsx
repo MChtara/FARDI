@@ -313,8 +313,28 @@ export default function Results() {
             <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
               <Typography variant="h6" fontWeight={700} gutterBottom>Next Steps</Typography>
               <Stack spacing={1.5}>
+                {/* Phase 2 Button - Primary Action */}
+                <Button
+                  href="/app/phase2-intro"
+                  size="large"
+                  variant="contained"
+                  startIcon={<NavigateNextIcon />}
+                  sx={{
+                    justifyContent: 'flex-start',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    fontWeight: 700,
+                    py: 1.5,
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #059669, #047857)'
+                    }
+                  }}>
+                  Start Phase 2 - Team Collaboration
+                </Button>
+
                 {data.session_id && (
                   <Button href={`/certificate?session_id=${data.session_id}`} size="large"
+                    variant="contained"
                     startIcon={<WorkspacePremiumIcon />}
                     sx={{ justifyContent: 'flex-start', background: 'linear-gradient(135deg, #1e3a8a, #4f46e5)' }}>
                     Get Your Certificate
@@ -450,9 +470,9 @@ export default function Results() {
             </Paper>
 
             <Paper elevation={1} sx={{ p: 3, borderRadius: 3, background: 'linear-gradient(135deg, #1e3a8a, #4f46e5)', color: 'white' }}>
-              <Typography variant="h6" fontWeight={700} gutterBottom>Advanced Practice</Typography>
+              <Typography variant="h6" fontWeight={700} gutterBottom>What's Next: Phase 2</Typography>
               <Typography variant="body2" sx={{ opacity: 0.85, mb: 2 }}>
-                Strengthen your {data.overall_level} level with real team collaboration scenarios.
+                Ready to take your {data.overall_level} skills to the next level? Phase 2 focuses on team collaboration scenarios.
               </Typography>
               <Grid container spacing={1.5} sx={{ mb: 2 }}>
                 {['Team Meetings', 'Project Planning', 'Problem Solving', 'Decision Making'].map((s, i) => (
@@ -463,8 +483,9 @@ export default function Results() {
                   </Grid>
                 ))}
               </Grid>
-              <Button href="/phase2" size="large" sx={{ bgcolor: 'white', color: '#1e3a8a', fontWeight: 700, '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}>
-                Start Team Practice
+              <Button href="/app/phase2-intro" size="large" startIcon={<NavigateNextIcon />}
+                sx={{ bgcolor: 'white', color: '#1e3a8a', fontWeight: 700, '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' } }}>
+                Begin Phase 2
               </Button>
             </Paper>
           </Grid>

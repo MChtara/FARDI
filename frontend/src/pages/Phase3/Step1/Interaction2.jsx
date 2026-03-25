@@ -121,6 +121,23 @@ export default function Phase3Step1Interaction2() {
         <SushiSpellGame onComplete={handleGameComplete} targetWords={TARGET_WORDS} />
       </Box>
 
+      {/* Skip/Next Button - Always visible */}
+      {!gameResult && (
+        <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ mb: 3 }}>
+          <Alert severity="info" sx={{ flex: 1 }}>
+            Having trouble? You can skip this activity and continue to the next one.
+          </Alert>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleContinue}
+            size="large"
+          >
+            Skip & Continue →
+          </Button>
+        </Stack>
+      )}
+
       {/* Results Display - Show after game completion */}
       {gameResult && (
         <>
