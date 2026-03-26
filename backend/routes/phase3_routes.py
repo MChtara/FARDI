@@ -59,10 +59,34 @@ def submit_response(step_id):
 @login_required
 def calculate_step_score(step_id):
     """
-    Calculate Phase 3 step score and determine remedial routing.
-    Steps 1-3: I1 (vocab game, 0-8), I2 (game, 0-8), I3 (sentence CEFR, 1-5)
-    Step 4: I1 (budget, 1-5), I2 (pitch CEFR, 1-5)
-    The CEFR score (I3 for steps 1-3, I2 for step 4) drives remedial level.
+    Calculate Phase 3 score and determine remedial routing.
+
+    🎯 Global Rules:
+    - Scores are NOT shown to the user
+    - Scores are only displayed in the terminal/logs for monitoring
+
+    🔹 Phase 3 — Step 1
+    - interaction 1: each one matched correctly +1 (max 8)
+    - interaction 2: each word targeted found +1 (max 8)
+    - interaction 3: scored based on CEFR level (A1=1, A2=2, B1=3, B2=4, C1=5)
+    - Routing Logic: total_score < 12 → A1, < 18 → A2, < 22 → B1, < 26 → B2, else → C1
+
+    🔹 Phase 3 — Step 2
+    - interaction 1: each one matched correctly +1 (max 10)
+    - interaction 2: each matched one correctly +1 (max 8)
+    - interaction 3: each matched one correctly +1 (max 5)
+    - Routing Logic: total_score < 8 → A1, < 13 → A2, < 18 → B1, < 21 → B2, else → C1
+
+    🔹 Phase 3 — Step 3
+    - interaction 1: Guided Explanation - each correct selection +1 (max 8)
+    - interaction 2: Sentence Transformation - each correct combination +1 (max 5)
+    - interaction 3: Justification Practice - CEFR level (A1=1, A2=2, B1=3, B2=4, C1=5)
+    - Routing Logic: total_score < 6 → A1, < 11 → A2, < 14 → B1, < 17 → B2, else → C1
+
+    🔹 Phase 3 — Step 4
+    - interaction 1: Budget Creation - CEFR level (A1=1, A2=2, B1=3, B2=4, C1=5)
+    - interaction 2: Sponsor Pitch - CEFR level (A1=1, A2=2, B1=3, B2=4, C1=5)
+    - Routing Logic: total_score < 2 → A1, < 4 → A2, < 6 → B1, < 8 → B2, else → C1
     """
     try:
         user_id = session.get('user_id')
@@ -74,62 +98,312 @@ def calculate_step_score(step_id):
 
         total_score = interaction1_score + interaction2_score + interaction3_score
 
-        # CEFR assessment score determines remedial level
-        # Steps 1-3: I3 is the sentence production (1-5 CEFR)
-        # Step 4: I2 is the pitch (1-5 CEFR)
-        cefr_score = interaction3_score if step_id <= 3 else interaction2_score
-
-        level_map = {1: 'A1', 2: 'A2', 3: 'B1', 4: 'B2', 5: 'C1'}
-        remedial_level = level_map.get(cefr_score, 'A1')
-        should_proceed = cefr_score >= 3
-
-        # Determine next URL
-        next_step_map = {1: 2, 2: 3, 3: 4, 4: None}
-        next_step = next_step_map.get(step_id)
-
-        if should_proceed and next_step:
-            next_url = f"/app/phase3/step/{next_step}"
-        elif should_proceed and not next_step:
-            next_url = "/app/phase4/step/1"
-        else:
-            next_url = f"/app/phase3/step/{step_id}/remedial/{remedial_level.lower()}/task/a"
-
-        # TERMINAL OUTPUT
-        print("\n" + "="*60)
-        print(f"PHASE 3 STEP {step_id} - SCORING RESULTS")
-        print("="*60)
-        print(f"User ID: {user_id}")
-        print(f"I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}")
-        print(f"Total: {total_score}, CEFR Score: {cefr_score}, Level: {remedial_level}")
-        print(f"PROCEED: {'YES' if should_proceed else 'NO - Remedial Required'}")
-        print("="*60 + "\n")
-
-        logger.info(f"Phase 3 Step {step_id} - User {user_id}: I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}, Total={total_score}, Level={remedial_level}, Proceed={should_proceed}")
-
-        # Max scores depend on step
-        if step_id <= 3:
+        # Routing Logic based on step_id and total score
+        if step_id == 1:
+            # Step 1: Max scores are 8, 8, 5 (total 21)
             i1_max, i2_max, i3_max, total_max = 8, 8, 5, 21
-        else:
+            i1_desc = "Matching"
+            i2_desc = "Word Finding"
+            i3_desc = "CEFR Writing"
+
+            if total_score < 12:
+                remedial_level = 'A1'
+            elif total_score < 18:
+                remedial_level = 'A2'
+            elif total_score < 22:
+                remedial_level = 'B1'
+            elif total_score < 26:
+                remedial_level = 'B2'
+            else:
+                remedial_level = 'C1'
+
+        elif step_id == 2:
+            # Step 2: Max scores are 10, 8, 5 (total 23)
+            i1_max, i2_max, i3_max, total_max = 10, 8, 5, 23
+            i1_desc = "Matching"
+            i2_desc = "Matching"
+            i3_desc = "Matching"
+
+            if total_score < 8:
+                remedial_level = 'A1'
+            elif total_score < 13:
+                remedial_level = 'A2'
+            elif total_score < 18:
+                remedial_level = 'B1'
+            elif total_score < 21:
+                remedial_level = 'B2'
+            else:
+                remedial_level = 'C1'
+
+        elif step_id == 3:
+            # Step 3: Max scores are 8, 5, 5 (total 18)
+            i1_max, i2_max, i3_max, total_max = 8, 5, 5, 18
+            i1_desc = "Guided Explanation"
+            i2_desc = "Sentence Transformation"
+            i3_desc = "Justification (CEFR)"
+
+            if total_score < 6:
+                remedial_level = 'A1'
+            elif total_score < 11:
+                remedial_level = 'A2'
+            elif total_score < 14:
+                remedial_level = 'B1'
+            elif total_score < 17:
+                remedial_level = 'B2'
+            else:
+                remedial_level = 'C1'
+
+        elif step_id == 4:
+            # Step 4: Max scores are 5, 5, 0 (total 10) - Only 2 interactions
             i1_max, i2_max, i3_max, total_max = 5, 5, 0, 10
+            i1_desc = "Budget Creation (CEFR)"
+            i2_desc = "Sponsor Pitch (CEFR)"
+            i3_desc = "N/A"
+
+            if total_score < 2:
+                remedial_level = 'A1'
+            elif total_score < 4:
+                remedial_level = 'A2'
+            elif total_score < 6:
+                remedial_level = 'B1'
+            elif total_score < 8:
+                remedial_level = 'B2'
+            else:
+                remedial_level = 'C1'
+        else:
+            # Default to Step 1 routing for other steps
+            i1_max, i2_max, i3_max, total_max = 8, 8, 5, 21
+            i1_desc = "Task"
+            i2_desc = "Task"
+            i3_desc = "Task"
+            remedial_level = 'A1'
+
+        # Route to remedial
+        next_url = f"/app/phase3/step/{step_id}/remedial/{remedial_level.lower()}/task/a"
+
+        # TERMINAL OUTPUT (Scores NOT shown to user)
+        print("\n" + "="*70)
+        print(f"🎯 PHASE 3 STEP {step_id} - SCORING RESULTS (INTERNAL USE ONLY)")
+        print("="*70)
+        print(f"User ID: {user_id}")
+        print(f"Interaction 1 ({i1_desc}): {interaction1_score}/{i1_max}")
+        print(f"Interaction 2 ({i2_desc}): {interaction2_score}/{i2_max}")
+        print(f"Interaction 3 ({i3_desc}): {interaction3_score}/{i3_max}")
+        print(f"TOTAL SCORE: {total_score}/{total_max}")
+        print(f"ROUTING TO: Remedial {remedial_level}")
+        print("="*70 + "\n")
+
+        logger.info(f"Phase 3 Step {step_id} - User {user_id}: I1={interaction1_score}/{i1_max}, I2={interaction2_score}/{i2_max}, I3={interaction3_score}/{i3_max}, Total={total_score}/{total_max}, Remedial={remedial_level}")
 
         return jsonify({
             'success': True,
             'data': {
-                'interaction1': {'score': interaction1_score, 'max_score': i1_max},
-                'interaction2': {'score': interaction2_score, 'max_score': i2_max, 'level': level_map.get(interaction2_score, 'A1') if step_id > 3 else None},
-                'interaction3': {'score': interaction3_score, 'max_score': i3_max, 'level': level_map.get(interaction3_score, 'A1') if step_id <= 3 else None},
-                'total': {
-                    'score': total_score,
-                    'max_score': total_max,
-                    'remedial_level': remedial_level,
-                    'should_proceed': should_proceed,
-                    'next_url': next_url
-                }
+                'next_url': next_url,
+                'remedial_level': remedial_level
             }
         })
 
     except Exception as e:
         logger.error(f"Error calculating Phase 3 Step {step_id} score: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@phase3_bp.route('/remedial/evaluate', methods=['POST'])
+@login_required
+def evaluate_remedial():
+    """
+    Evaluate remedial task completion and determine if user can proceed to next step.
+
+    STEP 1 REMEDIAL:
+    🔸 Remedial A1: score >= 6/8 → go to Step 2
+    🔸 Remedial A2: score >= 80% → go to Step 2
+    🔸 Remedial B1: CEFR score >= 2 → go to Step 2
+    🔸 Remedial B2: CEFR score >= 3 → go to Step 2
+    🔸 Remedial C1: CEFR score >= 4 → go to Step 2
+
+    STEP 2 REMEDIAL:
+    🔸 Remedial A1: score >= 6/8 → go to Step 3
+    🔸 Remedial A2: score >= 8/10 → go to Step 3
+    🔸 Remedial B1: CEFR score >= 2 → go to Step 3
+    🔸 Remedial B2: CEFR score >= 3 → go to Step 3
+    🔸 Remedial C1: CEFR score >= 4 → go to Step 3
+
+    STEP 3 REMEDIAL:
+    🔸 Remedial A1: Sentence Building - score >= 3/5 → go to Step 4
+    🔸 Remedial A2: Gap Fill - score >= 8/10 → go to Step 4
+    🔸 Remedial B1: Short Justification - CEFR score >= 2 → go to Step 4
+    🔸 Remedial B2: Structured Explanation - CEFR score >= 3 → go to Step 4
+    🔸 Remedial C1: Financial Rationale - CEFR score >= 4 → go to Step 4
+
+    STEP 4 REMEDIAL:
+    🔸 Remedial A1: Fill-in Budget Template - score >= 3/4 → go to Phase 4
+    🔸 Remedial A2: Sentence Completers - score >= 4/5 → go to Phase 4
+    🔸 Remedial B1: Budget + Justification - score >= 4/6 → go to Phase 4
+    🔸 Remedial B2: Draft → Revision - score >= 6/8 → go to Phase 4
+    🔸 Remedial C1: Strategic Proposal - score >= 9/12 → go to Phase 4
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        level = data.get('level', '').upper()
+        step_id = data.get('step_id', 1)
+        remedial_score = data.get('score', 0)
+        max_score = data.get('max_score', 0)
+
+        # Determine if user can proceed based on remedial level and step
+        can_proceed = False
+        threshold = 0
+
+        if step_id == 1:
+            # STEP 1 REMEDIAL CONDITIONS
+            if level == 'A1':
+                # A1: Need 6/8 to proceed
+                threshold = 6
+                can_proceed = remedial_score >= threshold
+            elif level == 'A2':
+                # A2: Need 80% to proceed
+                threshold_percent = 80
+                actual_percent = (remedial_score / max_score * 100) if max_score > 0 else 0
+                can_proceed = actual_percent >= threshold_percent
+            elif level == 'B1':
+                # B1: Need CEFR score >= 2 (A2 level)
+                threshold = 2
+                can_proceed = remedial_score >= threshold
+            elif level == 'B2':
+                # B2: Need CEFR score >= 3 (B1 level)
+                threshold = 3
+                can_proceed = remedial_score >= threshold
+            elif level == 'C1':
+                # C1: Need CEFR score >= 4 (B2 level)
+                threshold = 4
+                can_proceed = remedial_score >= threshold
+
+            next_step = 2
+
+        elif step_id == 2:
+            # STEP 2 REMEDIAL CONDITIONS
+            if level == 'A1':
+                # A1: Need 6/8 to proceed
+                threshold = 6
+                can_proceed = remedial_score >= threshold
+            elif level == 'A2':
+                # A2: Need 8/10 to proceed
+                threshold = 8
+                can_proceed = remedial_score >= threshold
+            elif level == 'B1':
+                # B1: Need CEFR score >= 2 (A2 level)
+                threshold = 2
+                can_proceed = remedial_score >= threshold
+            elif level == 'B2':
+                # B2: Need CEFR score >= 3 (B1 level)
+                threshold = 3
+                can_proceed = remedial_score >= threshold
+            elif level == 'C1':
+                # C1: Need CEFR score >= 4 (B2 level)
+                threshold = 4
+                can_proceed = remedial_score >= threshold
+
+            next_step = 3
+
+        elif step_id == 3:
+            # STEP 3 REMEDIAL CONDITIONS
+            if level == 'A1':
+                # A1: Sentence Building - Need 3/5 to proceed
+                threshold = 3
+                can_proceed = remedial_score >= threshold
+            elif level == 'A2':
+                # A2: Gap Fill - Need 8/10 to proceed
+                threshold = 8
+                can_proceed = remedial_score >= threshold
+            elif level == 'B1':
+                # B1: Short Justification - Need CEFR score >= 2 (A2 level)
+                threshold = 2
+                can_proceed = remedial_score >= threshold
+            elif level == 'B2':
+                # B2: Structured Explanation - Need CEFR score >= 3 (B1 level)
+                threshold = 3
+                can_proceed = remedial_score >= threshold
+            elif level == 'C1':
+                # C1: Financial Rationale - Need CEFR score >= 4 (B2 level)
+                threshold = 4
+                can_proceed = remedial_score >= threshold
+
+            next_step = 4
+
+        elif step_id == 4:
+            # STEP 4 REMEDIAL CONDITIONS
+            if level == 'A1':
+                # A1: Fill-in Budget Template - Need 3/4 to proceed
+                threshold = 3
+                can_proceed = remedial_score >= threshold
+            elif level == 'A2':
+                # A2: Sentence Completers - Need 4/5 to proceed
+                threshold = 4
+                can_proceed = remedial_score >= threshold
+            elif level == 'B1':
+                # B1: Budget + Justification - Need 4/6 to proceed
+                threshold = 4
+                can_proceed = remedial_score >= threshold
+            elif level == 'B2':
+                # B2: Draft → Revision - Need 6/8 to proceed
+                threshold = 6
+                can_proceed = remedial_score >= threshold
+            elif level == 'C1':
+                # C1: Strategic Proposal - Need 9/12 to proceed
+                threshold = 9
+                can_proceed = remedial_score >= threshold
+
+            next_step = 'phase4'  # Move to Phase 4
+        else:
+            # Default for other steps
+            next_step = step_id + 1
+
+        # Determine next URL
+        if can_proceed:
+            if next_step == 'phase4':
+                next_url = "/app/phase4/step/1"
+            else:
+                next_url = f"/app/phase3/step/{next_step}"
+        else:
+            # Stay in remedial or retry
+            next_url = f"/app/phase3/step/{step_id}/remedial/{level.lower()}/retry"
+
+        # TERMINAL OUTPUT (Scores NOT shown to user)
+        print("\n" + "="*70)
+        print(f"🔸 PHASE 3 STEP {step_id} REMEDIAL {level} - EVALUATION (INTERNAL USE ONLY)")
+        print("="*70)
+        print(f"User ID: {user_id}")
+        print(f"Remedial Score: {remedial_score}/{max_score}")
+
+        if step_id == 1 and level == 'A2':
+            actual_percent = (remedial_score / max_score * 100) if max_score > 0 else 0
+            print(f"Success Rate: {actual_percent:.1f}% (Required: 80%)")
+        else:
+            print(f"Threshold: {threshold}")
+
+        if can_proceed:
+            if next_step == 'phase4':
+                print(f"CAN PROCEED: ✓ YES - Moving to Phase 4")
+            else:
+                print(f"CAN PROCEED: ✓ YES - Moving to Step {next_step}")
+        else:
+            print(f"CAN PROCEED: ✗ NO - Remedial required")
+        print("="*70 + "\n")
+
+        logger.info(f"Phase 3 Step {step_id} Remedial {level} - User {user_id}: Score={remedial_score}/{max_score}, CanProceed={can_proceed}, NextStep={next_step if can_proceed else 'Retry'}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'can_proceed': can_proceed,
+                'next_url': next_url,
+                'level': level,
+                'next_step': next_step if can_proceed else None
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error evaluating Phase 3 remedial: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @phase3_bp.route('/remedial/log', methods=['POST'])
@@ -148,15 +422,15 @@ def log_remedial_task():
         max_score = data.get('max_score', 0)
         time_taken = data.get('time_taken', 0)
 
-        # TERMINAL OUTPUT - Detailed logging
-        print("\n" + "="*60)
-        print(f"PHASE 3 REMEDIAL - LEVEL {level} - TASK {task}")
-        print("="*60)
+        # TERMINAL OUTPUT - Detailed logging (Scores NOT shown to user)
+        print("\n" + "="*70)
+        print(f"📝 PHASE 3 REMEDIAL - LEVEL {level} - TASK {task} (INTERNAL)")
+        print("="*70)
         print(f"User ID: {user_id}")
         print(f"Score: {score}/{max_score} points")
         print(f"Time Taken: {time_taken} seconds")
         print(f"Success Rate: {(score/max_score)*100:.1f}%" if max_score > 0 else "N/A")
-        print("="*60 + "\n")
+        print("="*70 + "\n")
 
         logger.info(f"Phase 3 Remedial {level} Task {task} - User {user_id}: Score={score}/{max_score}, Time={time_taken}s")
 
@@ -177,6 +451,7 @@ def log_remedial_task():
 def log_interaction():
     """
     Log interaction completion for Phase 3
+    🎯 Scores are NOT shown to the user - only logged in terminal
     """
     try:
         user_id = session.get('user_id')
@@ -189,16 +464,16 @@ def log_interaction():
         time_taken = data.get('time_taken', 0)
         completed = data.get('completed', False)
 
-        # TERMINAL OUTPUT - Detailed logging
-        print("\n" + "="*60)
-        print(f"PHASE 3 STEP {step} - INTERACTION {interaction}")
-        print("="*60)
+        # TERMINAL OUTPUT - Detailed logging (Scores NOT shown to user)
+        print("\n" + "="*70)
+        print(f"📊 PHASE 3 STEP {step} - INTERACTION {interaction} (INTERNAL USE ONLY)")
+        print("="*70)
         print(f"User ID: {user_id}")
         print(f"Score: {score}/{max_score} points")
         print(f"Time Taken: {time_taken} seconds")
         print(f"Completed: {completed}")
         print(f"Success Rate: {(score/max_score)*100:.1f}%" if max_score > 0 else "N/A")
-        print("="*60 + "\n")
+        print("="*70 + "\n")
 
         logger.info(f"Phase 3 Step {step} Interaction {interaction} - User {user_id}: Score={score}/{max_score}, Time={time_taken}s")
 
@@ -354,16 +629,16 @@ Respond ONLY with a JSON object in this exact format:
                     'evaluation': 'Evaluation completed.'
                 })
 
-        # Terminal output
-        print("\n" + "="*60)
-        print(f"PHASE 3 REMEDIAL EVALUATION - LEVEL {level} - TASK {task}")
-        print("="*60)
+        # TERMINAL OUTPUT (Scores NOT shown to user)
+        print("\n" + "="*70)
+        print(f"📝 PHASE 3 REMEDIAL EVALUATION - LEVEL {level} - TASK {task} (INTERNAL)")
+        print("="*70)
         print(f"User ID: {user_id}")
         print(f"Total Score: {total_score}/{len(answers)}")
         for eval_result in evaluations:
             print(f"\nAnswer {eval_result['id']}: {eval_result['score']}/1")
             print(f"  Feedback: {eval_result['feedback']}")
-        print("="*60 + "\n")
+        print("="*70 + "\n")
 
         return jsonify({
             'success': True,
