@@ -167,32 +167,39 @@ def calculate_step1_score():
         # Calculate total score
         total_score = interaction1_score + interaction2_score + interaction3_score
 
-        # Determine remedial CEFR level based on Interaction 3 (sentence CEFR score)
-        remedial_map = {1: 'Remedial A1', 2: 'Remedial A2', 3: 'Remedial B1', 4: 'Remedial B2', 5: 'Remedial C1'}
-        remedial_level = remedial_map.get(interaction3_score, 'Remedial A1')
+        # Determine remedial CEFR level based on TOTAL SCORE thresholds
+        # Routing Logic:
+        # - total < 7 → Remedial A1
+        # - total < 12 → Remedial A2
+        # - total < 16 → Remedial B1
+        # - total < 19 → Remedial B2
+        # - total >= 19 → Remedial C1
+        if total_score < 7:
+            remedial_level = 'Remedial A1'
+        elif total_score < 12:
+            remedial_level = 'Remedial A2'
+        elif total_score < 16:
+            remedial_level = 'Remedial B1'
+        elif total_score < 19:
+            remedial_level = 'Remedial B2'
+        else:
+            remedial_level = 'Remedial C1'
 
-        # Determine if should proceed (I3 CEFR >= B1 = 3 points)
-        should_proceed = interaction3_score >= 3
+        # All users must complete remedial (no direct proceed)
+        should_proceed = False
 
-        # TERMINAL OUTPUT - Detailed logging for professor
-        print("\n" + "="*60)
-        print("PHASE 4 STEP 1 - SCORING RESULTS")
-        print("="*60)
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🎯 PHASE 4 STEP 1 - SCORE CALCULATION (INTERNAL USE ONLY)")
+        print("="*70)
         print(f"User ID: {user_id}")
-        print(f"\nInteraction 1 (Matching Game):")
-        print(f"  Score: {interaction1_score}/8 points")
-        print(f"  Level: {interaction1_level}")
-        print(f"\nInteraction 2 (Wordshake Game):")
-        print(f"  Score: {interaction2_score}/8 points")
-        print(f"  Level: {interaction2_level}")
-        print(f"\nInteraction 3 (Sentence Production):")
-        print(f"  Score: {interaction3_score}/5 points")
-        print(f"  Level: {interaction3_level}")
-        print(f"\n" + "-"*60)
-        print(f"TOTAL SCORE: {total_score}/21 points")
-        print(f"REMEDIAL LEVEL: {remedial_level}")
-        print(f"PROCEED TO NEXT: {'✅ YES' if should_proceed else '❌ NO - Remedial Required'}")
-        print("="*60 + "\n")
+        print(f"Interaction 1 (Matching): {interaction1_score}/8 → Level: {interaction1_level}")
+        print(f"Interaction 2 (Wordshake): {interaction2_score}/8 → Level: {interaction2_level}")
+        print(f"Interaction 3 (Sentence): {interaction3_score}/5 → Level: {interaction3_level}")
+        print(f"📊 Total Score: {total_score}/21")
+        print(f"📍 Remedial Level: {remedial_level}")
+        print(f"Route: User must complete {remedial_level}")
+        print("="*70 + "\n")
 
         logger.info(f"Phase 4 Step 1 scoring - User {user_id}: I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}, Total={total_score}, Level={remedial_level}")
 
@@ -236,6 +243,10 @@ def calculate_a1_final_score():
     """
     Calculate and log Remedial A1 final score
     Pass threshold: >= 13/16
+
+    RETRY LOGIC:
+    - PASS (score >= 13) → proceed to Step 2
+    - FAIL (score < 13) → RETRY/REPEAT Remedial A1
     """
     try:
         user_id = session.get('user_id')
@@ -244,35 +255,36 @@ def calculate_a1_final_score():
         task_a_score = data.get('task_a_score', 0)
         task_b_score = data.get('task_b_score', 0)
         total_score = task_a_score + task_b_score
-        passed = total_score >= 13
+        threshold = 13
+        max_score = 16
+        passed = total_score >= threshold
 
-        # TERMINAL OUTPUT - Detailed logging for professor
-        print("\n" + "="*60)
-        print("REMEDIAL A1 - FINAL ASSESSMENT")
-        print("="*60)
+        # Determine next URL based on pass/fail
+        if passed:
+            next_url = "/app/phase4/step/3"
+        else:
+            next_url = "/app/phase4/step/1/remedial/a1/retry"
+
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🔸 PHASE 4 STEP 1 REMEDIAL A1 - EVALUATION (INTERNAL USE ONLY)")
+        print("="*70)
         print(f"User ID: {user_id}")
-        print(f"\nTask A (Drag-Drop Matching):")
-        print(f"  Score: {task_a_score}/8 points")
-        print(f"\nTask B (Wordle Game):")
-        print(f"  Score: {task_b_score}/8 points")
-        print(f"\n" + "-"*60)
-        print(f"TOTAL SCORE: {total_score}/16 points")
-        print(f"PASS THRESHOLD: 13/16 points")
-        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
-        print("="*60 + "\n")
+        print(f"Task A (Drag-Drop Matching): {task_a_score}/8")
+        print(f"Task B (Wordle Game): {task_b_score}/8")
+        print(f"📊 Remedial Score: {total_score}/{max_score}")
+        print(f"Threshold: {threshold}")
+        print(f"CAN PROCEED: {'✓ YES - Moving to Step 2' if passed else '✗ NO - Remedial required'}")
+        print(f"Next URL: {next_url}")
+        print("="*70 + "\n")
 
-        logger.info(f"Remedial A1 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 1 Remedial A1 - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
-            'data': {
-                'task_a_score': task_a_score,
-                'task_b_score': task_b_score,
-                'total_score': total_score,
-                'max_score': 16,
-                'passed': passed,
-                'pass_threshold': 13
-            }
+            'can_proceed': passed,
+            'next_url': next_url,
+            'message': 'Evaluation complete' if passed else 'Additional practice needed'
         })
 
     except Exception as e:
@@ -288,6 +300,10 @@ def calculate_a2_final_score():
     """
     Calculate and log Remedial A2 final score
     Pass threshold: >= 13/16
+
+    RETRY LOGIC:
+    - PASS (score >= 13) → proceed to Step 2
+    - FAIL (score < 13) → RETRY/REPEAT Remedial A2
     """
     try:
         user_id = session.get('user_id')
@@ -296,35 +312,36 @@ def calculate_a2_final_score():
         task_a_score = data.get('task_a_score', 0)
         task_b_score = data.get('task_b_score', 0)
         total_score = task_a_score + task_b_score
-        passed = total_score >= 13
+        threshold = 13
+        max_score = 16
+        passed = total_score >= threshold
 
-        # TERMINAL OUTPUT - Detailed logging for professor
-        print("\n" + "="*60)
-        print("REMEDIAL A2 - FINAL ASSESSMENT")
-        print("="*60)
+        # Determine next URL based on pass/fail
+        if passed:
+            next_url = "/app/phase4/step/3"
+        else:
+            next_url = "/app/phase4/step/1/remedial/a2/retry"
+
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🔸 PHASE 4 STEP 1 REMEDIAL A2 - EVALUATION (INTERNAL USE ONLY)")
+        print("="*70)
         print(f"User ID: {user_id}")
-        print(f"\nTask A (Chat Challenge):")
-        print(f"  Score: {task_a_score}/8 points")
-        print(f"\nTask B (Expand Quest):")
-        print(f"  Score: {task_b_score}/8 points")
-        print(f"\n" + "-"*60)
-        print(f"TOTAL SCORE: {total_score}/16 points")
-        print(f"PASS THRESHOLD: 13/16 points")
-        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
-        print("="*60 + "\n")
+        print(f"Task A (Chat Challenge): {task_a_score}/8")
+        print(f"Task B (Expand Quest): {task_b_score}/8")
+        print(f"📊 Remedial Score: {total_score}/{max_score}")
+        print(f"Threshold: {threshold}")
+        print(f"CAN PROCEED: {'✓ YES - Moving to Step 2' if passed else '✗ NO - Remedial required'}")
+        print(f"Next URL: {next_url}")
+        print("="*70 + "\n")
 
-        logger.info(f"Remedial A2 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 1 Remedial A2 - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
-            'data': {
-                'task_a_score': task_a_score,
-                'task_b_score': task_b_score,
-                'total_score': total_score,
-                'max_score': 16,
-                'passed': passed,
-                'pass_threshold': 13
-            }
+            'can_proceed': passed,
+            'next_url': next_url,
+            'message': 'Evaluation complete' if passed else 'Additional practice needed'
         })
 
     except Exception as e:
@@ -340,6 +357,10 @@ def calculate_b1_final_score():
     """
     Calculate and log Remedial B1 final score
     Pass threshold: >= 22/27
+
+    RETRY LOGIC:
+    - PASS (score >= 22) → proceed to Step 2
+    - FAIL (score < 22) → RETRY/REPEAT Remedial B1
     """
     try:
         user_id = session.get('user_id')
@@ -350,41 +371,38 @@ def calculate_b1_final_score():
         task_c_score = data.get('task_c_score', 0)
         task_d_score = data.get('task_d_score', 0)
         total_score = task_a_score + task_b_score + task_c_score + task_d_score
-        passed = total_score >= 22
+        threshold = 22
+        max_score = 27
+        passed = total_score >= threshold
 
-        # TERMINAL OUTPUT - Detailed logging for professor
-        print("\n" + "="*60)
-        print("REMEDIAL B1 - FINAL ASSESSMENT")
-        print("="*60)
+        # Determine next URL based on pass/fail
+        if passed:
+            next_url = "/app/phase4/step/3"
+        else:
+            next_url = "/app/phase4/step/1/remedial/b1/retry"
+
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🔸 PHASE 4 STEP 1 REMEDIAL B1 - EVALUATION (INTERNAL USE ONLY)")
+        print("="*70)
         print(f"User ID: {user_id}")
-        print(f"\nTask A (Dialogue):")
-        print(f"  Score: {task_a_score}/5 points")
-        print(f"\nTask B (Proposals):")
-        print(f"  Score: {task_b_score}/8 points")
-        print(f"\nTask C (Quiz):")
-        print(f"  Score: {task_c_score}/6 points")
-        print(f"\nTask D (Matching):")
-        print(f"  Score: {task_d_score}/8 points")
-        print(f"\n" + "-"*60)
-        print(f"TOTAL SCORE: {total_score}/27 points")
-        print(f"PASS THRESHOLD: 22/27 points")
-        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
-        print("="*60 + "\n")
+        print(f"Task A (Dialogue): {task_a_score}/5")
+        print(f"Task B (Proposals): {task_b_score}/8")
+        print(f"Task C (Quiz): {task_c_score}/6")
+        print(f"Task D (Matching): {task_d_score}/8")
+        print(f"📊 Remedial Score: {total_score}/{max_score}")
+        print(f"Threshold: {threshold}")
+        print(f"CAN PROCEED: {'✓ YES - Moving to Step 2' if passed else '✗ NO - Remedial required'}")
+        print(f"Next URL: {next_url}")
+        print("="*70 + "\n")
 
-        logger.info(f"Remedial B1 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 1 Remedial B1 - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
-            'data': {
-                'task_a_score': task_a_score,
-                'task_b_score': task_b_score,
-                'task_c_score': task_c_score,
-                'task_d_score': task_d_score,
-                'total_score': total_score,
-                'max_score': 27,
-                'passed': passed,
-                'pass_threshold': 22
-            }
+            'can_proceed': passed,
+            'next_url': next_url,
+            'message': 'Evaluation complete' if passed else 'Additional practice needed'
         })
 
     except Exception as e:
@@ -400,6 +418,10 @@ def calculate_b2_final_score():
     """
     Calculate and log Remedial B2 final score
     Pass threshold: >= 24/30
+
+    RETRY LOGIC:
+    - PASS (score >= 24) → proceed to Step 2
+    - FAIL (score < 24) → RETRY/REPEAT Remedial B2
     """
     try:
         user_id = session.get('user_id')
@@ -410,41 +432,38 @@ def calculate_b2_final_score():
         task_c_score = data.get('task_c_score', 0)
         task_d_score = data.get('task_d_score', 0)
         total_score = task_a_score + task_b_score + task_c_score + task_d_score
-        passed = total_score >= 24
+        threshold = 24
+        max_score = 30
+        passed = total_score >= threshold
 
-        # TERMINAL OUTPUT - Detailed logging for professor
-        print("\n" + "="*60)
-        print("REMEDIAL B2 - FINAL ASSESSMENT")
-        print("="*60)
+        # Determine next URL based on pass/fail
+        if passed:
+            next_url = "/app/phase4/step/3"
+        else:
+            next_url = "/app/phase4/step/1/remedial/b2/retry"
+
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🔸 PHASE 4 STEP 1 REMEDIAL B2 - EVALUATION (INTERNAL USE ONLY)")
+        print("="*70)
         print(f"User ID: {user_id}")
-        print(f"\nTask A (Role-Play RPG):")
-        print(f"  Score: {task_a_score}/8 points")
-        print(f"\nTask B (Compare Quest):")
-        print(f"  Score: {task_b_score}/8 points")
-        print(f"\nTask C (Sushi Spell):")
-        print(f"  Score: {task_c_score}/8 points")
-        print(f"\nTask D (Kahoot Quiz):")
-        print(f"  Score: {task_d_score}/6 points")
-        print(f"\n" + "-"*60)
-        print(f"TOTAL SCORE: {total_score}/30 points")
-        print(f"PASS THRESHOLD: 24/30 points")
-        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
-        print("="*60 + "\n")
+        print(f"Task A (Role-Play RPG): {task_a_score}/8")
+        print(f"Task B (Compare Quest): {task_b_score}/8")
+        print(f"Task C (Sushi Spell): {task_c_score}/8")
+        print(f"Task D (Kahoot Quiz): {task_d_score}/6")
+        print(f"📊 Remedial Score: {total_score}/{max_score}")
+        print(f"Threshold: {threshold}")
+        print(f"CAN PROCEED: {'✓ YES - Moving to Step 2' if passed else '✗ NO - Remedial required'}")
+        print(f"Next URL: {next_url}")
+        print("="*70 + "\n")
 
-        logger.info(f"Remedial B2 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 1 Remedial B2 - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
-            'data': {
-                'task_a_score': task_a_score,
-                'task_b_score': task_b_score,
-                'task_c_score': task_c_score,
-                'task_d_score': task_d_score,
-                'total_score': total_score,
-                'max_score': 30,
-                'passed': passed,
-                'pass_threshold': 24
-            }
+            'can_proceed': passed,
+            'next_url': next_url,
+            'message': 'Evaluation complete' if passed else 'Additional practice needed'
         })
 
     except Exception as e:
@@ -460,6 +479,10 @@ def calculate_c1_final_score():
     """
     Calculate and log Remedial C1 final score
     Pass threshold: >= 16/19
+
+    RETRY LOGIC:
+    - PASS (score >= 16) → proceed to Step 2
+    - FAIL (score < 16) → RETRY/REPEAT Remedial C1
     """
     try:
         user_id = session.get('user_id')
@@ -470,41 +493,38 @@ def calculate_c1_final_score():
         task_c_score = data.get('task_c_score', 0)
         task_d_score = data.get('task_d_score', 0)
         total_score = task_a_score + task_b_score + task_c_score + task_d_score
-        passed = total_score >= 16
+        threshold = 16
+        max_score = 19
+        passed = total_score >= threshold
 
-        # TERMINAL OUTPUT - Detailed logging for professor
-        print("\n" + "="*60)
-        print("REMEDIAL C1 - FINAL ASSESSMENT")
-        print("="*60)
+        # Determine next URL based on pass/fail
+        if passed:
+            next_url = "/app/phase4/step/3"
+        else:
+            next_url = "/app/phase4/step/1/remedial/c1/retry"
+
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🔸 PHASE 4 STEP 1 REMEDIAL C1 - EVALUATION (INTERNAL USE ONLY)")
+        print("="*70)
         print(f"User ID: {user_id}")
-        print(f"\nTask A (Debate Duel):")
-        print(f"  Score: {task_a_score}/4 points")
-        print(f"\nTask B (Critique Challenge):")
-        print(f"  Score: {task_b_score}/8 points")
-        print(f"\nTask C (Wordshake):")
-        print(f"  Score: {task_c_score}/6 points")
-        print(f"\nTask D (Live Debate):")
-        print(f"  Score: {task_d_score}/1 points")
-        print(f"\n" + "-"*60)
-        print(f"TOTAL SCORE: {total_score}/19 points")
-        print(f"PASS THRESHOLD: 16/19 points")
-        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
-        print("="*60 + "\n")
+        print(f"Task A (Debate Duel): {task_a_score}/4")
+        print(f"Task B (Critique Challenge): {task_b_score}/8")
+        print(f"Task C (Wordshake): {task_c_score}/6")
+        print(f"Task D (Live Debate): {task_d_score}/1")
+        print(f"📊 Remedial Score: {total_score}/{max_score}")
+        print(f"Threshold: {threshold}")
+        print(f"CAN PROCEED: {'✓ YES - Moving to Step 2' if passed else '✗ NO - Remedial required'}")
+        print(f"Next URL: {next_url}")
+        print("="*70 + "\n")
 
-        logger.info(f"Remedial C1 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 1 Remedial C1 - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
-            'data': {
-                'task_a_score': task_a_score,
-                'task_b_score': task_b_score,
-                'task_c_score': task_c_score,
-                'task_d_score': task_d_score,
-                'total_score': total_score,
-                'max_score': 19,
-                'passed': passed,
-                'pass_threshold': 16
-            }
+            'can_proceed': passed,
+            'next_url': next_url,
+            'message': 'Evaluation complete' if passed else 'Additional practice needed'
         })
 
     except Exception as e:
@@ -513,6 +533,134 @@ def calculate_c1_final_score():
             'success': False,
             'error': str(e)
         }), 500
+
+# ==================== PHASE 4 STEP 3 SCORE CALCULATION ====================
+
+@phase4_bp.route('/step/3/calculate-score', methods=['POST'])
+@login_required
+def calculate_step3_score():
+    """
+    Calculate Phase 4 Step 3 total score and route to remedial
+    Based on 3 interactions (CEFR-scored):
+    - Interaction 1 (Define "Persuasive"): 1-5 points (CEFR A1-C1)
+    - Interaction 2 (Explain "Dramatisation"): 1-5 points (CEFR A1-C1)
+    - Interaction 3 (Game Connection - Sushi Spell): 1-5 points (CEFR A1-C1)
+    Total: 15 points max
+
+    Routing Logic:
+    - total < 4  → Remedial A1
+    - total < 7  → Remedial A2
+    - total < 10 → Remedial B1
+    - total < 13 → Remedial B2
+    - total >= 13 → Remedial C1
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        interaction1_score = data.get('interaction1_score', 0)
+        interaction2_score = data.get('interaction2_score', 0)
+        interaction3_score = data.get('interaction3_score', 0)
+
+        # Validate scores (CEFR 1-5 scale)
+        if not (1 <= interaction1_score <= 5):
+            return jsonify({
+                'success': False,
+                'error': 'Interaction 1 score must be between 1 and 5'
+            }), 400
+
+        if not (1 <= interaction2_score <= 5):
+            return jsonify({
+                'success': False,
+                'error': 'Interaction 2 score must be between 1 and 5'
+            }), 400
+
+        if not (1 <= interaction3_score <= 5):
+            return jsonify({
+                'success': False,
+                'error': 'Interaction 3 score must be between 1 and 5'
+            }), 400
+
+        # Calculate total score
+        total_score = interaction1_score + interaction2_score + interaction3_score
+
+        # Map CEFR scores to level names
+        level_to_name = {1: 'A1', 2: 'A2', 3: 'B1', 4: 'B2', 5: 'C1'}
+        interaction1_level = level_to_name.get(interaction1_score, 'A1')
+        interaction2_level = level_to_name.get(interaction2_score, 'A1')
+        interaction3_level = level_to_name.get(interaction3_score, 'A1')
+
+        # Determine remedial CEFR level based on TOTAL SCORE thresholds
+        # Routing Logic:
+        # - total < 4  → Remedial A1
+        # - total < 7  → Remedial A2
+        # - total < 10 → Remedial B1
+        # - total < 13 → Remedial B2
+        # - total >= 13 → Remedial C1
+        if total_score < 4:
+            remedial_level = 'Remedial A1'
+        elif total_score < 7:
+            remedial_level = 'Remedial A2'
+        elif total_score < 10:
+            remedial_level = 'Remedial B1'
+        elif total_score < 13:
+            remedial_level = 'Remedial B2'
+        else:
+            remedial_level = 'Remedial C1'
+
+        # All users must complete remedial (no direct proceed)
+        should_proceed = False
+
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🎯 PHASE 4 STEP 3 - SCORE CALCULATION (INTERNAL USE ONLY)")
+        print("="*70)
+        print(f"User ID: {user_id}")
+        print(f"Interaction 1 (Define 'Persuasive'): {interaction1_score}/5 → Level: {interaction1_level}")
+        print(f"Interaction 2 (Explain 'Dramatisation'): {interaction2_score}/5 → Level: {interaction2_level}")
+        print(f"Interaction 3 (Game Connection): {interaction3_score}/5 → Level: {interaction3_level}")
+        print(f"📊 Total Score: {total_score}/15")
+        print(f"📍 Remedial Level: {remedial_level}")
+        print(f"Route: User must complete {remedial_level}")
+        print("="*70 + "\n")
+
+        logger.info(f"Phase 4 Step 3 scoring - User {user_id}: I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}, Total={total_score}, Level={remedial_level}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'interaction1': {
+                    'score': interaction1_score,
+                    'max_score': 5,
+                    'level': interaction1_level
+                },
+                'interaction2': {
+                    'score': interaction2_score,
+                    'max_score': 5,
+                    'level': interaction2_level
+                },
+                'interaction3': {
+                    'score': interaction3_score,
+                    'max_score': 5,
+                    'level': interaction3_level
+                },
+                'total': {
+                    'score': total_score,
+                    'max_score': 15,
+                    'remedial_level': remedial_level,
+                    'should_proceed': should_proceed
+                }
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 3 score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ==================== END PHASE 4 STEP 3 ====================
 
 @phase4_bp.route('/evaluate-writing', methods=['POST'])
 def evaluate_writing():
@@ -669,8 +817,11 @@ Return ONLY valid JSON."""
 @login_required
 def calculate_step3_a1_final_score():
     """
-    Calculate and log Phase 4 Step 2 Remedial A1 final score
+    Calculate and log Phase 4 Step 3 Remedial A1 final score
+    Tasks: Term Treasure Hunt (8) + Fill Quest (8) + Sentence Builder (6)
+    Total Max: 22 points
     Pass threshold: >= 18/22 (~82%)
+    Route to Step 4 on pass
     """
     try:
         user_id = session.get('user_id')
@@ -682,9 +833,12 @@ def calculate_step3_a1_final_score():
         total_score = task_a_score + task_b_score + task_c_score
         passed = total_score >= 18
 
+        # Determine next URL
+        next_url = "/app/phase4/step/4" if passed else "/app/phase4/step/3/remedial/a1/retry"
+
         # TERMINAL OUTPUT - Detailed logging for professor
         print("\n" + "="*60)
-        print("PHASE 4 STEP 2 - REMEDIAL A1 - FINAL ASSESSMENT")
+        print("PHASE 4 STEP 3 - REMEDIAL A1 - FINAL ASSESSMENT")
         print("="*60)
         print(f"User ID: {user_id}")
         print(f"\nTask A (Term Treasure Hunt):")
@@ -697,9 +851,10 @@ def calculate_step3_a1_final_score():
         print(f"TOTAL SCORE: {total_score}/22 points")
         print(f"PASS THRESHOLD: 18/22 points (~82%)")
         print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
         print("="*60 + "\n")
 
-        logger.info(f"Phase 4 Step 2 Remedial A1 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 3 Remedial A1 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
@@ -710,12 +865,13 @@ def calculate_step3_a1_final_score():
                 'total_score': total_score,
                 'max_score': 22,
                 'passed': passed,
-                'pass_threshold': 18
+                'pass_threshold': 18,
+                'next_url': next_url
             }
         })
 
     except Exception as e:
-        logger.error(f"Error calculating Step 2 A1 final score: {e}")
+        logger.error(f"Error calculating Step 3 A1 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -725,8 +881,11 @@ def calculate_step3_a1_final_score():
 @login_required
 def calculate_step3_a2_final_score():
     """
-    Calculate and log Phase 4 Step 2 Remedial A2 final score
+    Calculate and log Phase 4 Step 3 Remedial A2 final score
+    Tasks: Dialogue Adventure (8) + Expand Empire (8) + Connector Quest (6)
+    Total Max: 22 points
     Pass threshold: >= 18/22 (~82%)
+    Route to Step 4 on pass
     """
     try:
         user_id = session.get('user_id')
@@ -738,9 +897,12 @@ def calculate_step3_a2_final_score():
         total_score = task_a_score + task_b_score + task_c_score
         passed = total_score >= 18
 
+        # Determine next URL
+        next_url = "/app/phase4/step/4" if passed else "/app/phase4/step/3/remedial/a2/retry"
+
         # TERMINAL OUTPUT - Detailed logging for professor
         print("\n" + "="*60)
-        print("PHASE 4 STEP 2 - REMEDIAL A2 - FINAL ASSESSMENT")
+        print("PHASE 4 STEP 3 - REMEDIAL A2 - FINAL ASSESSMENT")
         print("="*60)
         print(f"User ID: {user_id}")
         print(f"\nTask A (Dialogue Adventure):")
@@ -753,9 +915,10 @@ def calculate_step3_a2_final_score():
         print(f"TOTAL SCORE: {total_score}/22 points")
         print(f"PASS THRESHOLD: 18/22 points (~82%)")
         print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
         print("="*60 + "\n")
 
-        logger.info(f"Phase 4 Step 2 Remedial A2 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 3 Remedial A2 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
@@ -766,12 +929,13 @@ def calculate_step3_a2_final_score():
                 'total_score': total_score,
                 'max_score': 22,
                 'passed': passed,
-                'pass_threshold': 18
+                'pass_threshold': 18,
+                'next_url': next_url
             }
         })
 
     except Exception as e:
-        logger.error(f"Error calculating Step 2 A2 final score: {e}")
+        logger.error(f"Error calculating Step 3 A2 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -1204,8 +1368,11 @@ Return ONLY valid JSON."""
 @login_required
 def calculate_step3_b2_final_score():
     """
-    Calculate and log Phase 4 Step 2 Remedial B2 final score
-    Pass threshold: >= 15/18 (~83%)
+    Calculate and log Phase 4 Step 3 Remedial B2 final score
+    Tasks: Role-Play Saga (10) + Explain Expedition (8) + Task C (8) + Task D (6) + Task E (6) + Task F (6)
+    Total Max: 44 points
+    Pass threshold: >= 35/44 (~80%)
+    Route to Step 4 on pass
     """
     try:
         user_id = session.get('user_id')
@@ -1213,40 +1380,55 @@ def calculate_step3_b2_final_score():
 
         task_a_score = data.get('task_a_score', 0)
         task_b_score = data.get('task_b_score', 0)
-        total_score = task_a_score + task_b_score
-        passed = total_score >= 15
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+        task_e_score = data.get('task_e_score', 0)
+        task_f_score = data.get('task_f_score', 0)
+        total_score = task_a_score + task_b_score + task_c_score + task_d_score + task_e_score + task_f_score
+        passed = total_score >= 35
+
+        # Determine next URL
+        next_url = "/app/phase4/step/4" if passed else "/app/phase4/step/3/remedial/b2/retry"
 
         # TERMINAL OUTPUT - Detailed logging for professor
         print("\n" + "="*60)
-        print("PHASE 4 STEP 2 - REMEDIAL B2 - FINAL ASSESSMENT")
+        print("PHASE 4 STEP 3 - REMEDIAL B2 - FINAL ASSESSMENT")
         print("="*60)
         print(f"User ID: {user_id}")
-        print(f"\nTask A (Role-Play Saga):")
-        print(f"  Score: {task_a_score}/10 points")
-        print(f"\nTask B (Explain Expedition):")
-        print(f"  Score: {task_b_score}/8 points")
+        print(f"\nTask A (Role-Play Saga):         {task_a_score}/10 points")
+        print(f"Task B (Explain Expedition):     {task_b_score}/8 points")
+        print(f"Task C:                          {task_c_score}/8 points")
+        print(f"Task D:                          {task_d_score}/6 points")
+        print(f"Task E:                          {task_e_score}/6 points")
+        print(f"Task F:                          {task_f_score}/6 points")
         print(f"\n" + "-"*60)
-        print(f"TOTAL SCORE: {total_score}/18 points")
-        print(f"PASS THRESHOLD: 15/18 points (~83%)")
+        print(f"TOTAL SCORE: {total_score}/44 points")
+        print(f"PASS THRESHOLD: 35/44 points (~80%)")
         print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
         print("="*60 + "\n")
 
-        logger.info(f"Phase 4 Step 2 Remedial B2 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 3 Remedial B2 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, TaskE={task_e_score}, TaskF={task_f_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
             'data': {
                 'task_a_score': task_a_score,
                 'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'task_e_score': task_e_score,
+                'task_f_score': task_f_score,
                 'total_score': total_score,
-                'max_score': 18,
+                'max_score': 44,
                 'passed': passed,
-                'pass_threshold': 15
+                'pass_threshold': 35,
+                'next_url': next_url
             }
         })
 
     except Exception as e:
-        logger.error(f"Error calculating Step 2 B2 final score: {e}")
+        logger.error(f"Error calculating Step 3 B2 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -1256,10 +1438,12 @@ def calculate_step3_b2_final_score():
 @login_required
 def calculate_step3_b1_final_score():
     """
-    Calculate and log Phase 4 Step 2 Remedial B1 final score
-    Pass threshold: >= 22/27 (~81%)
-    Required tasks: A (5), B (8), C (6), D (8)
-    Bonus tasks: E (6), F (6)
+    Calculate and log Phase 4 Step 3 Remedial B1 final score
+    Required tasks: 27 points max
+    Bonus tasks: Tense Travel (6) + Grammar Kahoot (6)
+    Total Max: 39 points (27 required + 12 bonus)
+    Pass threshold: >= 22/27 required points (~81%)
+    Route to Step 4 on pass
     """
     try:
         user_id = session.get('user_id')
@@ -1284,9 +1468,12 @@ def calculate_step3_b1_final_score():
         # Pass based on required tasks only
         passed = required_total >= 22
 
+        # Determine next URL
+        next_url = "/app/phase4/step/4" if passed else "/app/phase4/step/3/remedial/b1/retry"
+
         # TERMINAL OUTPUT - Detailed logging for professor
         print("\n" + "="*60)
-        print("PHASE 4 STEP 2 - REMEDIAL B1 - FINAL ASSESSMENT")
+        print("PHASE 4 STEP 3 - REMEDIAL B1 - FINAL ASSESSMENT")
         print("="*60)
         print(f"User ID: {user_id}")
         print(f"\nREQUIRED TASKS:")
@@ -1304,9 +1491,10 @@ def calculate_step3_b1_final_score():
         print(f"REQUIRED TASKS SCORE:             {required_total}/27 points")
         print(f"PASS THRESHOLD:                   22/27 points (~81%)")
         print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
         print("="*60 + "\n")
 
-        logger.info(f"Phase 4 Step 2 Remedial B1 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, TaskE={task_e_score}, TaskF={task_f_score}, Required={required_total}, Bonus={bonus_total}, Total={total_score}, Passed={passed}")
+        logger.info(f"Phase 4 Step 3 Remedial B1 Final - User {user_id}: TaskA={task_a_score}, TaskB={task_b_score}, TaskC={task_c_score}, TaskD={task_d_score}, TaskE={task_e_score}, TaskF={task_f_score}, Required={required_total}, Bonus={bonus_total}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
@@ -1324,12 +1512,91 @@ def calculate_step3_b1_final_score():
                 'max_score_bonus': 12,
                 'max_score_total': 39,
                 'passed': passed,
-                'pass_threshold': 22
+                'pass_threshold': 22,
+                'next_url': next_url
             }
         })
 
     except Exception as e:
-        logger.error(f"Error calculating Step 2 B1 final score: {e}")
+        logger.error(f"Error calculating Step 3 B1 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step3/remedial/c1/final-score', methods=['POST'])
+@login_required
+def calculate_step3_c1_final_score():
+    """
+    Calculate and log Phase 4 Step 3 Remedial C1 final score
+    Tasks: Task A (10) + Task B (8) + Task C (6) + Task D (6) + Task E (6) + Task F (6) + Task G (6) + Task H (6)
+    Total Max: 54 points
+    Pass threshold: >= 43/54 (~80%)
+    Route to Step 4 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+        task_e_score = data.get('task_e_score', 0)
+        task_f_score = data.get('task_f_score', 0)
+        task_g_score = data.get('task_g_score', 0)
+        task_h_score = data.get('task_h_score', 0)
+
+        total_score = (task_a_score + task_b_score + task_c_score + task_d_score +
+                      task_e_score + task_f_score + task_g_score + task_h_score)
+        passed = total_score >= 43
+
+        # Determine next URL
+        next_url = "/app/phase4/step/4" if passed else "/app/phase4/step/3/remedial/c1/retry"
+
+        # TERMINAL OUTPUT - Detailed logging for professor
+        print("\n" + "="*60)
+        print("PHASE 4 STEP 3 - REMEDIAL C1 - FINAL ASSESSMENT")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"\nTask A:                          {task_a_score}/10 points")
+        print(f"Task B:                          {task_b_score}/8 points")
+        print(f"Task C:                          {task_c_score}/6 points")
+        print(f"Task D:                          {task_d_score}/6 points")
+        print(f"Task E:                          {task_e_score}/6 points")
+        print(f"Task F:                          {task_f_score}/6 points")
+        print(f"Task G:                          {task_g_score}/6 points")
+        print(f"Task H:                          {task_h_score}/6 points")
+        print(f"\n" + "-"*60)
+        print(f"TOTAL SCORE: {total_score}/54 points")
+        print(f"PASS THRESHOLD: 43/54 points (~80%)")
+        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4 Step 3 Remedial C1 Final - User {user_id}: A={task_a_score}, B={task_b_score}, C={task_c_score}, D={task_d_score}, E={task_e_score}, F={task_f_score}, G={task_g_score}, H={task_h_score}, Total={total_score}, Passed={passed}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'task_e_score': task_e_score,
+                'task_f_score': task_f_score,
+                'task_g_score': task_g_score,
+                'task_h_score': task_h_score,
+                'total_score': total_score,
+                'max_score': 54,
+                'passed': passed,
+                'pass_threshold': 43,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Step 3 C1 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -3708,6 +3975,134 @@ Return ONLY valid JSON."""
             'error': str(e)
         }), 500
 
+# ==================== PHASE 4 STEP 4 SCORE CALCULATION ====================
+
+@phase4_bp.route('/step/4/calculate-score', methods=['POST'])
+@login_required
+def calculate_step4_score():
+    """
+    Calculate Phase 4 Step 4 total score and route to remedial
+    Based on 3 interactions (CEFR-scored):
+    - Interaction 1: 1-5 points (CEFR A1-C1)
+    - Interaction 2: 1-5 points (CEFR A1-C1)
+    - Interaction 3: 1-5 points (CEFR A1-C1)
+    Total: 15 points max
+
+    Routing Logic:
+    - total < 4  → Remedial A1
+    - total < 7  → Remedial A2
+    - total < 10 → Remedial B1
+    - total < 13 → Remedial B2
+    - total >= 13 → Remedial C1
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        interaction1_score = data.get('interaction1_score', 0)
+        interaction2_score = data.get('interaction2_score', 0)
+        interaction3_score = data.get('interaction3_score', 0)
+
+        # Validate scores (CEFR 1-5 scale)
+        if not (1 <= interaction1_score <= 5):
+            return jsonify({
+                'success': False,
+                'error': 'Interaction 1 score must be between 1 and 5'
+            }), 400
+
+        if not (1 <= interaction2_score <= 5):
+            return jsonify({
+                'success': False,
+                'error': 'Interaction 2 score must be between 1 and 5'
+            }), 400
+
+        if not (1 <= interaction3_score <= 5):
+            return jsonify({
+                'success': False,
+                'error': 'Interaction 3 score must be between 1 and 5'
+            }), 400
+
+        # Calculate total score
+        total_score = interaction1_score + interaction2_score + interaction3_score
+
+        # Map CEFR scores to level names
+        level_to_name = {1: 'A1', 2: 'A2', 3: 'B1', 4: 'B2', 5: 'C1'}
+        interaction1_level = level_to_name.get(interaction1_score, 'A1')
+        interaction2_level = level_to_name.get(interaction2_score, 'A1')
+        interaction3_level = level_to_name.get(interaction3_score, 'A1')
+
+        # Determine remedial CEFR level based on TOTAL SCORE thresholds
+        # Routing Logic:
+        # - total < 4  → Remedial A1
+        # - total < 7  → Remedial A2
+        # - total < 10 → Remedial B1
+        # - total < 13 → Remedial B2
+        # - total >= 13 → Remedial C1
+        if total_score < 4:
+            remedial_level = 'Remedial A1'
+        elif total_score < 7:
+            remedial_level = 'Remedial A2'
+        elif total_score < 10:
+            remedial_level = 'Remedial B1'
+        elif total_score < 13:
+            remedial_level = 'Remedial B2'
+        else:
+            remedial_level = 'Remedial C1'
+
+        # All users must complete remedial (no direct proceed)
+        should_proceed = False
+
+        # TERMINAL OUTPUT - SCORES NEVER SHOWN TO USER (INTERNAL USE ONLY)
+        print("\n" + "="*70)
+        print("🎯 PHASE 4 STEP 4 - SCORE CALCULATION (INTERNAL USE ONLY)")
+        print("="*70)
+        print(f"User ID: {user_id}")
+        print(f"Interaction 1: {interaction1_score}/5 → Level: {interaction1_level}")
+        print(f"Interaction 2: {interaction2_score}/5 → Level: {interaction2_level}")
+        print(f"Interaction 3: {interaction3_score}/5 → Level: {interaction3_level}")
+        print(f"📊 Total Score: {total_score}/15")
+        print(f"📍 Remedial Level: {remedial_level}")
+        print(f"Route: User must complete {remedial_level}")
+        print("="*70 + "\n")
+
+        logger.info(f"Phase 4 Step 4 scoring - User {user_id}: I1={interaction1_score}, I2={interaction2_score}, I3={interaction3_score}, Total={total_score}, Level={remedial_level}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'interaction1': {
+                    'score': interaction1_score,
+                    'max_score': 5,
+                    'level': interaction1_level
+                },
+                'interaction2': {
+                    'score': interaction2_score,
+                    'max_score': 5,
+                    'level': interaction2_level
+                },
+                'interaction3': {
+                    'score': interaction3_score,
+                    'max_score': 5,
+                    'level': interaction3_level
+                },
+                'total': {
+                    'score': total_score,
+                    'max_score': 15,
+                    'remedial_level': remedial_level,
+                    'should_proceed': should_proceed
+                }
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 4 score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ==================== END PHASE 4 STEP 4 SCORE CALCULATION ====================
+
 # ============================================================================
 # PHASE 4 STEP 4: REMEDIAL LOGGING
 # ============================================================================
@@ -3753,60 +4148,128 @@ def log_step4_remedial_task():
         }), 500
 
 @phase4_bp.route('/step4/remedial/a1/final-score', methods=['POST'])
+@login_required
 def calculate_step4_a1_final_score():
     """
     Calculate Phase 4 Step 4 Remedial A1 final score
-
-    Task A: 8 points (Drag & Drop Matching)
-    Task B: 8 points (Gap Fill)
-    Task C: 6 points (Sentence Builder)
-    Total: 22 points
-    Pass threshold: 70% = 16 points
+    Tasks: Term Treasure Hunt (8) + Fill Quest (8) + Sentence Builder (6)
+    Total Max: 22 points
+    Pass threshold: >= 18/22 (~82%)
+    Route to Step 5 on pass
     """
     try:
-        user_id = session.get('user_id', 'anonymous')
+        user_id = session.get('user_id')
         data = request.json
 
-        task_a = data.get('task_a_score', 0)
-        task_b = data.get('task_b_score', 0)
-        task_c = data.get('task_c_score', 0)
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
 
-        total = task_a + task_b + task_c
+        total_score = task_a_score + task_b_score + task_c_score
         max_score = 22
-        threshold = 16  # 70%
-        passed = total >= threshold
+        threshold = 18
+        passed = total_score >= threshold
+
+        # Determine next URL
+        next_url = "/app/phase4/step/5" if passed else "/app/phase4/step/4/remedial/a1/retry"
 
         # TERMINAL OUTPUT
         print("\n" + "="*60)
-        print("PHASE 4 STEP 4 - REMEDIAL A1 - FINAL SCORE")
+        print("PHASE 4 STEP 4 - REMEDIAL A1 - FINAL ASSESSMENT")
         print("="*60)
         print(f"User ID: {user_id}")
-        print(f"Task A (Term Treasure Hunt): {task_a}/8")
-        print(f"Task B (Fill Quest): {task_b}/8")
-        print(f"Task C (Sentence Builder): {task_c}/6")
-        print("-"*60)
-        print(f"TOTAL SCORE: {total}/{max_score}")
-        print(f"Pass Threshold: {threshold}/{max_score} (70%)")
-        print(f"Result: {'✅ PASSED' if passed else '❌ FAILED'}")
+        print(f"\nTask A (Term Treasure Hunt):  {task_a_score}/8 points")
+        print(f"Task B (Fill Quest):          {task_b_score}/8 points")
+        print(f"Task C (Sentence Builder):    {task_c_score}/6 points")
+        print(f"\n" + "-"*60)
+        print(f"TOTAL SCORE: {total_score}/{max_score} points")
+        print(f"PASS THRESHOLD: {threshold}/{max_score} points (~82%)")
+        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
         print("="*60 + "\n")
 
-        logger.info(f"Phase 4 Step 4 - Remedial A1 Final - User {user_id}: {total}/{max_score} ({'PASS' if passed else 'FAIL'})")
+        logger.info(f"Phase 4 Step 4 Remedial A1 Final - User {user_id}: A={task_a_score}, B={task_b_score}, C={task_c_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
             'data': {
-                'task_a': task_a,
-                'task_b': task_b,
-                'task_c': task_c,
-                'total': total,
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'total_score': total_score,
                 'max_score': max_score,
-                'threshold': threshold,
-                'passed': passed
+                'passed': passed,
+                'pass_threshold': threshold,
+                'next_url': next_url
             }
         })
 
     except Exception as e:
         logger.error(f"Error calculating Phase 4 Step 4 A1 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step4/remedial/a2/final-score', methods=['POST'])
+@login_required
+def calculate_step4_a2_final_score():
+    """
+    Calculate Phase 4 Step 4 Remedial A2 final score
+    Tasks: Dialogue Adventure (8) + Expand Empire (7) + Connector Quest (6)
+    Total Max: 21 points
+    Pass threshold: >= 18/21 (~86%)
+    Route to Step 5 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+
+        total_score = task_a_score + task_b_score + task_c_score
+        max_score = 21
+        threshold = 18
+        passed = total_score >= threshold
+
+        # Determine next URL
+        next_url = "/app/phase4/step/5" if passed else "/app/phase4/step/4/remedial/a2/retry"
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print("PHASE 4 STEP 4 - REMEDIAL A2 - FINAL ASSESSMENT")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"\nTask A (Dialogue Adventure):  {task_a_score}/8 points")
+        print(f"Task B (Expand Empire):       {task_b_score}/7 points")
+        print(f"Task C (Connector Quest):     {task_c_score}/6 points")
+        print(f"\n" + "-"*60)
+        print(f"TOTAL SCORE: {total_score}/{max_score} points")
+        print(f"PASS THRESHOLD: {threshold}/{max_score} points (~86%)")
+        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4 Step 4 Remedial A2 Final - User {user_id}: A={task_a_score}, B={task_b_score}, C={task_c_score}, Total={total_score}, Passed={passed}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'total_score': total_score,
+                'max_score': max_score,
+                'passed': passed,
+                'pass_threshold': threshold,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 4 A2 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -4012,101 +4475,204 @@ Evaluate and return ONLY valid JSON."""
 @login_required
 def calculate_step4_b1_final_score():
     """
-    Calculate and log Phase 4 Step 4 Remedial B1 final score
-    Pass threshold: >= 32/38 (~84%)
-
-    Request body:
-    {
-        "task_a_score": 4,   # Negotiation Battle (max 4)
-        "task_b_score": 8,   # Definition Duel (max 8)
-        "task_c_score": 6,   # Quiz Game (max 6)
-        "task_d_score": 8,   # Flashcard Game (max 8)
-        "task_e_score": 6,   # Tense Time Travel (max 6)
-        "task_f_score": 6    # Grammar Kahoot (max 6)
-    }
-
-    Returns:
-    {
-        "success": true,
-        "data": {
-            "task_a": 4,
-            "task_b": 8,
-            "task_c": 6,
-            "task_d": 8,
-            "task_e": 6,
-            "task_f": 6,
-            "total": 38,
-            "max_score": 38,
-            "threshold": 32,
-            "passed": true
-        }
-    }
+    Calculate Phase 4 Step 4 Remedial B1 final score
+    Tasks: Negotiation Battle (4) + Definition Duel (8) + Quiz Game (6) + Flashcard Game (8) + Tense Travel (6) + Grammar Kahoot (6)
+    Total Max: 38 points
+    Pass threshold: >= 22/38 (~58%)
+    Route to Step 5 on pass
     """
-    logger.info(f"=== Calculating Phase 4 Step 4 B1 Final Score - User {session.get('user_id')} ===")
     try:
-        data = request.get_json()
-        task_a = data.get('task_a_score', 0)
-        task_b = data.get('task_b_score', 0)
-        task_c = data.get('task_c_score', 0)
-        task_d = data.get('task_d_score', 0)
-        task_e = data.get('task_e_score', 0)
-        task_f = data.get('task_f_score', 0)
-
-        total = task_a + task_b + task_c + task_d + task_e + task_f
-        max_score = 38
-        threshold = 32  # ~84%
-        passed = total >= threshold
-
-        logger.info(f"Step 4 B1 Scores - Task A: {task_a}/4, Task B: {task_b}/8, Task C: {task_c}/6")
-        logger.info(f"Task D: {task_d}/8, Task E: {task_e}/6, Task F: {task_f}/6")
-        logger.info(f"Total: {total}/{max_score}, Threshold: {threshold}, Passed: {passed}")
-
-        # Log to database
         user_id = session.get('user_id')
-        if user_id:
-            try:
-                import sqlite3
-                db = sqlite3.connect('fardi.db')
-                cursor = db.cursor()
+        data = request.json
 
-                cursor.execute('''
-                    INSERT INTO remedial_scores (
-                        user_id, phase, step, level,
-                        task_a_score, task_b_score, task_c_score,
-                        task_d_score, task_e_score, task_f_score,
-                        total_score, max_score, passed, timestamp
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-                ''', (
-                    user_id, 4, 4, 'B1',
-                    task_a, task_b, task_c,
-                    task_d, task_e, task_f,
-                    total, max_score, passed
-                ))
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+        task_e_score = data.get('task_e_score', 0)
+        task_f_score = data.get('task_f_score', 0)
 
-                db.commit()
-                logger.info(f"Step 4 B1 final score logged to database for user {user_id}")
+        total_score = task_a_score + task_b_score + task_c_score + task_d_score + task_e_score + task_f_score
+        max_score = 38
+        threshold = 22
+        passed = total_score >= threshold
 
-            except Exception as db_error:
-                logger.error(f"Database error logging Step 4 B1 score: {db_error}")
+        # Determine next URL
+        next_url = "/app/phase4/step/5" if passed else "/app/phase4/step/4/remedial/b1/retry"
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print("PHASE 4 STEP 4 - REMEDIAL B1 - FINAL ASSESSMENT")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"\nTask A (Negotiation Battle):  {task_a_score}/4 points")
+        print(f"Task B (Definition Duel):     {task_b_score}/8 points")
+        print(f"Task C (Quiz Game):           {task_c_score}/6 points")
+        print(f"Task D (Flashcard Game):      {task_d_score}/8 points")
+        print(f"Task E (Tense Travel):        {task_e_score}/6 points")
+        print(f"Task F (Grammar Kahoot):      {task_f_score}/6 points")
+        print(f"\n" + "-"*60)
+        print(f"TOTAL SCORE: {total_score}/{max_score} points")
+        print(f"PASS THRESHOLD: {threshold}/{max_score} points (~58%)")
+        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4 Step 4 Remedial B1 Final - User {user_id}: A={task_a_score}, B={task_b_score}, C={task_c_score}, D={task_d_score}, E={task_e_score}, F={task_f_score}, Total={total_score}, Passed={passed}")
 
         return jsonify({
             'success': True,
             'data': {
-                'task_a': task_a,
-                'task_b': task_b,
-                'task_c': task_c,
-                'task_d': task_d,
-                'task_e': task_e,
-                'task_f': task_f,
-                'total': total,
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'task_e_score': task_e_score,
+                'task_f_score': task_f_score,
+                'total_score': total_score,
                 'max_score': max_score,
-                'threshold': threshold,
-                'passed': passed
+                'passed': passed,
+                'pass_threshold': threshold,
+                'next_url': next_url
             }
         })
 
     except Exception as e:
         logger.error(f"Error calculating Phase 4 Step 4 B1 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step4/remedial/b2/final-score', methods=['POST'])
+@login_required
+def calculate_step4_b2_final_score():
+    """
+    Calculate Phase 4 Step 4 Remedial B2 final score
+    Tasks: 4 tasks totaling 32 points
+    Total Max: 32 points
+    Pass threshold: >= 26/32 (~81%)
+    Route to Step 5 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+
+        total_score = task_a_score + task_b_score + task_c_score + task_d_score
+        max_score = 32
+        threshold = 26
+        passed = total_score >= threshold
+
+        # Determine next URL
+        next_url = "/app/phase4/step/5" if passed else "/app/phase4/step/4/remedial/b2/retry"
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print("PHASE 4 STEP 4 - REMEDIAL B2 - FINAL ASSESSMENT")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"\nTask A:  {task_a_score}/8 points")
+        print(f"Task B:  {task_b_score}/8 points")
+        print(f"Task C:  {task_c_score}/8 points")
+        print(f"Task D:  {task_d_score}/8 points")
+        print(f"\n" + "-"*60)
+        print(f"TOTAL SCORE: {total_score}/{max_score} points")
+        print(f"PASS THRESHOLD: {threshold}/{max_score} points (~81%)")
+        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4 Step 4 Remedial B2 Final - User {user_id}: A={task_a_score}, B={task_b_score}, C={task_c_score}, D={task_d_score}, Total={total_score}, Passed={passed}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'total_score': total_score,
+                'max_score': max_score,
+                'passed': passed,
+                'pass_threshold': threshold,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 4 B2 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@phase4_bp.route('/step4/remedial/c1/final-score', methods=['POST'])
+@login_required
+def calculate_step4_c1_final_score():
+    """
+    Calculate Phase 4 Step 4 Remedial C1 final score
+    Tasks: 4 tasks totaling 26 points
+    Total Max: 26 points
+    Pass threshold: >= 21/26 (~81%)
+    Route to Step 5 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+
+        total_score = task_a_score + task_b_score + task_c_score + task_d_score
+        max_score = 26
+        threshold = 21
+        passed = total_score >= threshold
+
+        # Determine next URL
+        next_url = "/app/phase4/step/5" if passed else "/app/phase4/step/4/remedial/c1/retry"
+
+        # TERMINAL OUTPUT
+        print("\n" + "="*60)
+        print("PHASE 4 STEP 4 - REMEDIAL C1 - FINAL ASSESSMENT")
+        print("="*60)
+        print(f"User ID: {user_id}")
+        print(f"\nTask A:  {task_a_score}/6 points")
+        print(f"Task B:  {task_b_score}/8 points")
+        print(f"Task C:  {task_c_score}/6 points")
+        print(f"Task D:  {task_d_score}/6 points")
+        print(f"\n" + "-"*60)
+        print(f"TOTAL SCORE: {total_score}/{max_score} points")
+        print(f"PASS THRESHOLD: {threshold}/{max_score} points (~81%)")
+        print(f"RESULT: {'✅ PASSED' if passed else '❌ FAILED - RETRY REQUIRED'}")
+        print(f"NEXT URL: {next_url}")
+        print("="*60 + "\n")
+
+        logger.info(f"Phase 4 Step 4 Remedial C1 Final - User {user_id}: A={task_a_score}, B={task_b_score}, C={task_c_score}, D={task_d_score}, Total={total_score}, Passed={passed}")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'total_score': total_score,
+                'max_score': max_score,
+                'passed': passed,
+                'pass_threshold': threshold,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 4 C1 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -6355,6 +6921,478 @@ Return ONLY a JSON object:
 
     except Exception as e:
         logger.error(f"Error evaluating Phase 4.2 Step 5 enhancement: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ===================================
+# PHASE 4 STEP 5 - SCORE CALCULATION & ROUTING
+# ===================================
+
+@phase4_bp.route('/step/5/calculate-score', methods=['POST'])
+@login_required
+def calculate_step5_score():
+    """
+    Calculate Phase 4 Step 5 total score and route to remedial
+    Based on 3 AI-scored interactions:
+    - Interaction 1 (Poster Description): 1-5 points (CEFR A1-C1)
+    - Interaction 2 (Video Script): 1-5 points (CEFR A1-C1)
+    - Interaction 3 (Vocabulary Integration - Sushi Spell): 1-5 points (CEFR A1-C1)
+    Total: 15 points max
+
+    Routing Logic:
+    - total < 4  → Remedial A1
+    - total < 7  → Remedial A2
+    - total < 10 → Remedial B1
+    - total < 13 → Remedial B2
+    - total >= 13 → Remedial C1
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        # Get CEFR scores (1-5 each)
+        interaction1_score = data.get('interaction1_score', 1)
+        interaction2_score = data.get('interaction2_score', 1)
+        interaction3_score = data.get('interaction3_score', 1)
+
+        # Calculate total
+        total_score = interaction1_score + interaction2_score + interaction3_score
+
+        # Determine remedial CEFR level based on TOTAL SCORE thresholds
+        # Routing Logic:
+        # - total < 4 → Remedial A1
+        # - total < 7 → Remedial A2
+        # - total < 10 → Remedial B1
+        # - total < 13 → Remedial B2
+        # - total >= 13 → Remedial C1
+        if total_score < 4:
+            remedial_level = 'Remedial A1'
+        elif total_score < 7:
+            remedial_level = 'Remedial A2'
+        elif total_score < 10:
+            remedial_level = 'Remedial B1'
+        elif total_score < 13:
+            remedial_level = 'Remedial B2'
+        else:
+            remedial_level = 'Remedial C1'
+
+        # Print detailed terminal output (INTERNAL USE ONLY)
+        print("\n" + "="*80)
+        print("PHASE 4 STEP 5 - SCORE CALCULATION & ROUTING (INTERNAL USE ONLY)")
+        print("="*80)
+        print(f"User ID: {user_id}")
+        print("\nInteraction Scores (AI-Scored CEFR 1-5):")
+        print(f"  Interaction 1 (Poster Description):           {interaction1_score}/5")
+        print(f"  Interaction 2 (Video Script):                 {interaction2_score}/5")
+        print(f"  Interaction 3 (Vocabulary - Sushi Spell):     {interaction3_score}/5")
+        print("-"*80)
+        print(f"TOTAL SCORE: {total_score}/15")
+        print("-"*80)
+        print(f"ROUTING DECISION: {remedial_level}")
+        print("  (Based on thresholds: <4=A1, <7=A2, <10=B1, <13=B2, ≥13=C1)")
+        print("="*80 + "\n")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'interaction1': {
+                    'score': interaction1_score,
+                    'max': 5
+                },
+                'interaction2': {
+                    'score': interaction2_score,
+                    'max': 5
+                },
+                'interaction3': {
+                    'score': interaction3_score,
+                    'max': 5
+                },
+                'total': {
+                    'score': total_score,
+                    'max': 15,
+                    'remedial_level': remedial_level
+                }
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 5 score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ===================================
+# PHASE 4 STEP 5 - REMEDIAL A1
+# ===================================
+
+@phase4_bp.route('/step5/remedial/a1/final-score', methods=['POST'])
+@login_required
+def calculate_step5_a1_final_score():
+    """
+    Calculate Phase 4 Step 5 Remedial A1 final score
+    Tasks: Task A (8) + Task B (8) + Task C (6)
+    Total Max: 22 points
+    Pass threshold: >= 17/22 (~77%)
+    Route to Phase 4_2 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+
+        total_score = task_a_score + task_b_score + task_c_score
+        passed = total_score >= 17
+
+        # Determine next URL
+        next_url = "/app/phase4_2" if passed else "/app/phase4/step/5/remedial/a1/retry"
+
+        # Print detailed terminal output (INTERNAL USE ONLY)
+        print("\n" + "="*80)
+        print("PHASE 4 STEP 5 - REMEDIAL A1 FINAL SCORE (INTERNAL USE ONLY)")
+        print("="*80)
+        print(f"User ID: {user_id}")
+        print("\nTask Breakdown:")
+        print(f"  Task A: {task_a_score}/8")
+        print(f"  Task B: {task_b_score}/8")
+        print(f"  Task C: {task_c_score}/6")
+        print("-"*80)
+        print(f"TOTAL SCORE: {total_score}/22")
+        print(f"PASS THRESHOLD: 17/22 (~77%)")
+        print(f"STATUS: {'PASSED ✓' if passed else 'FAILED ✗'}")
+        print("-"*80)
+        print(f"ROUTING: {next_url}")
+        print("="*80 + "\n")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'total_score': total_score,
+                'max_score': 22,
+                'passed': passed,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 5 Remedial A1 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ===================================
+# PHASE 4 STEP 5 - REMEDIAL A2
+# ===================================
+
+@phase4_bp.route('/step5/remedial/a2/final-score', methods=['POST'])
+@login_required
+def calculate_step5_a2_final_score():
+    """
+    Calculate Phase 4 Step 5 Remedial A2 final score
+    Tasks: Task A (8) + Task B (8) + Task C (6)
+    Total Max: 22 points
+    Pass threshold: >= 18/22 (~82%)
+    Route to Phase 4_2 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+
+        total_score = task_a_score + task_b_score + task_c_score
+        passed = total_score >= 18
+
+        # Determine next URL
+        next_url = "/app/phase4_2" if passed else "/app/phase4/step/5/remedial/a2/retry"
+
+        # Print detailed terminal output (INTERNAL USE ONLY)
+        print("\n" + "="*80)
+        print("PHASE 4 STEP 5 - REMEDIAL A2 FINAL SCORE (INTERNAL USE ONLY)")
+        print("="*80)
+        print(f"User ID: {user_id}")
+        print("\nTask Breakdown:")
+        print(f"  Task A: {task_a_score}/8")
+        print(f"  Task B: {task_b_score}/8")
+        print(f"  Task C: {task_c_score}/6")
+        print("-"*80)
+        print(f"TOTAL SCORE: {total_score}/22")
+        print(f"PASS THRESHOLD: 18/22 (~82%)")
+        print(f"STATUS: {'PASSED ✓' if passed else 'FAILED ✗'}")
+        print("-"*80)
+        print(f"ROUTING: {next_url}")
+        print("="*80 + "\n")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'total_score': total_score,
+                'max_score': 22,
+                'passed': passed,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 5 Remedial A2 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ===================================
+# PHASE 4 STEP 5 - REMEDIAL B1
+# ===================================
+
+@phase4_bp.route('/step5/remedial/b1/final-score', methods=['POST'])
+@login_required
+def calculate_step5_b1_final_score():
+    """
+    Calculate Phase 4 Step 5 Remedial B1 final score
+    Required Tasks: Task A (5) + Task B (8) + Task C (6) + Task D (8) = 27 points
+    Bonus Tasks: Task E (6) + Task F (6) = 12 points
+    Total Max: 39 points (27 required + 12 bonus)
+    Pass threshold: >= 22/27 required points (~81%)
+    Route to Phase 4_2 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+        task_e_score = data.get('task_e_score', 0)  # Bonus
+        task_f_score = data.get('task_f_score', 0)  # Bonus
+
+        required_score = task_a_score + task_b_score + task_c_score + task_d_score
+        bonus_score = task_e_score + task_f_score
+        total_score = required_score + bonus_score
+        passed = required_score >= 22
+
+        # Determine next URL
+        next_url = "/app/phase4_2" if passed else "/app/phase4/step/5/remedial/b1/retry"
+
+        # Print detailed terminal output (INTERNAL USE ONLY)
+        print("\n" + "="*80)
+        print("PHASE 4 STEP 5 - REMEDIAL B1 FINAL SCORE (INTERNAL USE ONLY)")
+        print("="*80)
+        print(f"User ID: {user_id}")
+        print("\nRequired Tasks:")
+        print(f"  Task A: {task_a_score}/5")
+        print(f"  Task B: {task_b_score}/8")
+        print(f"  Task C: {task_c_score}/6")
+        print(f"  Task D: {task_d_score}/8")
+        print(f"  Required Subtotal: {required_score}/27")
+        print("\nBonus Tasks:")
+        print(f"  Task E (Bonus): {task_e_score}/6")
+        print(f"  Task F (Bonus): {task_f_score}/6")
+        print(f"  Bonus Subtotal: {bonus_score}/12")
+        print("-"*80)
+        print(f"TOTAL SCORE: {total_score}/39 (required: {required_score}/27, bonus: {bonus_score}/12)")
+        print(f"PASS THRESHOLD: 22/27 required (~81%)")
+        print(f"STATUS: {'PASSED ✓' if passed else 'FAILED ✗'} (based on required tasks only)")
+        print("-"*80)
+        print(f"ROUTING: {next_url}")
+        print("="*80 + "\n")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'task_e_score': task_e_score,
+                'task_f_score': task_f_score,
+                'required_score': required_score,
+                'bonus_score': bonus_score,
+                'total_score': total_score,
+                'max_score': 39,
+                'passed': passed,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 5 Remedial B1 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ===================================
+# PHASE 4 STEP 5 - REMEDIAL B2
+# ===================================
+
+@phase4_bp.route('/step5/remedial/b2/final-score', methods=['POST'])
+@login_required
+def calculate_step5_b2_final_score():
+    """
+    Calculate Phase 4 Step 5 Remedial B2 final score
+    Tasks: Task A (10) + Task B (8) + Task C (8) + Task D (6) + Task E (6) + Task F (6)
+    Total Max: 44 points
+    Pass threshold: >= 35/44 (~80%)
+    Route to Phase 4_2 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+        task_e_score = data.get('task_e_score', 0)
+        task_f_score = data.get('task_f_score', 0)
+
+        total_score = (task_a_score + task_b_score + task_c_score +
+                      task_d_score + task_e_score + task_f_score)
+        passed = total_score >= 35
+
+        # Determine next URL
+        next_url = "/app/phase4_2" if passed else "/app/phase4/step/5/remedial/b2/retry"
+
+        # Print detailed terminal output (INTERNAL USE ONLY)
+        print("\n" + "="*80)
+        print("PHASE 4 STEP 5 - REMEDIAL B2 FINAL SCORE (INTERNAL USE ONLY)")
+        print("="*80)
+        print(f"User ID: {user_id}")
+        print("\nTask Breakdown:")
+        print(f"  Task A: {task_a_score}/10")
+        print(f"  Task B: {task_b_score}/8")
+        print(f"  Task C: {task_c_score}/8")
+        print(f"  Task D: {task_d_score}/6")
+        print(f"  Task E: {task_e_score}/6")
+        print(f"  Task F: {task_f_score}/6")
+        print("-"*80)
+        print(f"TOTAL SCORE: {total_score}/44")
+        print(f"PASS THRESHOLD: 35/44 (~80%)")
+        print(f"STATUS: {'PASSED ✓' if passed else 'FAILED ✗'}")
+        print("-"*80)
+        print(f"ROUTING: {next_url}")
+        print("="*80 + "\n")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'task_e_score': task_e_score,
+                'task_f_score': task_f_score,
+                'total_score': total_score,
+                'max_score': 44,
+                'passed': passed,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 5 Remedial B2 final score: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# ===================================
+# PHASE 4 STEP 5 - REMEDIAL C1
+# ===================================
+
+@phase4_bp.route('/step5/remedial/c1/final-score', methods=['POST'])
+@login_required
+def calculate_step5_c1_final_score():
+    """
+    Calculate Phase 4 Step 5 Remedial C1 final score
+    Tasks: Task A (10) + Task B (8) + Task C (6) + Task D (6) + Task E (6) + Task F (6) + Task G (6) + Task H (6)
+    Total Max: 54 points
+    Pass threshold: >= 43/54 (~80%)
+    Route to Phase 4_2 on pass
+    """
+    try:
+        user_id = session.get('user_id')
+        data = request.json
+
+        task_a_score = data.get('task_a_score', 0)
+        task_b_score = data.get('task_b_score', 0)
+        task_c_score = data.get('task_c_score', 0)
+        task_d_score = data.get('task_d_score', 0)
+        task_e_score = data.get('task_e_score', 0)
+        task_f_score = data.get('task_f_score', 0)
+        task_g_score = data.get('task_g_score', 0)
+        task_h_score = data.get('task_h_score', 0)
+
+        total_score = (task_a_score + task_b_score + task_c_score + task_d_score +
+                      task_e_score + task_f_score + task_g_score + task_h_score)
+        passed = total_score >= 43
+
+        # Determine next URL
+        next_url = "/app/phase4_2" if passed else "/app/phase4/step/5/remedial/c1/retry"
+
+        # Print detailed terminal output (INTERNAL USE ONLY)
+        print("\n" + "="*80)
+        print("PHASE 4 STEP 5 - REMEDIAL C1 FINAL SCORE (INTERNAL USE ONLY)")
+        print("="*80)
+        print(f"User ID: {user_id}")
+        print("\nTask Breakdown:")
+        print(f"  Task A: {task_a_score}/10")
+        print(f"  Task B: {task_b_score}/8")
+        print(f"  Task C: {task_c_score}/6")
+        print(f"  Task D: {task_d_score}/6")
+        print(f"  Task E: {task_e_score}/6")
+        print(f"  Task F: {task_f_score}/6")
+        print(f"  Task G: {task_g_score}/6")
+        print(f"  Task H: {task_h_score}/6")
+        print("-"*80)
+        print(f"TOTAL SCORE: {total_score}/54")
+        print(f"PASS THRESHOLD: 43/54 (~80%)")
+        print(f"STATUS: {'PASSED ✓' if passed else 'FAILED ✗'}")
+        print("-"*80)
+        print(f"ROUTING: {next_url}")
+        print("="*80 + "\n")
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'task_a_score': task_a_score,
+                'task_b_score': task_b_score,
+                'task_c_score': task_c_score,
+                'task_d_score': task_d_score,
+                'task_e_score': task_e_score,
+                'task_f_score': task_f_score,
+                'task_g_score': task_g_score,
+                'task_h_score': task_h_score,
+                'total_score': total_score,
+                'max_score': 54,
+                'passed': passed,
+                'next_url': next_url
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Error calculating Phase 4 Step 5 Remedial C1 final score: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
